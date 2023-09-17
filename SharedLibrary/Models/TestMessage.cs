@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharedLibrary.Models
+﻿namespace SharedLibrary.Models
 {
-    internal class TestMessage
+    public class TestMessage
     {
         public string Message { get; set; }
+
+        public TestMessage(string message)
+        {
+            Message = message;
+        }
     }
 }

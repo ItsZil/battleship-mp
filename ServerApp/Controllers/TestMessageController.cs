@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using SharedLibrary.Models;
 
 namespace ServerApp.Controllers
 {
@@ -14,9 +16,10 @@ namespace ServerApp.Controllers
         }
 
         [HttpGet(Name = "GetTestMessage")]
-        public string Get()
+        public IActionResult Get()
         {
-            return "Received this message from ServerApp successfully.";
+            var testMessage = new TestMessage("Received this message from ServerApp successfully.");
+            return Ok(testMessage);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace ClientApp
 {
-    partial class Form1
+    partial class StartForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,24 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
+            TestMessageLabel = new Label();
+            GetTestMessageButton = new Button();
             SuspendLayout();
             // 
-            // label1
+            // TestMessageLabel
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(269, 212);
-            label1.Name = "label1";
-            label1.Size = new Size(230, 15);
-            label1.TabIndex = 0;
-            label1.Text = "Failed to receive message from ServerApp.";
+            TestMessageLabel.AutoSize = true;
+            TestMessageLabel.Location = new Point(305, 197);
+            TestMessageLabel.Name = "TestMessageLabel";
+            TestMessageLabel.Size = new Size(194, 15);
+            TestMessageLabel.TabIndex = 0;
+            TestMessageLabel.Text = "Click button to test the connection.";
+            // 
+            // GetTestMessageButton
+            // 
+            GetTestMessageButton.Location = new Point(337, 226);
+            GetTestMessageButton.Name = "GetTestMessageButton";
+            GetTestMessageButton.Size = new Size(116, 22);
+            GetTestMessageButton.TabIndex = 1;
+            GetTestMessageButton.Text = "GetTestMessage";
+            GetTestMessageButton.UseVisualStyleBackColor = true;
+            GetTestMessageButton.Click += GetTestMessageButton_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(label1);
+            Controls.Add(GetTestMessageButton);
+            Controls.Add(TestMessageLabel);
             Name = "Form1";
             Text = "Battleship";
             ResumeLayout(false);
@@ -54,6 +66,7 @@
 
         #endregion
 
-        private Label label1;
+        private Label TestMessageLabel;
+        private Button GetTestMessageButton;
     }
 }
