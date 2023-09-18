@@ -1,3 +1,5 @@
+using ClientApp.Utilities;
+using SharedLibrary.Models;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -30,6 +32,11 @@ namespace ClientApp
                     Process.Start(client2ExecutableName, "client2");
                 }
             }
+
+            HttpUtility httpUtility = new HttpUtility();
+            SharedLibrary.Models.Message result = httpUtility.Post<SharedLibrary.Models.Message>("api/server/SubscribeToObserver");
+            MessageBox.Show(result.MessageText);
+
             Application.Run(new StartForm());
         }
     }

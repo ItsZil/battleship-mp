@@ -1,3 +1,4 @@
+using ServerApp.Managers;
 
 namespace ServerApp
 {
@@ -13,6 +14,9 @@ namespace ServerApp
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Game services
+            builder.Services.AddSingleton<ServerManager>();
 
             var app = builder.Build();
 
