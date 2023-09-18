@@ -18,11 +18,9 @@ namespace ClientApp
             try
             {
                 var testMessage = await httpClient.GetAsync<TestMessage>("TestMessage");
-                TestMessageLabel.Text = testMessage.Message;
             }
             catch (HttpRequestException ex)
             {
-                TestMessageLabel.Text = ex.Message;
             }
         }
     }
