@@ -17,7 +17,7 @@ namespace ServerApp
 
             // Network services
             builder.Services.AddSignalR();
-            builder.Services.AddScoped<GameHub>();
+            builder.Services.AddSingleton<GameHub>();
 
             // Game services
             builder.Services.AddSingleton<ServerManager>();

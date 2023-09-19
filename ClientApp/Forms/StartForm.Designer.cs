@@ -201,6 +201,7 @@
             JoinGameButton.TabIndex = 11;
             JoinGameButton.Text = "Join";
             JoinGameButton.UseVisualStyleBackColor = true;
+            JoinGameButton.Click += JoinGameButton_Click;
             // 
             // CreateGameButton
             // 
@@ -211,6 +212,7 @@
             CreateGameButton.TabIndex = 2;
             CreateGameButton.Text = "Create";
             CreateGameButton.UseVisualStyleBackColor = true;
+            CreateGameButton.Click += CreateGameButton_Click;
             // 
             // StartForm
             // 

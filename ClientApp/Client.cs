@@ -1,5 +1,6 @@
 ﻿using ClientApp.Utilities;
 using Microsoft.AspNetCore.SignalR.Client;
+using SharedLibrary.Models;
 
 namespace ClientApp
 {
@@ -23,12 +24,18 @@ namespace ClientApp
 
         private async void Initialize()
         {
-            _gameHub.On<string>("TestMessage", (message) =>
+            _gameHub.On<List<Game>>("SendAvailableGameList", (gameList) =>
             {
                 // Handle the received message from the server
-                MessageBox.Show(message);
+                MessageBox.Show($"There are currently {gameList.Count()} open servers.");
             });
             
+            _gameHub.On<Game>("SendNewCreatedGame", (game) =>
+            {
+                // Handle the received message from the server
+                MessageBox.Show($"A new game server ({game.Name}) was just opened!");
+            });
+
             await StartAsync();
         }
 

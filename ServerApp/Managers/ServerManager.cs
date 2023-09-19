@@ -1,20 +1,20 @@
 ﻿using SharedLibrary.Models;
 using SharedLibrary.Observers;
 using SharedLibrary.Events;
+using SharedLibrary.Constants;
+using SharedLibrary.Exceptions;
 
 namespace ServerApp.Managers
 {
-    // Singleton, Observer sablonas
-    // TODO: thread safety
+    // Observer, singleton sablonas?
     public class ServerManager : IServerObserver
     {
         private static ServerManager _instance;
         private readonly List<IServerObserver> _observers = new List<IServerObserver>();
         private readonly List<Game> _gameServers = new List<Game>();
 
-        public event EventHandler<GameCreatedEventArgs> GameCreated;
+        public event EventHandler<GameCreatedEventArgs> GameCreated;  
         
-
         public static ServerManager Instance
         {
             get
@@ -26,6 +26,7 @@ namespace ServerApp.Managers
                 return _instance;
             }
         }
+
         #region Observer event methods
         protected virtual void OnGameCreated(GameCreatedEventArgs e)
         {
@@ -57,7 +58,7 @@ namespace ServerApp.Managers
         {
             _gameServers.Add(gameServer);
             OnGameCreated(new GameCreatedEventArgs(gameServer));
-            
+
             return gameServer;
         }
 
@@ -76,6 +77,34 @@ namespace ServerApp.Managers
                 }
             }
             return false;
+        }
+
+        public async Task<Game> JoinGameServer(JoinGameDetails joinGameDetails)
+        {
+            foreach (Game gameServer in _gameServers)
+            {
+                if (gameServer.Name == joinGameDetails.Name)
+                {
+                    if (gameServer.Password == joinGameDetails.Password)
+                    {
+                        if (gameServer.Players.Count < 2)
+                        {
+                            // TODO: Add the client as a new player
+                            gameServer.Players.Add(new Player(123, "Test Player"));
+                            return gameServer;
+                        }
+                        else
+                        {
+                            throw new GameFullException();
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidPasswordException();
+                    }
+                }
+            }
+            throw new GameNotFoundException();
         }
     }
 }

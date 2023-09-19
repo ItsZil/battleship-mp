@@ -2,21 +2,33 @@
 {
     public class Game
     {
-        public int GameId { get; }
-        public string Name { get; }
-        public string Password { get; }
-        public int Level { get; }
+        public int GameId { get; set; }
+        public string Name { get; set; }
+        public string Password { get; set; }
+        public int Level { get; set; }
 
-        public List<Player> Players { get; } = new List<Player>();
-        
-        public Game(string serverName, string password, int level)
+        public List<Player> Players { get; set; } = new List<Player>();
+
+        public Game()
+        {
+            
+        }
+
+        public Game(string Name, string Password)
+        {
+            this.Name = Name;
+            this.Password = Password;
+        }
+
+        public Game(string Name, string Password, int Level, List<Player> Players)
         {
             var random = new Random();
             
             GameId = random.Next(1000, 9999);
-            Name = serverName;
-            Password = password;
-            Level = level;
+            this.Name = Name;
+            this.Password = Password;
+            this.Level = Level;
+            this.Players = Players;
         }
 
         public void AddPlayer()

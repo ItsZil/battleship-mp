@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
+using SharedLibrary.Constants;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Factories;
 using SharedLibrary.Models;
@@ -11,47 +12,57 @@ namespace ServerApp.Controllers
     [ApiController]
     public class ServerController : ControllerBase
     {
-        private readonly GameHub _gameHub;
-        private readonly ServerManager _serverManager = ServerManager.Instance;
+        private readonly ServerManager _serverManager;
         private readonly LevelOneGameFactory _levelOneGameFactory = new LevelOneGameFactory();
-
-        public ServerController(GameHub gameHub)
+        
+        public ServerController(ServerManager serverManager)
         {
-            _gameHub = gameHub;
+            _serverManager = serverManager;
         }
 
-        #region Observer endpoints
-        [HttpPost("SubscribeToObserver")]
-        public IActionResult Subscribe()
+        [HttpPost("CreateNewGameServer")]
+        public async Task<IActionResult> CreateGameServer(Game game)
         {
-            // Access the gamehub
-            _gameHub.Hello();
-            return Ok(new Message { MessageText = "Subscribed to ServerManager observer." });
-        }
-        #endregion
-
-        [HttpGet("CreateGameServer")]
-        public IActionResult CreateGameServer(string serverName, string password, int level = 1)
-        {
-            if (_serverManager.IsServerNameTaken(serverName))
+            if (_serverManager.IsServerNameTaken(game.Name))
             {
                 return new BadRequestObjectResult(new ErrorMessage("A server with this name already exists!"));
             }
             
-            Game game = null;
-            switch (level)
+            switch (game.Level)
             {
                 case 1:
-                    game = _levelOneGameFactory.CreateGame(serverName, password, level);
+                    game = _levelOneGameFactory.CreateGame(game.Name, game.Password, game.Level);
                     break;
                 case 2:
-                    game = _levelOneGameFactory.CreateGame(serverName, password, level);
+                    game = _levelOneGameFactory.CreateGame(game.Name, game.Password, game.Level);
                     break;
                 default:
                     return new BadRequestObjectResult(new ErrorMessage("Invalid game level!"));
             }
             _serverManager.CreateGameServer(game);
             return Ok(game);
+        }
+
+        [HttpPost("JoinGameServer")]
+        public async Task<IActionResult> JoinGameServer(JoinGameDetails joinGameDetails)
+        {
+            try
+            {
+                var joined = await _serverManager.JoinGameServer(joinGameDetails);
+                return Ok(joined);
+            }
+            catch (GameNotFoundException)
+            {
+                return new BadRequestObjectResult(new ErrorMessage("Game not found!"));
+            }
+            catch (InvalidPasswordException)
+            {
+                return new BadRequestObjectResult(new ErrorMessage("Invalid password!"));
+            }
+            catch (GameFullException)
+            {
+                return new BadRequestObjectResult(new ErrorMessage("Game is full!"));
+            }
         }
     }
 }

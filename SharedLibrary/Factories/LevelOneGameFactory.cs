@@ -9,7 +9,7 @@ namespace SharedLibrary.Factories
         
         public Game CreateGame(string serverName, string password, int level)
         {
-            var game = new Game(serverName, password, level);
+            var game = new Game(serverName, password, level, new List<Player>());
             // Add player?
             return game;
         }

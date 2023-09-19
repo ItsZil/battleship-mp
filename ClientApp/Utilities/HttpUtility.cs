@@ -43,9 +43,12 @@ namespace ClientApp.Utilities
             }
         }
 
-        public async Task<T> PostAsync<T>(string endpoint)
+        public async Task<T> PostAsync<T>(string endpoint, T data)
         {
-            HttpResponseMessage response = await _httpClient.PostAsync(endpoint, null);
+            var jsonData = JsonSerializer.Serialize(data);
+            var contentData = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync(endpoint, contentData);
 
             if (response.IsSuccessStatusCode)
             {
