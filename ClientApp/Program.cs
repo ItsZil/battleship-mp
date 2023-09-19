@@ -1,12 +1,12 @@
 using ClientApp.Utilities;
+using Microsoft.AspNetCore.SignalR.Client;
 using SharedLibrary.Models;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace ClientApp
 {
     internal static class Program
-    {
+    {   
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -33,11 +33,9 @@ namespace ClientApp
                 }
             }
 
-            HttpUtility httpUtility = new HttpUtility();
-            SharedLibrary.Models.Message result = httpUtility.Post<SharedLibrary.Models.Message>("api/server/SubscribeToObserver");
-            MessageBox.Show(result.MessageText);
+            Client client = new Client();
 
-            Application.Run(new StartForm());
+            Application.Run(new StartForm(client));
         }
     }
 }

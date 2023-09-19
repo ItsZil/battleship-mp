@@ -15,6 +15,10 @@ namespace ServerApp
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Network services
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<GameHub>();
+
             // Game services
             builder.Services.AddSingleton<ServerManager>();
 
@@ -31,7 +35,12 @@ namespace ServerApp
 
             app.UseAuthorization();
 
-
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<GameHub>("/gameHub"); // Customize the hub URL
+                endpoints.MapControllers();
+            });
             app.MapControllers();
 
             app.Run();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Factories;
@@ -10,13 +11,21 @@ namespace ServerApp.Controllers
     [ApiController]
     public class ServerController : ControllerBase
     {
+        private readonly GameHub _gameHub;
         private readonly ServerManager _serverManager = ServerManager.Instance;
         private readonly LevelOneGameFactory _levelOneGameFactory = new LevelOneGameFactory();
+
+        public ServerController(GameHub gameHub)
+        {
+            _gameHub = gameHub;
+        }
 
         #region Observer endpoints
         [HttpPost("SubscribeToObserver")]
         public IActionResult Subscribe()
         {
+            // Access the gamehub
+            _gameHub.Hello();
             return Ok(new Message { MessageText = "Subscribed to ServerManager observer." });
         }
         #endregion
