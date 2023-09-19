@@ -1,7 +1,6 @@
 ﻿using SharedLibrary.Models;
 using SharedLibrary.Observers;
 using SharedLibrary.Events;
-using SharedLibrary.Constants;
 using SharedLibrary.Exceptions;
 
 namespace ServerApp.Managers
@@ -79,7 +78,7 @@ namespace ServerApp.Managers
             return false;
         }
 
-        public async Task<Game> JoinGameServer(JoinGameDetails joinGameDetails)
+        public async Task<Game> JoinGameServer(Game joinGameDetails)
         {
             foreach (Game gameServer in _gameServers)
             {

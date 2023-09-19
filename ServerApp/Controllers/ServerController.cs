@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
-using SharedLibrary.Constants;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Factories;
 using SharedLibrary.Models;
@@ -44,7 +43,7 @@ namespace ServerApp.Controllers
         }
 
         [HttpPost("JoinGameServer")]
-        public async Task<IActionResult> JoinGameServer(JoinGameDetails joinGameDetails)
+        public async Task<IActionResult> JoinGameServer(Game joinGameDetails)
         {
             try
             {
