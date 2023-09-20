@@ -42,5 +42,52 @@ namespace ClientApp.Utilities
                 throw new HttpRequestException($"HTTP request failed with status code {response.StatusCode}");
             }
         }
+
+        public async Task<T> PostAsync<T>(string endpoint, T data)
+        {
+            var jsonData = JsonSerializer.Serialize(data);
+            var contentData = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync(endpoint, contentData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var deserializedObject = await response.Content.ReadFromJsonAsync<T>();
+                if (deserializedObject != null)
+                {
+                    return deserializedObject;
+                }
+                else
+                {
+                    throw new HttpRequestException("Received empty JSON from HTTP request.");
+                }
+            }
+            else
+            {
+                throw new HttpRequestException($"HTTP request failed with status code {response.StatusCode}");
+            }
+        }
+
+        public T Post<T>(string endpoint)
+        {
+            HttpResponseMessage response = _httpClient.PostAsync(endpoint, null).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var deserializedObject = response.Content.ReadFromJsonAsync<T>().Result;
+                if (deserializedObject != null)
+                {
+                    return deserializedObject;
+                }
+                else
+                {
+                    throw new HttpRequestException("Received empty JSON from HTTP request.");
+                }
+            }
+            else
+            {
+                throw new HttpRequestException($"HTTP request failed with status code {response.StatusCode}");
+            }
+        }
     }
 }

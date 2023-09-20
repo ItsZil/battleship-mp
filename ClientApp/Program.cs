@@ -1,10 +1,12 @@
+using ClientApp.Utilities;
+using Microsoft.AspNetCore.SignalR.Client;
+using SharedLibrary.Models;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace ClientApp
 {
     internal static class Program
-    {
+    {   
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -30,7 +32,10 @@ namespace ClientApp
                     Process.Start(client2ExecutableName, "client2");
                 }
             }
-            Application.Run(new StartForm());
+
+            Client client = new Client();
+
+            Application.Run(new StartForm(client));
         }
     }
 }

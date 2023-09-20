@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
     <Folder Include="Constants\" />
+    <Folder Include="Enums\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Utilities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client" Version="2.4.3" />
   </ItemGroup>
 
 </Project>

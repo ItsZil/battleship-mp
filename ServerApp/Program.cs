@@ -1,3 +1,4 @@
+using ServerApp.Managers;
 
 namespace ServerApp
 {
@@ -14,6 +15,13 @@ namespace ServerApp
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Network services
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<GameHub>();
+
+            // Game services
+            builder.Services.AddSingleton<ServerManager>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,7 +35,12 @@ namespace ServerApp
 
             app.UseAuthorization();
 
-
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<GameHub>("/gameHub"); // Customize the hub URL
+                endpoints.MapControllers();
+            });
             app.MapControllers();
 
             app.Run();
