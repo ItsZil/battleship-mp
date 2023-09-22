@@ -22,6 +22,12 @@ namespace ServerApp
             await base.OnConnectedAsync();
         }
 
+        public async Task<string> GetClientId()
+        {
+            // Used in Client.cs initialization to retrieve the client's connection id
+            return Context.ConnectionId;
+        }
+
         public async Task SendAvailableGameList(string clientConnectionId)
         {
             var availableGames = _serverManager.GetAvailableGames();

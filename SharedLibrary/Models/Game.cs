@@ -3,6 +3,7 @@
     public class Game
     {
         public int GameId { get; set; }
+        public string? CreatorId { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
         public int Level { get; set; }
@@ -14,17 +15,19 @@
             
         }
 
-        public Game(string Name, string Password)
+        public Game(string CreatorId, string Name, string Password)
         {
+            this.CreatorId = CreatorId;
             this.Name = Name;
             this.Password = Password;
         }
 
-        public Game(string Name, string Password, int Level, List<Player> Players)
+        public Game(string CreatorId, string Name, string Password, int Level, List<Player> Players)
         {
             var random = new Random();
             
             GameId = random.Next(1000, 9999);
+            this.CreatorId = CreatorId;
             this.Name = Name;
             this.Password = Password;
             this.Level = Level;
