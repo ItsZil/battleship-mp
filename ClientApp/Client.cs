@@ -37,6 +37,11 @@ namespace ClientApp
                 MessageBox.Show($"A new game server ({game.Name}) was just opened!");
             });
 
+            _gameHub.On("SendPlayerJoinedGame", () =>
+            {
+                MessageBox.Show("A player has joined your game, starting now!");
+            });
+
             await StartAsync();
         }
 

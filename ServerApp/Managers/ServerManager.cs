@@ -2,6 +2,7 @@
 using SharedLibrary.Observers;
 using SharedLibrary.Events;
 using SharedLibrary.Exceptions;
+using SharedLibrary.Models.Request_Models;
 
 namespace ServerApp.Managers
 {
@@ -12,8 +13,9 @@ namespace ServerApp.Managers
         private readonly List<IServerObserver> _observers = new List<IServerObserver>();
         private readonly List<Game> _gameServers = new List<Game>();
 
-        public event EventHandler<GameCreatedEventArgs> GameCreated;  
-        
+        public event EventHandler<GameCreatedEventArgs> GameCreated;
+        public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
+
         public static ServerManager Instance
         {
             get
@@ -30,6 +32,11 @@ namespace ServerApp.Managers
         protected virtual void OnGameCreated(GameCreatedEventArgs e)
         {
             GameCreated?.Invoke(this, e);
+        }
+
+        protected virtual void OnPlayerJoinedGame(PlayerJoinedGameEventArgs e)
+        {
+            PlayerJoinedGame?.Invoke(this, e);
         }
         #endregion
 
@@ -78,7 +85,7 @@ namespace ServerApp.Managers
             return false;
         }
 
-        public async Task<Game> JoinGameServer(Game joinGameDetails)
+        public async Task<JoinGameDetails> JoinGameServer(JoinGameDetails joinGameDetails)
         {
             foreach (Game gameServer in _gameServers)
             {
@@ -88,9 +95,16 @@ namespace ServerApp.Managers
                     {
                         if (gameServer.Players.Count < 2)
                         {
-                            // TODO: Add the client as a new player
-                            gameServer.Players.Add(new Player(123, "Test Player"));
-                            return gameServer;
+                            string playerName = "Player " + (gameServer.Players.Count + 1);
+                            
+                            gameServer.Players.Add(new Player(joinGameDetails.ClientId, playerName));
+                            OnPlayerJoinedGame(new PlayerJoinedGameEventArgs(joinGameDetails.ClientId, gameServer.Players));
+                            
+                            // Prepare response object
+                            joinGameDetails.PlayerCount = gameServer.Players.Count;
+                            joinGameDetails.Level = gameServer.Level;
+                            
+                            return joinGameDetails;
                         }
                         else
                         {

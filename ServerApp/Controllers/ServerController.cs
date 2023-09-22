@@ -4,6 +4,7 @@ using ServerApp.Managers;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Factories;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Request_Models;
 
 namespace ServerApp.Controllers
 {
@@ -30,10 +31,10 @@ namespace ServerApp.Controllers
             switch (game.Level)
             {
                 case 1:
-                    game = _levelOneGameFactory.CreateGame(game.Name, game.Password, game.Level);
+                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
                     break;
                 case 2:
-                    game = _levelOneGameFactory.CreateGame(game.Name, game.Password, game.Level);
+                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
                     break;
                 default:
                     return new BadRequestObjectResult(new ErrorMessage("Invalid game level!"));
@@ -43,7 +44,7 @@ namespace ServerApp.Controllers
         }
 
         [HttpPost("JoinGameServer")]
-        public async Task<IActionResult> JoinGameServer(Game joinGameDetails)
+        public async Task<IActionResult> JoinGameServer(JoinGameDetails joinGameDetails)
         {
             try
             {

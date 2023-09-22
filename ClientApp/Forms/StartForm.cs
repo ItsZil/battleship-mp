@@ -1,12 +1,13 @@
 using ClientApp.Utilities;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Request_Models;
 
 namespace ClientApp
 {
     public partial class StartForm : Form
     {
         private static HttpUtility _httpUtility = new HttpUtility();
-        private static Client _client = Client.Instance;
+        private static Client _client;
 
         public StartForm(Client client)
         {
@@ -19,7 +20,7 @@ namespace ClientApp
             string serverName = CreateGameNameTextbox.Text;
             string serverPassword = CreateGamePasswordTextbox.Text;
 
-            Game game = new Game(_client.Id, serverName, serverPassword, 1, new List<Player>());
+            Game game = new Game(_client.Id, serverName, serverPassword, 1);
             await _httpUtility.PostAsync("api/server/CreateNewGameServer", game);
         }
 
@@ -28,10 +29,10 @@ namespace ClientApp
             string serverName = JoinGameNameTextbox.Text;
             string serverPassword = JoinGamePasswordTextbox.Text;
 
-            Game joinGameDetails = new Game(_client.Id, serverName, serverPassword);
+            JoinGameDetails joinGameDetails = new JoinGameDetails(_client.Id, serverName, serverPassword);
 
             var joinedGame = await _httpUtility.PostAsync("api/server/JoinGameServer", joinGameDetails);
-            MessageBox.Show($"Succesfully joined game {joinedGame.Name}, player count: {joinedGame.Players.Count()}");
+            MessageBox.Show($"Succesfully joined game {joinedGame.Name}, player count: {joinedGame.PlayerCount}");
         }
     }
 }
