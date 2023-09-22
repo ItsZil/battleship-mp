@@ -7,10 +7,11 @@ namespace SharedLibrary.Factories
     {
         private string _levelName = "Basic Level";
         
-        public Game CreateGame(string serverName, string password, int level)
+        public Game CreateGame(string creatorId, string serverName, string password, int level)
         {
-            var game = new Game(serverName, password, level, new List<Player>());
-            // Add player?
+            var players = new List<Player>();
+            players.Add(new Player(creatorId, "Player 1"));
+            var game = new Game(creatorId, serverName, password, level, players);
             return game;
         }
 
