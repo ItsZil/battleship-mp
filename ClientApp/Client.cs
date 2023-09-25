@@ -47,7 +47,7 @@ namespace ClientApp
 
         private async void ReceiveClientId()
         {
-            Id = await _gameHub.InvokeAsync<string>("GetClientId");
+          //  Id = await _gameHub.InvokeAsync<string>("GetClientId");
         }
 
         public async Task StartAsync()

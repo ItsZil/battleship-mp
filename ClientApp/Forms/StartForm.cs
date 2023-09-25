@@ -34,5 +34,10 @@ namespace ClientApp
             var joinedGame = await _httpUtility.PostAsync("api/server/JoinGameServer", joinGameDetails);
             MessageBox.Show($"Succesfully joined game {joinedGame.Name}, player count: {joinedGame.PlayerCount}");
         }
+
+        private void StartForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
