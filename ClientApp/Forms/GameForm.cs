@@ -1,4 +1,5 @@
 ﻿using ClientApp.Utilities;
+using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,14 +18,13 @@ namespace ClientApp.Forms
     {
         private static HttpUtility _httpUtility = new HttpUtility();
         private static Client _client;
-        public GameForm(Client client)
+        private static Game _game;
+        public GameForm(Client client, Game game)
         {
             InitializeComponent();
             _client = client;
-
-
-
-
+            _game = game;
+            this.Text = $"Game: {game.Name} Game id: {game.GameId}";
         }
 
         private void Cell_Click(object sender, EventArgs e)

@@ -99,8 +99,9 @@ namespace ServerApp.Managers
                             
                             gameServer.Players.Add(new Player(joinGameDetails.ClientId, playerName));
                             OnPlayerJoinedGame(new PlayerJoinedGameEventArgs(joinGameDetails.ClientId, gameServer.Players));
-                            
+
                             // Prepare response object
+                            joinGameDetails.GameId = gameServer.GameId;
                             joinGameDetails.PlayerCount = gameServer.Players.Count;
                             joinGameDetails.Level = gameServer.Level;
                             

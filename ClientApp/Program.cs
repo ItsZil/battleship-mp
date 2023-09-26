@@ -38,7 +38,7 @@ namespace ClientApp
 
             Application.Run(new StartForm(client));
 
-            Application.Run(new GameForm(client));
+            //Application.Run(new GameForm(client));
         }
     }
 }
