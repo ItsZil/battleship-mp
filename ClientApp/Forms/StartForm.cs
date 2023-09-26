@@ -22,7 +22,7 @@ namespace ClientApp
             string serverPassword = CreateGamePasswordTextbox.Text;
 
             Game game = new Game(_client.Id, serverName, serverPassword, 1);
-            await _httpUtility.PostAsync("api/server/CreateNewGameServer", game);
+            game = await _httpUtility.PostAsync("api/server/CreateNewGameServer", game);
 
             MessageBox.Show($"Succesfully created game {game.Name}, game Id :{game.GameId}");
 
