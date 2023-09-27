@@ -68,9 +68,12 @@ namespace ClientApp.Utilities
             }
         }
 
-        public T Post<T>(string endpoint)
+        public T Post<T>(string endpoint, T data)
         {
-            HttpResponseMessage response = _httpClient.PostAsync(endpoint, null).Result;
+            var jsonData = JsonSerializer.Serialize(data);
+            var contentData = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            
+            HttpResponseMessage response = _httpClient.PostAsync(endpoint, contentData).Result;
 
             if (response.IsSuccessStatusCode)
             {

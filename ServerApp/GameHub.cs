@@ -16,6 +16,7 @@ namespace ServerApp
             // Register event handlers
             _serverManager.GameCreated += OnNewCreatedGame;
             _serverManager.PlayerJoinedGame += OnPlayerJoinedGame;
+            _serverManager.AllPlayersReady += OnAllPlayersReady;
         }
         
         public override async Task OnConnectedAsync()
@@ -47,6 +48,11 @@ namespace ServerApp
         {
             SendPlayerJoinedGame(e.JoinedPlayerId, e.ConnectedPlayers);
         }
+
+        private void OnAllPlayersReady(object sender, Game game)
+        {
+            SendPlayerReady(game);
+        }
         #endregion
 
         #region Event handler methods
@@ -62,6 +68,15 @@ namespace ServerApp
             connectedPlayerIds.Remove(joinedPlayerId);
             
             await Clients.Clients(connectedPlayerIds).SendAsync("SendPlayerJoinedGame");
+        }
+
+        public async Task SendPlayerReady(Game game)
+        {
+            if (game.ReadyCount == 2)
+            {
+                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();
+                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady");
+            }
         }
         #endregion
     }

@@ -8,7 +8,10 @@
         public string Password { get; set; }
         public int Level { get; set; }
 
+        public int ReadyCount { get; set; } = 0;
+
         public List<Player> Players { get; set; } = new List<Player>();
+        public List<Ship> Ships { get; set; } = new List<Ship>();
 
         #region Constructors
         public Game()
