@@ -8,6 +8,7 @@ namespace SharedLibrary.Models.Request_Models
 {
     public class JoinGameDetails
     {
+        public int GameId { get; set; }
         public string ClientId { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }

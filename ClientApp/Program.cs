@@ -1,3 +1,4 @@
+using ClientApp.Forms;
 using ClientApp.Utilities;
 using Microsoft.AspNetCore.SignalR.Client;
 using SharedLibrary.Models;
@@ -36,6 +37,8 @@ namespace ClientApp
             Client client = new Client();
 
             Application.Run(new StartForm(client));
+
+            //Application.Run(new GameForm(client));
         }
     }
 }
