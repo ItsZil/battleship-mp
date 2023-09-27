@@ -1,15 +1,6 @@
 ﻿using ClientApp.Utilities;
 using SharedLibrary.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace ClientApp.Forms
 {
@@ -45,8 +36,6 @@ namespace ClientApp.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-
             for (int i = 1; i < 7; i++)
             {
                 for (int j = 1; j < 7; j++)
@@ -71,7 +60,7 @@ namespace ClientApp.Forms
         private void button2_Click(object sender, EventArgs e)
         {
             string ship = comboBox1.SelectedItem.ToString();
-
+            
             int x = int.Parse(textBox1.Text);
             int y = int.Parse(textBox2.Text);
 
@@ -84,6 +73,10 @@ namespace ClientApp.Forms
                     cellButton.Tag = y + "_" + x;
                     gameBoard1.Controls.Add(cellButton, y - 1, x - 1);
                     comboBox1.Items.Remove("One piece");
+                    if (comboBox1.Items.Count > 0)
+                        comboBox1.SelectedIndex = 0;
+                    else
+                        comboBox1.Enabled = false;
                     break;
                 case "Two piece (horizontal)":
                     for (int i = 0; i < 2; i++)
@@ -122,7 +115,16 @@ namespace ClientApp.Forms
                     comboBox1.Items.Remove("Three piece (vertical)");
                     break;
             }
-
+            
+            if (comboBox1.Items.Count > 0)
+            {
+                comboBox1.SelectedIndex = 0;
+            }
+            else
+            {
+                comboBox1.Enabled = false;
+                button2.Enabled = false;
+            }
         }
     }
 }
