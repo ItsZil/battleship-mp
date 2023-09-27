@@ -70,57 +70,56 @@ namespace ClientApp.Forms
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int ship = comboBox1.SelectedIndex;
+            string ship = comboBox1.SelectedItem.ToString();
 
             int x = int.Parse(textBox1.Text);
             int y = int.Parse(textBox2.Text);
 
             switch (ship)
             {
-                case 0:
+                case "One piece":
                     Button cellButton = new Button();
                     cellButton.Text = "";
                     cellButton.BackColor = Color.Transparent;
                     cellButton.Tag = y + "_" + x;
                     gameBoard1.Controls.Add(cellButton, y - 1, x - 1);
-                    comboBox1.Items.RemoveAt(0);
+                    comboBox1.Items.Remove("One piece");
                     break;
-                case 1:
+                case "Two piece (horizontal)":
                     for (int i = 0; i < 2; i++)
                     {
                         Button cellButton1 = new Button();
                         cellButton1.Text = "";
                         cellButton1.BackColor = Color.Transparent;
-                        cellButton1.Tag = x + "_" + y + i;
+                        cellButton1.Tag = x + "_" + (y + i);
                         gameBoard1.Controls.Add(cellButton1, y - 1 + i, x - 1);
 
                     }
-                    comboBox1.Items.RemoveAt(1);
+                    comboBox1.Items.Remove("Two piece (horizontal)");
                     break;
-                case 2:
+                case "Two piece (vertical)":
                     for (int i = 0; i < 2; i++)
                     {
                         Button cellButton2 = new Button();
                         cellButton2.Text = "";
                         cellButton2.BackColor = Color.Transparent;
-                        cellButton2.Tag = x + "_" + y + i;
+                        cellButton2.Tag = x + "_" + (y - i);
                         gameBoard1.Controls.Add(cellButton2, y - 1, x - 1 + i);
 
                     }
-                    comboBox1.Items.RemoveAt(2);
+                    comboBox1.Items.Remove("Two piece (vertical)");
                     break;
-                case 3:
+                case "Three piece (vertical)":
                     for (int i = 0; i < 3; i++)
                     {
-                        ;
                         Button cellButton3 = new Button();
                         cellButton3.Text = "";
                         cellButton3.BackColor = Color.Transparent;
-                        cellButton3.Tag = x + "_" + y + i;
+                        cellButton3.Tag = x + "_" + (y - i);
                         gameBoard1.Controls.Add(cellButton3, y - 1, x - 1 + i);
 
                     }
-                    comboBox1.Items.RemoveAt(3);
+                    comboBox1.Items.Remove("Three piece (vertical)");
                     break;
             }
 
