@@ -11,11 +11,13 @@ namespace ClientApp
     {
         private static readonly Lazy<Client> _instance = new Lazy<Client>(() => new Client());
         private readonly HubConnection _gameHub;
+        private GameForm _gameForm;
 
         public string Id { get; set; } = "N/A";
 
-        public Client()
+        public Client(GameForm gameForm = null)
         {
+            _gameForm = gameForm;
             _gameHub = new HubConnectionBuilder()
                 .WithUrl("https://localhost:7272/gameHub")
                 .Build();
@@ -61,6 +63,17 @@ namespace ClientApp
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        public async void RegisterGameFormEvents(GameForm gameForm)
+        {
+            _gameForm = gameForm;
+
+            // All messages from the server that happen in the GameForm should live here.
+            _gameHub.On("SendAllPlayersReady", () =>
+            {
+                _gameForm.InitializeBoard();
+            });
         }
 
         public async Task SendMessageAsync(string message)

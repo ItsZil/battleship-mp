@@ -64,5 +64,13 @@ namespace ServerApp.Controllers
                 return new BadRequestObjectResult(new ErrorMessage("Game is full!"));
             }
         }
+
+        [HttpPost("SetPlayerAsReady")]
+        public async Task<IActionResult> SetPlayerAsReady(PlayerReadyDetails playerReadyDetails)
+        {
+            bool isServerReady = await _serverManager.SetPlayerAsReady(playerReadyDetails);
+            playerReadyDetails.IsServerReady = isServerReady;
+            return Ok(playerReadyDetails);
+        }
     }
 }
