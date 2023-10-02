@@ -32,13 +32,13 @@
             gameBoard2 = new TableLayoutPanel();
             label1 = new Label();
             label2 = new Label();
-            button1 = new Button();
+            readyButton = new Button();
             label3 = new Label();
             comboBox1 = new ComboBox();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
             label4 = new Label();
-            button2 = new Button();
+            placeShipButton = new Button();
             SuspendLayout();
             // 
             // gameBoard1
@@ -105,16 +105,16 @@
             label2.TabIndex = 38;
             label2.Text = "Enemy's Board";
             // 
-            // button1
+            // readyButton
             // 
-            button1.Location = new Point(320, 308);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(168, 22);
-            button1.TabIndex = 39;
-            button1.Text = "Ready!";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            readyButton.Location = new Point(320, 308);
+            readyButton.Margin = new Padding(3, 2, 3, 2);
+            readyButton.Name = "readyButton";
+            readyButton.Size = new Size(168, 22);
+            readyButton.TabIndex = 39;
+            readyButton.Text = "Ready!";
+            readyButton.UseVisualStyleBackColor = true;
+            readyButton.Click += readyButton_Click;
             // 
             // label3
             // 
@@ -160,16 +160,16 @@
             label4.TabIndex = 44;
             label4.Text = "Enter starting Coordinates:";
             // 
-            // button2
+            // placeShipButton
             // 
-            button2.Location = new Point(122, 380);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(82, 22);
-            button2.TabIndex = 45;
-            button2.Text = "Place!";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            placeShipButton.Location = new Point(122, 380);
+            placeShipButton.Margin = new Padding(3, 2, 3, 2);
+            placeShipButton.Name = "placeShipButton";
+            placeShipButton.Size = new Size(82, 22);
+            placeShipButton.TabIndex = 45;
+            placeShipButton.Text = "Place!";
+            placeShipButton.UseVisualStyleBackColor = true;
+            placeShipButton.Click += placeShipButton_Click;
             // 
             // GameForm
             // 
@@ -177,13 +177,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(853, 410);
-            Controls.Add(button2);
+            Controls.Add(placeShipButton);
             Controls.Add(label4);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
             Controls.Add(comboBox1);
             Controls.Add(label3);
-            Controls.Add(button1);
+            Controls.Add(readyButton);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(gameBoard2);
@@ -202,12 +202,12 @@
         private TableLayoutPanel gameBoard2;
         private Label label1;
         private Label label2;
-        private Button button1;
+        private Button readyButton;
         private Label label3;
         private ComboBox comboBox1;
         private TextBox textBox1;
         private TextBox textBox2;
         private Label label4;
-        private Button button2;
+        private Button placeShipButton;
     }
 }

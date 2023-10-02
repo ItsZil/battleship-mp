@@ -15,6 +15,7 @@ namespace ServerApp.Managers
 
         public event EventHandler<GameCreatedEventArgs> GameCreated;
         public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
+        public EventHandler<Game> AllPlayersReady;
 
         public static ServerManager Instance
         {
@@ -37,6 +38,11 @@ namespace ServerApp.Managers
         protected virtual void OnPlayerJoinedGame(PlayerJoinedGameEventArgs e)
         {
             PlayerJoinedGame?.Invoke(this, e);
+        }
+
+        protected virtual void OnAllPlayersReady(Game game)
+        {
+            AllPlayersReady?.Invoke(this, game);
         }
         #endregion
 
@@ -119,6 +125,26 @@ namespace ServerApp.Managers
                 }
             }
             throw new GameNotFoundException();
+        }
+
+        public async Task<bool> SetPlayerAsReady(PlayerReadyDetails playerReadyDetails)
+        {
+            foreach (Game gameServer in _gameServers)
+            {
+                if (gameServer.GameId == playerReadyDetails.GameId)
+                {
+                    gameServer.ReadyCount++;
+                    gameServer.Ships.AddRange(playerReadyDetails.Ships);
+                    
+                    if (gameServer.ReadyCount == 2)
+                    {
+                        OnAllPlayersReady(gameServer);
+                        return true; // Game is ready to start
+                    }
+                    return false; // Game is not ready to start
+                }
+            }
+            return false;
         }
     }
 }
