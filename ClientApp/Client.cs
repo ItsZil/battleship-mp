@@ -1,7 +1,7 @@
 ﻿using ClientApp.Forms;
-using ClientApp.Utilities;
 using Microsoft.AspNetCore.SignalR.Client;
 using SharedLibrary.Models;
+using SharedLibrary.Structs;
 
 namespace ClientApp
 {
@@ -75,17 +75,23 @@ namespace ClientApp
                 List<Ship> otherPlayerShips = ships.Where(s => s.PlayerId != Id).ToList();
                 _gameForm.InitializeBoard(otherPlayerShips);
             });
+
+            _gameHub.On("SendHitResult", (HitDetails hitDetails) =>
+            {
+                _gameForm.UpdateBoard(hitDetails);
+            });
         }
 
-        public async Task SendMessageAsync(string message)
+        public async Task<object> SendMessageAsync(string methodName, object obj)
         {
             if (_gameHub.State == HubConnectionState.Connected)
             {
-                await _gameHub.SendAsync("SendTestMessageClient", message);
+                return await _gameHub.InvokeAsync<object>(methodName, obj);
             }
             else
             {
                 MessageBox.Show("Connection is not established.");
+                return null;
             }
         }
     }

@@ -79,6 +79,11 @@ namespace ServerApp.Managers
             return _gameServers;
         }
 
+        public Game GetGameById(int id)
+        {
+            return _gameServers.FirstOrDefault(g => g.GameId == id);
+        }
+
         public bool IsServerNameTaken(string name)
         {
             foreach (Game gameServer in _gameServers)

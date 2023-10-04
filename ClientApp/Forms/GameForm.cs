@@ -1,6 +1,8 @@
 ﻿using ClientApp.Utilities;
+using Newtonsoft.Json;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
+using SharedLibrary.Structs;
 
 namespace ClientApp.Forms
 {
@@ -24,19 +26,17 @@ namespace ClientApp.Forms
             _client.RegisterGameFormEvents(this);
         }
 
-        private void Cell_Click(object sender, EventArgs e)
+        private async void Cell_Click(object sender, EventArgs e)
         {
             Control clickedCell = (Control)sender;
+            string[] tagParts = clickedCell.Tag.ToString().Split('_'); // x_y
+            
+            int x = int.Parse(tagParts[0]);
+            int y = int.Parse(tagParts[1]);
 
-            string[] tagParts = clickedCell.Tag.ToString().Split('_'); // Tag are wrote like this tag = rowX_colY
-
-            if (tagParts.Length == 2)
-            {
-                int row = int.Parse(tagParts[0]);
-                int col = int.Parse(tagParts[1]);
-            }
-
-            label1.Text = tagParts[0] + " " + tagParts[1]; //for testing purposes, delete later.
+            object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
+            var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
+            UpdateBoard(hitDetails);
         }
 
         private void readyButton_Click(object sender, EventArgs e)
@@ -98,26 +98,27 @@ namespace ClientApp.Forms
             if (CanPlaceShip(coordinates, size, x, y, isVertical))
             {
                 Ship newShip = new Ship(_client.Id, size, isVertical);
+                PlaceShip(gameBoard, x, y, size, isVertical);
 
-                for (int i = 0; i < size; i++)
-                {
-                    Button cellButton = new Button();
-                    cellButton.Text = "";
-                    cellButton.BackColor = Color.Transparent;
-
-                    if (!isVertical)
-                        cellButton.Tag = y + i + "_" + x;
-                    else
-                        cellButton.Tag = y + "_" + (x - i);
-
-                    gameBoard.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1);
-                    newShip.AddCoordinate(isVertical ? x - 1 + i : x - 1, isVertical ? y - 1 : y - 1 + i);
-                    coordinates.Add(new Coordinate(x, y));
-                }
+                newShip.AddCoordinate(x, y);
+                coordinates.Add(new Coordinate(x, y));
                 return newShip;
             }
             MessageBox.Show("Invalid ship location!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
+        }
+
+        private void PlaceShip(TableLayoutPanel gameBoard, int x, int y, int size, bool isVertical)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                Button cellButton = new Button();
+                cellButton.Text = "";
+                cellButton.BackColor = Color.Navy; // TODO: Change to Color.Transparent when not testing
+                cellButton.Tag = x + "_" + y;
+
+                gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1); }));
+            }
         }
 
         private bool CanPlaceShip(List<Coordinate> coordinates, int size, int x, int y, bool isVertical = false)
@@ -177,13 +178,78 @@ namespace ClientApp.Forms
                 {
                     int x = coord.X;
                     int y = coord.Y;
-                    TryPlaceShip(gameBoardRight, x - 1, y - 1, 1, ship.IsVertical);
+                    PlaceShip(gameBoardRight, x, y, ship.MaxHealth, ship.IsVertical);
+                }
+            }
+            FillRemainingCells();
+        }
+
+        private void FillRemainingCells()
+        {
+            // Fill remaining empty grids in enemy board
+            for (int i = 0; i < gameBoardRight.RowCount; i++)
+            {
+                for (int j = 0; j < gameBoardRight.ColumnCount; j++)
+                {
+                    if (gameBoardRight.GetControlFromPosition(j, i) == null)
+                    {
+                        Button cellButton = new Button();
+                        cellButton.Text = "";
+                        cellButton.BackColor = Color.Transparent;
+                        cellButton.Tag = j + "_" + i; // x_y
+                        gameBoardRight.Invoke(new MethodInvoker(delegate { gameBoardRight.Controls.Add(cellButton, j, i); }));
+                    }
                 }
             }
 
             foreach (Control cell in gameBoardRight.Controls)
             {
                 cell.Click += new EventHandler(Cell_Click);
+            }
+        }
+
+        public void UpdateBoard(HitDetails hitDetails)
+        {
+            if (hitDetails.Hit)
+            {
+                var hitGameBoard = gameBoardLeft;
+                if (hitDetails.HitShip.PlayerId == _client.Id)
+                {
+                    MessageBox.Show($"You were hit!", "Hit!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    MessageBox.Show($"You hit the enemy!", "Hit!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    hitGameBoard = gameBoardRight;
+                }
+
+                // Set button to red where the hit was
+                foreach (Control cell in hitGameBoard.Controls)
+                {
+                    if (cell.Tag.ToString() == hitDetails.X + "_" + hitDetails.Y)
+                    {
+                        cell.BackColor = Color.Red;
+                        cell.Enabled = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // TODO: show a message that the player (or enemy) missed, set turn to next player
+            }
+        }
+
+        public void SetNextTurn(bool isMyTurn)
+        {
+            // TODO: update labels, disable/enable gameBoardRight buttons
+            if (isMyTurn)
+            {
+                MessageBox.Show("It's your turn!");
+            }
+            else
+            {
+                MessageBox.Show("It's the enemy's turn!");
             }
         }
     }
