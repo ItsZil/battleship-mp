@@ -19,7 +19,7 @@ namespace ClientApp.Forms
             InitializeComponent();
             _client = client;
             _game = game;
-            
+
             this.Text = $"Game: {game.Name} Game id: {game.GameId}";
             _client.RegisterGameFormEvents(this);
         }
@@ -54,139 +54,98 @@ namespace ClientApp.Forms
         private void placeShipButton_Click(object sender, EventArgs e)
         {
             string ship = comboBox1.SelectedItem.ToString();
-
             int x = int.Parse(textBox1.Text);
             int y = int.Parse(textBox2.Text);
 
-            Ship newShip = new Ship();
+            Ship newShip = null;
+
             switch (ship)
             {
                 case "One piece":
-                    usedCoords.Clear();
-                    usedCoords.Add(new Coordinate(x, y));
-                    
-                    if(x<6 && y<6 && x>0 && y>0)
-                    {
-                        if(!DoesContains(coordinates, usedCoords))
-                        {
-                            newShip = new Ship(_client.Id, 1);
-                            Button cellButton = new Button();
-                            cellButton.Text = "";
-                            cellButton.BackColor = Color.Transparent;
-                            cellButton.Tag = y + "_" + x;
-                            gameBoard1.Controls.Add(cellButton, y - 1, x - 1);
-                            comboBox1.Items.Remove("One piece");
-                            newShip.AddCoordinate(x - 1, y - 1);
-                            coordinates.Add(new Coordinate(x, y));
-
-                            if (comboBox1.Items.Count > 0)
-                                comboBox1.SelectedIndex = 0;
-                            else
-                                comboBox1.Enabled = false;
-                            break;
-                        }
-                    }
-                    MessageBox.Show("Invalid Location.");
+                    newShip = TryPlaceShip(1, x, y);
                     break;
-                    
                 case "Two piece (horizontal)":
-                    usedCoords.Clear();
-                    usedCoords.Add(new Coordinate(x, y));
-                    usedCoords.Add(new Coordinate(x, y + 1));
-                    if (x < 6 && y < 5 && x > 0 && y > 0)
-                    {
-                        if (!DoesContains(coordinates, usedCoords))
-                        {
-                            newShip = new Ship(_client.Id, 2);
-
-                            for (int i = 0; i < 2; i++)
-                            {
-                                Button cellButton1 = new Button();
-                                cellButton1.Text = "";
-                                cellButton1.BackColor = Color.Transparent;
-                                cellButton1.Tag = x + "_" + (y + i);
-                                gameBoard1.Controls.Add(cellButton1, y - 1 + i, x - 1);
-                                newShip.AddCoordinate(x - 1, y - 1);
-                                coordinates.Add(new Coordinate(x, y+i));
-                            }
-                            comboBox1.Items.Remove("Two piece (horizontal)");
-                            break;
-                        }
-                    }
-                    MessageBox.Show("Invalid Location.");
+                    newShip = TryPlaceShip(2, x, y);
                     break;
-
                 case "Two piece (vertical)":
-                    usedCoords.Clear();
-                    usedCoords.Add(new Coordinate(x, y));
-                    usedCoords.Add(new Coordinate(x + 1, y));
-                    if (x < 5 && y < 6 && x > 0 && y > 0)
-                    {
-                        if (!DoesContains(coordinates, usedCoords))
-                        {
-                            newShip = new Ship(_client.Id, 2);
-
-                            for (int i = 0; i < 2; i++)
-                            {
-                                Button cellButton2 = new Button();
-                                cellButton2.Text = "";
-                                cellButton2.BackColor = Color.Transparent;
-                                cellButton2.Tag = x + "_" + (y - i);
-                                gameBoard1.Controls.Add(cellButton2, y - 1, x - 1 + i);
-                                newShip.AddCoordinate(x - 1 + i, y - 1);
-                                coordinates.Add(new Coordinate(x+i, y));
-
-                            }
-                            comboBox1.Items.Remove("Two piece (vertical)");
-                            break;
-                        }
-                    }
-                    MessageBox.Show("Invalid Location.");
+                    newShip = TryPlaceShip(2, x, y, isVertical: true);
                     break;
-                    
                 case "Three piece (vertical)":
-                    usedCoords.Clear();
-                    usedCoords.Add(new Coordinate(x, y));
-                    usedCoords.Add(new Coordinate(x + 1, y));
-                    usedCoords.Add(new Coordinate(x + 2, y));
-
-                    if (x < 4 && y < 6 && x > 0 && y > 0)
-                    {
-                        if (!DoesContains(coordinates, usedCoords))
-                        {
-                            newShip = new Ship(_client.Id, 3);
-
-                            for (int i = 0; i < 3; i++)
-                            {
-                                Button cellButton3 = new Button();
-                                cellButton3.Text = "";
-                                cellButton3.BackColor = Color.Transparent;
-                                cellButton3.Tag = x + "_" + (y - i);
-                                gameBoard1.Controls.Add(cellButton3, y - 1, x - 1 + i);
-                                newShip.AddCoordinate(x - 1 + i, y - 1);
-                                coordinates.Add(new Coordinate(x+i, y));
-
-                            }
-                            comboBox1.Items.Remove("Three piece (vertical)");
-                            break;
-                        }
-                    }
-                    MessageBox.Show("Invalid Location.");
+                    newShip = TryPlaceShip(3, x, y, isVertical: true);
                     break;
-                    
-                   
+                default:
+                    MessageBox.Show("Invalid ship selection.");
+                    break;
             }
 
-            _ships.Add(newShip);
+            if (newShip != null)
+            {
+                _ships.Add(newShip);
+                RemoveSelectedShipFromComboBox();
+            }
+        }
 
+        private Ship TryPlaceShip(int size, int x, int y, bool isVertical = false)
+        {
+            if (CanPlaceShip(size, x, y, isVertical))
+            {
+                Ship newShip = new Ship(_client.Id, size);
+
+                for (int i = 0; i < size; i++)
+                {
+                    Button cellButton = new Button();
+                    cellButton.Text = "";
+                    cellButton.BackColor = Color.Transparent;
+
+                    if (!isVertical)
+                        cellButton.Tag = y + i + "_" + x;
+                    else
+                        cellButton.Tag = y + "_" + (x - i);
+
+                    gameBoard1.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1);
+                    newShip.AddCoordinate(isVertical ? x - 1 + i : x - 1, isVertical ? y - 1 : y - 1 + i);
+                    coordinates.Add(new Coordinate(isVertical ? x + i : x, isVertical ? y : y + i));
+                }
+                return newShip;
+            }
+
+            MessageBox.Show("Invalid ship location!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return null;
+        }
+
+        private bool CanPlaceShip(int size, int x, int y, bool isVertical = false)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                int currentX = isVertical ? x : x + i;
+                int currentY = isVertical ? y - i : y;
+
+                if (currentX < 1 || currentX > 6 || currentY < 1 || currentY > 6)
+                {
+                    return false;
+                }
+
+                if (coordinates.Any(coord => coord.X == currentX && coord.Y == currentY))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+        private void RemoveSelectedShipFromComboBox()
+        {
             if (comboBox1.Items.Count > 0)
             {
-                comboBox1.SelectedIndex = 0;
-            }
-            else
-            {
-                comboBox1.Enabled = false;
-                placeShipButton.Enabled = false;
+                comboBox1.Items.RemoveAt(comboBox1.SelectedIndex);
+                if (comboBox1.Items.Count > 0)
+                    comboBox1.SelectedIndex = 0;
+                else
+                {
+                    comboBox1.Enabled = false;
+                    placeShipButton.Enabled = false;
+                }
             }
         }
 
@@ -220,19 +179,5 @@ namespace ClientApp.Forms
                 cell.Click += new EventHandler(Cell_Click);
             }
         }
-
-        private bool DoesContains(List<Coordinate> usedCoords, List<Coordinate> coords)
-        {
-            foreach (Coordinate coord in coords)
-            {
-                foreach (Coordinate used in usedCoords)
-                {
-                    if (coord.X == used.X && coord.Y == used.Y)
-                        return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

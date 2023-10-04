@@ -32,7 +32,7 @@ namespace ClientApp
         {
             _gameHub.On<List<Game>>("SendAvailableGameList", (gameList) =>
             {
-                MessageBox.Show($"There are currently {gameList.Count()} open servers.");
+                //MessageBox.Show($"There are currently {gameList.Count()} open servers.");
             });
             
             _gameHub.On<Game>("SendNewCreatedGame", (game) =>

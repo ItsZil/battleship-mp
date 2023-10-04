@@ -140,6 +140,7 @@
             textBox1.Location = new Point(32, 381);
             textBox1.Margin = new Padding(3, 2, 3, 2);
             textBox1.Name = "textBox1";
+            textBox1.PlaceholderText = "X";
             textBox1.Size = new Size(24, 23);
             textBox1.TabIndex = 42;
             // 
@@ -148,6 +149,7 @@
             textBox2.Location = new Point(72, 381);
             textBox2.Margin = new Padding(3, 2, 3, 2);
             textBox2.Name = "textBox2";
+            textBox2.PlaceholderText = "Y";
             textBox2.Size = new Size(22, 23);
             textBox2.TabIndex = 43;
             // 
