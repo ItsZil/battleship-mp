@@ -64,15 +64,17 @@ namespace ClientApp
                 MessageBox.Show(ex.Message);
             }
         }
-
+        
         public async void RegisterGameFormEvents(GameForm gameForm)
         {
             _gameForm = gameForm;
 
             // All messages from the server that happen in the GameForm should live here.
-            _gameHub.On("SendAllPlayersReady", () =>
+            _gameHub.On("SendAllPlayersReady", (List<Ship> ships) =>
             {
-                _gameForm.InitializeBoard();
+                List<Ship> currentPlayerShips = ships.Where(s => s.PlayerId == Id).ToList();
+                List<Ship> otherPlayerShips = ships.Where(s => s.PlayerId != Id).ToList();
+                _gameForm.InitializeBoard(currentPlayerShips, otherPlayerShips);
             });
         }
 

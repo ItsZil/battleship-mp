@@ -11,16 +11,16 @@ namespace ClientApp.Forms
         private static Game _game;
 
         private List<Ship> _ships = new List<Ship>();
+        private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
+        private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
-        private List<Coordinate> coordinates = new List<Coordinate>();
-        private List<Coordinate> usedCoords = new List<Coordinate>();
         public GameForm(Client client, Game game)
         {
             InitializeComponent();
             _client = client;
             _game = game;
 
-            this.Text = $"Game: {game.Name} Game id: {game.GameId}";
+            Text = $"Game: {game.Name} Game ID: {game.GameId}";
             _client.RegisterGameFormEvents(this);
         }
 
@@ -62,16 +62,16 @@ namespace ClientApp.Forms
             switch (ship)
             {
                 case "One piece":
-                    newShip = TryPlaceShip(1, x, y);
+                    newShip = TryPlaceShip(gameBoardLeft, 1, x, y);
                     break;
                 case "Two piece (horizontal)":
-                    newShip = TryPlaceShip(2, x, y);
+                    newShip = TryPlaceShip(gameBoardLeft, 2, x, y);
                     break;
                 case "Two piece (vertical)":
-                    newShip = TryPlaceShip(2, x, y, isVertical: true);
+                    newShip = TryPlaceShip(gameBoardLeft, 2, x, y, isVertical: true);
                     break;
                 case "Three piece (vertical)":
-                    newShip = TryPlaceShip(3, x, y, isVertical: true);
+                    newShip = TryPlaceShip(gameBoardLeft, 3, x, y, isVertical: true);
                     break;
                 default:
                     MessageBox.Show("Invalid ship selection.");
@@ -85,11 +85,19 @@ namespace ClientApp.Forms
             }
         }
 
-        private Ship TryPlaceShip(int size, int x, int y, bool isVertical = false)
+        private Ship TryPlaceShip(TableLayoutPanel gameBoard, int size, int x, int y, bool isVertical = false)
         {
-            if (CanPlaceShip(size, x, y, isVertical))
+            List<Coordinate> coordinates;
+            if (gameBoard == gameBoardLeft)
+                coordinates = _coordinatesLeft;
+            else if (gameBoard == gameBoardRight)
+                coordinates = _coordinatesRight;
+            else
+                throw new Exception("Invalid game board!");
+
+            if (CanPlaceShip(coordinates, size, x, y, isVertical))
             {
-                Ship newShip = new Ship(_client.Id, size);
+                Ship newShip = new Ship(_client.Id, size, isVertical);
 
                 for (int i = 0; i < size; i++)
                 {
@@ -102,18 +110,17 @@ namespace ClientApp.Forms
                     else
                         cellButton.Tag = y + "_" + (x - i);
 
-                    gameBoard1.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1);
+                    gameBoard.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1);
                     newShip.AddCoordinate(isVertical ? x - 1 + i : x - 1, isVertical ? y - 1 : y - 1 + i);
-                    coordinates.Add(new Coordinate(isVertical ? x + i : x, isVertical ? y : y + i));
+                    coordinates.Add(new Coordinate(x, y));
                 }
                 return newShip;
             }
-
             MessageBox.Show("Invalid ship location!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
         }
 
-        private bool CanPlaceShip(int size, int x, int y, bool isVertical = false)
+        private bool CanPlaceShip(List<Coordinate> coordinates, int size, int x, int y, bool isVertical = false)
         {
             for (int i = 0; i < size; i++)
             {
@@ -149,32 +156,46 @@ namespace ClientApp.Forms
             }
         }
 
-        public void InitializeBoard()
+        public void InitializeBoard(List<Ship> currentPlayerShips, List<Ship> otherPlayerShips)
         {
+            if (currentPlayerShips.Count == 0 || otherPlayerShips.Count == 0)
+            {
+                MessageBox.Show("Failed to retrieve ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             // Because this method is called from another thread (inside Client), we need to use Invoke to access UI elements.
             placeShipButton.Invoke(new MethodInvoker(delegate { placeShipButton.Enabled = false; }));
             readyButton.Invoke(new MethodInvoker(delegate { readyButton.Visible = false; }));
 
             MessageBox.Show("Starting game!");
 
-            for (int i = 1; i < 7; i++)
+            // Populate gameBoardLeft (current player's board)
+            Parallel.For(0, currentPlayerShips.Count, i =>
             {
-                for (int j = 1; j < 7; j++)
+                var ship = currentPlayerShips[i];
+
+                foreach (var coord in ship.Coordinates)
                 {
-                    Button cellButton = new Button();
-                    cellButton.Text = "";
-                    cellButton.BackColor = Color.Transparent;
-                    cellButton.Tag = j + "_" + i;
-
-                    // Use Invoke to add the cellButton to the gameBoard2 (UI operation)
-                    gameBoard2.Invoke(new Action(() =>
-                    {
-                        gameBoard2.Controls.Add(cellButton, i - 1, j - 1);
-                    }));
+                    int x = coord.X;
+                    int y = coord.Y;
+                    TryPlaceShip(gameBoardLeft, x - 1, y - 1, 1, ship.IsVertical);
                 }
-            }
+            });
 
-            foreach (Control cell in gameBoard1.Controls)
+            // Populate gameBoardRight (other player's board)
+            Parallel.For(0, otherPlayerShips.Count, i =>
+            {
+                var ship = otherPlayerShips[i];
+                foreach (var coord in ship.Coordinates)
+                {
+                    int x = coord.X;
+                    int y = coord.Y;
+                    TryPlaceShip(gameBoardRight, x - 1, y - 1, 1, ship.IsVertical);
+                }
+            });
+
+            foreach (Control cell in gameBoardLeft.Controls)
             {
                 cell.Click += new EventHandler(Cell_Click);
             }

@@ -74,8 +74,8 @@ namespace ServerApp
         {
             if (game.ReadyCount == 2)
             {
-                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();
-                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady");
+                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();                
+                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady", game.Ships);
             }
         }
         #endregion

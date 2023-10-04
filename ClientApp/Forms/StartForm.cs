@@ -24,7 +24,7 @@ namespace ClientApp
             Game game = new Game(_client.Id, serverName, serverPassword, 1);
             game = await _httpUtility.PostAsync("api/server/CreateNewGameServer", game);
 
-            MessageBox.Show($"Succesfully created game {game.Name}, game Id :{game.GameId}");
+            MessageBox.Show($"Succesfully created game {game.Name}, ID: {game.GameId}");
 
             this.Hide();
             new GameForm(_client, game).ShowDialog();
