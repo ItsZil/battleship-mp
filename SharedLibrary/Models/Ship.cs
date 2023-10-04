@@ -31,7 +31,7 @@ namespace SharedLibrary.Models
 
         public void AddCoordinate(int x, int y)
         {
-            Coordinates.Add(new Coordinate { X = x, Y = y });
+            Coordinates.Add(new Coordinate(x,y));
         }
     }
 }
