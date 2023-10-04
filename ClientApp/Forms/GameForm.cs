@@ -20,7 +20,7 @@ namespace ClientApp.Forms
             _client = client;
             _game = game;
 
-            Text = $"Game: {game.Name} Game ID: {game.GameId}";
+            Text = $"Game: {game.Name} Game ID: {game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
         }
 
@@ -156,11 +156,11 @@ namespace ClientApp.Forms
             }
         }
 
-        public void InitializeBoard(List<Ship> currentPlayerShips, List<Ship> otherPlayerShips)
+        public void InitializeBoard(List<Ship> otherPlayerShips)
         {
-            if (currentPlayerShips.Count == 0 || otherPlayerShips.Count == 0)
+            if (otherPlayerShips.Count == 0)
             {
-                MessageBox.Show("Failed to retrieve ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Failed to retrieve enemy ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -170,32 +170,18 @@ namespace ClientApp.Forms
 
             MessageBox.Show("Starting game!");
 
-            // Populate gameBoardLeft (current player's board)
-            Parallel.For(0, currentPlayerShips.Count, i =>
-            {
-                var ship = currentPlayerShips[i];
-
-                foreach (var coord in ship.Coordinates)
-                {
-                    int x = coord.X;
-                    int y = coord.Y;
-                    TryPlaceShip(gameBoardLeft, x - 1, y - 1, 1, ship.IsVertical);
-                }
-            });
-
             // Populate gameBoardRight (other player's board)
-            Parallel.For(0, otherPlayerShips.Count, i =>
+            foreach (var ship in otherPlayerShips)
             {
-                var ship = otherPlayerShips[i];
                 foreach (var coord in ship.Coordinates)
                 {
                     int x = coord.X;
                     int y = coord.Y;
                     TryPlaceShip(gameBoardRight, x - 1, y - 1, 1, ship.IsVertical);
                 }
-            });
+            }
 
-            foreach (Control cell in gameBoardLeft.Controls)
+            foreach (Control cell in gameBoardRight.Controls)
             {
                 cell.Click += new EventHandler(Cell_Click);
             }

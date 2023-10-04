@@ -72,9 +72,8 @@ namespace ClientApp
             // All messages from the server that happen in the GameForm should live here.
             _gameHub.On("SendAllPlayersReady", (List<Ship> ships) =>
             {
-                List<Ship> currentPlayerShips = ships.Where(s => s.PlayerId == Id).ToList();
                 List<Ship> otherPlayerShips = ships.Where(s => s.PlayerId != Id).ToList();
-                _gameForm.InitializeBoard(currentPlayerShips, otherPlayerShips);
+                _gameForm.InitializeBoard(otherPlayerShips);
             });
         }
 

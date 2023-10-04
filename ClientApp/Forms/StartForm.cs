@@ -12,8 +12,9 @@ namespace ClientApp
 
         public StartForm(Client client)
         {
-            InitializeComponent();
             _client = client;
+            
+            InitializeComponent();
         }
 
         private async void CreateGameButton_Click(object sender, EventArgs e)
@@ -26,9 +27,9 @@ namespace ClientApp
 
             MessageBox.Show($"Succesfully created game {game.Name}, ID: {game.GameId}");
 
-            this.Hide();
+            Hide();
             new GameForm(_client, game).ShowDialog();
-            this.Show();
+            Show();
         }
 
         private async void JoinGameButton_Click(object sender, EventArgs e)
@@ -49,14 +50,9 @@ namespace ClientApp
             };
 
             MessageBox.Show($"Succesfully joined game {joinedGame.Name}, player count: {joinedGame.PlayerCount}, game Id :{joinedGame.GameId}");
-            this.Hide();
+            Hide();
             new GameForm(_client, game).ShowDialog();
-            this.Show();
-        }
-
-        private void StartForm_Load(object sender, EventArgs e)
-        {
-
+            Show();
         }
     }
 }
