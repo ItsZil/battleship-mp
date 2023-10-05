@@ -39,6 +39,9 @@
             textBox2 = new TextBox();
             label4 = new Label();
             placeShipButton = new Button();
+            turnIndicatorLabel = new Label();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // gameBoardLeft
@@ -90,7 +93,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(159, 52);
+            label1.Location = new Point(182, 52);
             label1.Name = "label1";
             label1.Size = new Size(65, 15);
             label1.TabIndex = 37;
@@ -99,7 +102,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(563, 52);
+            label2.Location = new Point(582, 52);
             label2.Name = "label2";
             label2.Size = new Size(85, 15);
             label2.TabIndex = 38;
@@ -173,12 +176,33 @@
             placeShipButton.UseVisualStyleBackColor = true;
             placeShipButton.Click += placeShipButton_Click;
             // 
+            // turnIndicatorLabel
+            // 
+            turnIndicatorLabel.Dock = DockStyle.Bottom;
+            turnIndicatorLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            turnIndicatorLabel.Location = new Point(3, 0);
+            turnIndicatorLabel.Name = "turnIndicatorLabel";
+            turnIndicatorLabel.Size = new Size(100, 50);
+            turnIndicatorLabel.TabIndex = 46;
+            turnIndicatorLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            flowLayoutPanel1.AutoSize = true;
+            flowLayoutPanel1.Controls.Add(turnIndicatorLabel);
+            flowLayoutPanel1.Location = new Point(364, 102);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(117, 50);
+            flowLayoutPanel1.TabIndex = 47;
+            // 
             // GameForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(853, 410);
+            Controls.Add(flowLayoutPanel1);
             Controls.Add(placeShipButton);
             Controls.Add(label4);
             Controls.Add(textBox2);
@@ -194,6 +218,7 @@
             Name = "GameForm";
             Tag = "1_1";
             Text = "GameForm";
+            flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -211,5 +236,7 @@
         private TextBox textBox2;
         private Label label4;
         private Button placeShipButton;
+        private Label turnIndicatorLabel;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }
