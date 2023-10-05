@@ -263,9 +263,9 @@ namespace ClientApp.Forms
             }
             else
             {
-                MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
                 cell.BackColor = ButtonColors.Miss;
             }
+            MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
             cell.Enabled = false;
         }
 
