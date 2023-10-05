@@ -1,11 +1,4 @@
-﻿using SharedLibrary.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharedLibrary.Models
+﻿namespace SharedLibrary.Models
 {
     public class Ship
     {
@@ -13,15 +6,18 @@ namespace SharedLibrary.Models
         public int ShipId { get; set; }
         public int Health { get; set; }
         public int MaxHealth { get; set; }
+        
         public List<Coordinate> Coordinates { get; set; } = new List<Coordinate>();
+        public bool IsVertical { get; set; }
 
-        public Ship(string playerId, int maxHealth)
+        public Ship(string playerId, int maxHealth, bool isVertical = false)
         {
             ShipId = new Random().Next(1000, 9999);
             PlayerId = playerId;
 
             MaxHealth = maxHealth;
             Health = maxHealth;
+            IsVertical = isVertical;
         }
 
         public Ship()

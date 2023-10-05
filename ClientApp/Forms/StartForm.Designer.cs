@@ -241,7 +241,6 @@
             Controls.Add(tableLayoutPanel1);
             Name = "StartForm";
             Text = "Battleship";
-            Load += StartForm_Load;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);

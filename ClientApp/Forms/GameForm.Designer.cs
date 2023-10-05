@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            gameBoard1 = new TableLayoutPanel();
-            gameBoard2 = new TableLayoutPanel();
+            gameBoardLeft = new TableLayoutPanel();
+            gameBoardRight = new TableLayoutPanel();
             label1 = new Label();
             label2 = new Label();
             readyButton = new Button();
@@ -41,51 +41,51 @@
             placeShipButton = new Button();
             SuspendLayout();
             // 
-            // gameBoard1
+            // gameBoardLeft
             // 
-            gameBoard1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-            gameBoard1.ColumnCount = 6;
-            gameBoard1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666718F));
-            gameBoard1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard1.Location = new Point(93, 85);
-            gameBoard1.Margin = new Padding(3, 2, 3, 2);
-            gameBoard1.Name = "gameBoard1";
-            gameBoard1.RowCount = 6;
-            gameBoard1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard1.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard1.Size = new Size(242, 202);
-            gameBoard1.TabIndex = 0;
+            gameBoardLeft.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
+            gameBoardLeft.ColumnCount = 6;
+            gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666718F));
+            gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardLeft.Location = new Point(93, 85);
+            gameBoardLeft.Margin = new Padding(3, 2, 3, 2);
+            gameBoardLeft.Name = "gameBoardLeft";
+            gameBoardLeft.RowCount = 6;
+            gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardLeft.Size = new Size(242, 202);
+            gameBoardLeft.TabIndex = 0;
             // 
-            // gameBoard2
+            // gameBoardRight
             // 
-            gameBoard2.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            gameBoard2.ColumnCount = 6;
-            gameBoard2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666718F));
-            gameBoard2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
-            gameBoard2.Location = new Point(487, 85);
-            gameBoard2.Margin = new Padding(3, 2, 3, 2);
-            gameBoard2.Name = "gameBoard2";
-            gameBoard2.RowCount = 6;
-            gameBoard2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoard2.Size = new Size(247, 202);
-            gameBoard2.TabIndex = 36;
+            gameBoardRight.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            gameBoardRight.ColumnCount = 6;
+            gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666718F));
+            gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
+            gameBoardRight.Location = new Point(487, 85);
+            gameBoardRight.Margin = new Padding(3, 2, 3, 2);
+            gameBoardRight.Name = "gameBoardRight";
+            gameBoardRight.RowCount = 6;
+            gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            gameBoardRight.Size = new Size(247, 202);
+            gameBoardRight.TabIndex = 36;
             // 
             // label1
             // 
@@ -188,8 +188,8 @@
             Controls.Add(readyButton);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(gameBoard2);
-            Controls.Add(gameBoard1);
+            Controls.Add(gameBoardRight);
+            Controls.Add(gameBoardLeft);
             Margin = new Padding(3, 2, 3, 2);
             Name = "GameForm";
             Tag = "1_1";
@@ -200,8 +200,8 @@
 
         #endregion
 
-        private TableLayoutPanel gameBoard1;
-        private TableLayoutPanel gameBoard2;
+        private TableLayoutPanel gameBoardLeft;
+        private TableLayoutPanel gameBoardRight;
         private Label label1;
         private Label label2;
         private Button readyButton;

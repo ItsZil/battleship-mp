@@ -1,6 +1,8 @@
 ﻿using ClientApp.Utilities;
+using Newtonsoft.Json;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
+using SharedLibrary.Structs;
 
 namespace ClientApp.Forms
 {
@@ -11,32 +13,30 @@ namespace ClientApp.Forms
         private static Game _game;
 
         private List<Ship> _ships = new List<Ship>();
+        private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
+        private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
-        private List<Coordinate> coordinates = new List<Coordinate>();
-        private List<Coordinate> usedCoords = new List<Coordinate>();
         public GameForm(Client client, Game game)
         {
             InitializeComponent();
             _client = client;
             _game = game;
 
-            this.Text = $"Game: {game.Name} Game id: {game.GameId}";
+            Text = $"Game: {game.Name} Game ID: {game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
         }
 
-        private void Cell_Click(object sender, EventArgs e)
+        private async void Cell_Click(object sender, EventArgs e)
         {
             Control clickedCell = (Control)sender;
+            string[] tagParts = clickedCell.Tag.ToString().Split('_'); // x_y
+            
+            int x = int.Parse(tagParts[0]);
+            int y = int.Parse(tagParts[1]);
 
-            string[] tagParts = clickedCell.Tag.ToString().Split('_'); // Tag are wrote like this tag = rowX_colY
-
-            if (tagParts.Length == 2)
-            {
-                int row = int.Parse(tagParts[0]);
-                int col = int.Parse(tagParts[1]);
-            }
-
-            label1.Text = tagParts[0] + " " + tagParts[1]; //for testing purposes, delete later.
+            object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
+            var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
+            UpdateBoard(hitDetails);
         }
 
         private void readyButton_Click(object sender, EventArgs e)
@@ -62,16 +62,16 @@ namespace ClientApp.Forms
             switch (ship)
             {
                 case "One piece":
-                    newShip = TryPlaceShip(1, x, y);
+                    newShip = TryPlaceShip(gameBoardLeft, 1, x, y);
                     break;
                 case "Two piece (horizontal)":
-                    newShip = TryPlaceShip(2, x, y);
+                    newShip = TryPlaceShip(gameBoardLeft, 2, x, y);
                     break;
                 case "Two piece (vertical)":
-                    newShip = TryPlaceShip(2, x, y, isVertical: true);
+                    newShip = TryPlaceShip(gameBoardLeft, 2, x, y, isVertical: true);
                     break;
                 case "Three piece (vertical)":
-                    newShip = TryPlaceShip(3, x, y, isVertical: true);
+                    newShip = TryPlaceShip(gameBoardLeft, 3, x, y, isVertical: true);
                     break;
                 default:
                     MessageBox.Show("Invalid ship selection.");
@@ -85,35 +85,43 @@ namespace ClientApp.Forms
             }
         }
 
-        private Ship TryPlaceShip(int size, int x, int y, bool isVertical = false)
+        private Ship TryPlaceShip(TableLayoutPanel gameBoard, int size, int x, int y, bool isVertical = false)
         {
-            if (CanPlaceShip(size, x, y, isVertical))
+            List<Coordinate> coordinates;
+            if (gameBoard == gameBoardLeft)
+                coordinates = _coordinatesLeft;
+            else if (gameBoard == gameBoardRight)
+                coordinates = _coordinatesRight;
+            else
+                throw new Exception("Invalid game board!");
+
+            if (CanPlaceShip(coordinates, size, x, y, isVertical))
             {
-                Ship newShip = new Ship(_client.Id, size);
+                Ship newShip = new Ship(_client.Id, size, isVertical);
+                PlaceShip(gameBoard, x, y, size, isVertical);
 
-                for (int i = 0; i < size; i++)
-                {
-                    Button cellButton = new Button();
-                    cellButton.Text = "";
-                    cellButton.BackColor = Color.Transparent;
-
-                    if (!isVertical)
-                        cellButton.Tag = y + i + "_" + x;
-                    else
-                        cellButton.Tag = y + "_" + (x - i);
-
-                    gameBoard1.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1);
-                    newShip.AddCoordinate(isVertical ? x - 1 + i : x - 1, isVertical ? y - 1 : y - 1 + i);
-                    coordinates.Add(new Coordinate(isVertical ? x + i : x, isVertical ? y : y + i));
-                }
+                newShip.AddCoordinate(x, y);
+                coordinates.Add(new Coordinate(x, y));
                 return newShip;
             }
-
             MessageBox.Show("Invalid ship location!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
         }
 
-        private bool CanPlaceShip(int size, int x, int y, bool isVertical = false)
+        private void PlaceShip(TableLayoutPanel gameBoard, int x, int y, int size, bool isVertical)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                Button cellButton = new Button();
+                cellButton.Text = "";
+                cellButton.BackColor = Color.Navy; // TODO: Change to Color.Transparent when not testing
+                cellButton.Tag = x + "_" + y;
+
+                gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1); }));
+            }
+        }
+
+        private bool CanPlaceShip(List<Coordinate> coordinates, int size, int x, int y, bool isVertical = false)
         {
             for (int i = 0; i < size; i++)
             {
@@ -149,34 +157,99 @@ namespace ClientApp.Forms
             }
         }
 
-        public void InitializeBoard()
+        public void InitializeBoard(List<Ship> otherPlayerShips)
         {
+            if (otherPlayerShips.Count == 0)
+            {
+                MessageBox.Show("Failed to retrieve enemy ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             // Because this method is called from another thread (inside Client), we need to use Invoke to access UI elements.
             placeShipButton.Invoke(new MethodInvoker(delegate { placeShipButton.Enabled = false; }));
             readyButton.Invoke(new MethodInvoker(delegate { readyButton.Visible = false; }));
 
             MessageBox.Show("Starting game!");
 
-            for (int i = 1; i < 7; i++)
+            // Populate gameBoardRight (other player's board)
+            foreach (var ship in otherPlayerShips)
             {
-                for (int j = 1; j < 7; j++)
+                foreach (var coord in ship.Coordinates)
                 {
-                    Button cellButton = new Button();
-                    cellButton.Text = "";
-                    cellButton.BackColor = Color.Transparent;
-                    cellButton.Tag = j + "_" + i;
+                    int x = coord.X;
+                    int y = coord.Y;
+                    PlaceShip(gameBoardRight, x, y, ship.MaxHealth, ship.IsVertical);
+                }
+            }
+            FillRemainingCells();
+        }
 
-                    // Use Invoke to add the cellButton to the gameBoard2 (UI operation)
-                    gameBoard2.Invoke(new Action(() =>
+        private void FillRemainingCells()
+        {
+            // Fill remaining empty grids in enemy board
+            for (int i = 0; i < gameBoardRight.RowCount; i++)
+            {
+                for (int j = 0; j < gameBoardRight.ColumnCount; j++)
+                {
+                    if (gameBoardRight.GetControlFromPosition(j, i) == null)
                     {
-                        gameBoard2.Controls.Add(cellButton, i - 1, j - 1);
-                    }));
+                        Button cellButton = new Button();
+                        cellButton.Text = "";
+                        cellButton.BackColor = Color.Transparent;
+                        cellButton.Tag = j + "_" + i; // x_y
+                        gameBoardRight.Invoke(new MethodInvoker(delegate { gameBoardRight.Controls.Add(cellButton, j, i); }));
+                    }
                 }
             }
 
-            foreach (Control cell in gameBoard1.Controls)
+            foreach (Control cell in gameBoardRight.Controls)
             {
                 cell.Click += new EventHandler(Cell_Click);
+            }
+        }
+
+        public void UpdateBoard(HitDetails hitDetails)
+        {
+            if (hitDetails.Hit)
+            {
+                var hitGameBoard = gameBoardLeft;
+                if (hitDetails.HitShip.PlayerId == _client.Id)
+                {
+                    MessageBox.Show($"You were hit!", "Hit!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    MessageBox.Show($"You hit the enemy!", "Hit!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    hitGameBoard = gameBoardRight;
+                }
+
+                // Set button to red where the hit was
+                foreach (Control cell in hitGameBoard.Controls)
+                {
+                    if (cell.Tag.ToString() == hitDetails.X + "_" + hitDetails.Y)
+                    {
+                        cell.BackColor = Color.Red;
+                        cell.Enabled = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // TODO: show a message that the player (or enemy) missed, set turn to next player
+            }
+        }
+
+        public void SetNextTurn(bool isMyTurn)
+        {
+            // TODO: update labels, disable/enable gameBoardRight buttons
+            if (isMyTurn)
+            {
+                MessageBox.Show("It's your turn!");
+            }
+            else
+            {
+                MessageBox.Show("It's the enemy's turn!");
             }
         }
     }

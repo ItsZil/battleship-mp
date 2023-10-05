@@ -1,4 +1,6 @@
-﻿namespace SharedLibrary.Models
+﻿using SharedLibrary.Structs;
+
+namespace SharedLibrary.Models
 {
     public class Game
     {
@@ -72,5 +74,38 @@
         {
             return Players;
         }
+
+        public List<string> GetAllPlayerIds()
+        {
+            return Players.Select(p => p.PlayerId).ToList();
+        }
+
+        #region Game methods
+        public HitDetails HandleShot(Shot shot)
+        {
+            // TODO: take into account shot.Radius
+            var hitDetails = new HitDetails(shot.X, shot.Y);
+
+            List<Ship> targetShips = Ships.Where(s => s.PlayerId != shot.PlayerId && s.Health > 0).ToList();
+            foreach (Ship ship in targetShips)
+            {
+                foreach (Coordinate coordinate in ship.Coordinates)
+                {
+                    if (coordinate.X == shot.X && coordinate.Y == shot.Y)
+                    {
+                        hitDetails.Hit = true;
+                        ship.Health--;
+                        if (ship.Health == 0)
+                        {
+                            hitDetails.Sunk = true;
+                        }
+                        hitDetails.HitShip = ship;
+                        return hitDetails;
+                    }
+                }
+            }
+            return hitDetails;
+        }
+        #endregion
     }
 }

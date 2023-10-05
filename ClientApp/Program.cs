@@ -18,6 +18,10 @@ namespace ClientApp
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
+
+            // Wait 1.5 seconds to ensure both clients don't get the same ID
+            Thread.Sleep(1500);
+            
             // Launch a second instance
             if (args.Length > 0 && args[0] == "client1")
             {

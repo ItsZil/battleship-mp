@@ -2,6 +2,7 @@
 using ServerApp.Managers;
 using SharedLibrary.Events;
 using SharedLibrary.Models;
+using SharedLibrary.Structs;
 
 namespace ServerApp
 {
@@ -36,6 +37,20 @@ namespace ServerApp
         {
             var availableGames = _serverManager.GetAvailableGames();
             await Clients.Client(clientConnectionId).SendAsync("SendAvailableGameList", availableGames);
+        }
+
+        public async Task<HitDetails> SendShot(Shot shot)
+        {
+            var game = _serverManager.GetGameById(shot.GameId);
+            var hitResult = game.HandleShot(shot);
+
+            if (hitResult.HitShip != null)
+            {
+                // Only send to the player whose ship got hit. We can handle the shooter's hit client side only.
+                string hitPlayerId = hitResult.HitShip.PlayerId;
+                await Clients.Client(hitPlayerId).SendAsync("SendHitResult", hitResult);
+            }
+            return hitResult;
         }
 
         #region Event receiver methods
@@ -74,8 +89,8 @@ namespace ServerApp
         {
             if (game.ReadyCount == 2)
             {
-                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();
-                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady");
+                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();                
+                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady", game.Ships);
             }
         }
         #endregion
