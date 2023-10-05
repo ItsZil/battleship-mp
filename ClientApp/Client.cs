@@ -42,7 +42,7 @@ namespace ClientApp
 
             _gameHub.On("SendPlayerJoinedGame", () =>
             {
-                MessageBox.Show("A player has joined your game, starting now!");
+                //MessageBox.Show("A player has joined your game, starting now!");
             });
 
             await StartAsync();
@@ -70,15 +70,20 @@ namespace ClientApp
             _gameForm = gameForm;
 
             // All messages from the server that happen in the GameForm should live here.
-            _gameHub.On("SendAllPlayersReady", (List<Ship> ships) =>
+            _gameHub.On("SendAllPlayersReady", (List<Ship> ships, string firstTurnPlayerId) =>
             {
                 List<Ship> otherPlayerShips = ships.Where(s => s.PlayerId != Id).ToList();
-                _gameForm.InitializeBoard(otherPlayerShips);
+                _gameForm.InitializeBoard(otherPlayerShips, firstTurnPlayerId);
             });
 
             _gameHub.On("SendHitResult", (HitDetails hitDetails) =>
             {
                 _gameForm.UpdateBoard(hitDetails);
+            });
+
+            _gameHub.On("SetNextTurn", (string nextTurnPlayerId) =>
+            {
+                _gameForm.SetNextTurn(nextTurnPlayerId);
             });
         }
 

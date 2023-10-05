@@ -93,12 +93,11 @@ namespace SharedLibrary.Models
                 {
                     if (coordinate.X == shot.X && coordinate.Y == shot.Y)
                     {
-                        hitDetails.Hit = true;
                         ship.Health--;
                         if (ship.Health == 0)
-                        {
                             hitDetails.Sunk = true;
-                        }
+                        else
+                            hitDetails.Hit = true;
                         hitDetails.HitShip = ship;
                         return hitDetails;
                     }

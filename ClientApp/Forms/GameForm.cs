@@ -16,6 +16,8 @@ namespace ClientApp.Forms
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
+        private bool isMyTurn = false;
+
         public GameForm(Client client, Game game)
         {
             InitializeComponent();
@@ -28,15 +30,18 @@ namespace ClientApp.Forms
 
         private async void Cell_Click(object sender, EventArgs e)
         {
+            if (!isMyTurn)
+                return;
+            
             Control clickedCell = (Control)sender;
             string[] tagParts = clickedCell.Tag.ToString().Split('_'); // x_y
-            
+
             int x = int.Parse(tagParts[0]);
             int y = int.Parse(tagParts[1]);
 
             object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
             var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
-            UpdateBoard(hitDetails);
+            UpdateBoard(hitDetails, isShooter: true);
         }
 
         private void readyButton_Click(object sender, EventArgs e)
@@ -114,7 +119,7 @@ namespace ClientApp.Forms
             {
                 Button cellButton = new Button();
                 cellButton.Text = "";
-                cellButton.BackColor = Color.Navy; // TODO: Change to Color.Transparent when not testing
+                cellButton.BackColor = ButtonColors.Ship; // TODO: Change to ButtonColors.Empty when not testing (unless gameBoard is left)
                 cellButton.Tag = x + "_" + y;
 
                 gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1); }));
@@ -157,8 +162,8 @@ namespace ClientApp.Forms
             }
         }
 
-        public void InitializeBoard(List<Ship> otherPlayerShips)
-        {
+        public void InitializeBoard(List<Ship> otherPlayerShips, string firstTurnPlayerId)
+        {   
             if (otherPlayerShips.Count == 0)
             {
                 MessageBox.Show("Failed to retrieve enemy ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -168,8 +173,7 @@ namespace ClientApp.Forms
             // Because this method is called from another thread (inside Client), we need to use Invoke to access UI elements.
             placeShipButton.Invoke(new MethodInvoker(delegate { placeShipButton.Enabled = false; }));
             readyButton.Invoke(new MethodInvoker(delegate { readyButton.Visible = false; }));
-
-            MessageBox.Show("Starting game!");
+            SetNextTurn(firstTurnPlayerId);
 
             // Populate gameBoardRight (other player's board)
             foreach (var ship in otherPlayerShips)
@@ -195,7 +199,7 @@ namespace ClientApp.Forms
                     {
                         Button cellButton = new Button();
                         cellButton.Text = "";
-                        cellButton.BackColor = Color.Transparent;
+                        cellButton.BackColor = ButtonColors.Empty;
                         cellButton.Tag = j + "_" + i; // x_y
                         gameBoardRight.Invoke(new MethodInvoker(delegate { gameBoardRight.Controls.Add(cellButton, j, i); }));
                     }
@@ -208,48 +212,80 @@ namespace ClientApp.Forms
             }
         }
 
-        public void UpdateBoard(HitDetails hitDetails)
+        private Control GetCellByCoords(TableLayoutPanel gameBoard, int x, int y)
         {
+            foreach (Control cell in gameBoard.Controls)
+            {
+                if (cell.Tag.ToString() == x + "_" + y)
+                    return cell;
+            }
+            return null;
+        }
+
+        public void UpdateBoard(HitDetails hitDetails, bool isShooter = false)
+        {
+            var shotGameBoard = isShooter ? gameBoardRight : gameBoardLeft;
+            var cell = GetCellByCoords(shotGameBoard, hitDetails.X, hitDetails.Y);
+
+            string message = isShooter ? "You missed!" : "The enemy missed!";
+            string caption = "Miss!";
+            MessageBoxIcon icon = MessageBoxIcon.Information;
+
             if (hitDetails.Hit)
             {
-                var hitGameBoard = gameBoardLeft;
-                if (hitDetails.HitShip.PlayerId == _client.Id)
+                if (!isShooter)
                 {
-                    MessageBox.Show($"You were hit!", "Hit!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    message = "You were hit!";
+                    caption = "Hit!";
+                    icon = MessageBoxIcon.Exclamation;
                 }
                 else
                 {
-                    MessageBox.Show($"You hit the enemy!", "Hit!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    hitGameBoard = gameBoardRight;
+                    message = "You hit the enemy!";
+                    caption = "Hit!";
                 }
-
-                // Set button to red where the hit was
-                foreach (Control cell in hitGameBoard.Controls)
+                cell.BackColor = ButtonColors.Hit;
+            }
+            else if (hitDetails.Sunk)
+            {
+                if (!isShooter)
                 {
-                    if (cell.Tag.ToString() == hitDetails.X + "_" + hitDetails.Y)
-                    {
-                        cell.BackColor = Color.Red;
-                        cell.Enabled = false;
-                        break;
-                    }
+                    message = "Your ship was sunk!";
+                    caption = "Sunk!";
+                    icon = MessageBoxIcon.Exclamation;
                 }
+                else
+                {
+                    message = "You sunk an enemy ship!";
+                    caption = "Sunk!";
+                }
+                cell.BackColor = ButtonColors.Sunk;
             }
             else
             {
-                // TODO: show a message that the player (or enemy) missed, set turn to next player
+                cell.BackColor = ButtonColors.Miss;
             }
+            MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
+            cell.Enabled = false;
         }
 
-        public void SetNextTurn(bool isMyTurn)
+        /// <summary>
+        /// Called by GameHub.SendShot to update whose turn is next.
+        /// </summary>
+        /// <param name="nextTurnPlayerId">The player's whose turn is next ID</param>
+        public void SetNextTurn(string nextTurnPlayerId)
         {
-            // TODO: update labels, disable/enable gameBoardRight buttons
+            // isMyTurn determines whether button clicks are handled.
+            // Use invoke because this might not always be triggered by the UI thread.
+            isMyTurn = nextTurnPlayerId == _client.Id;
+            
             if (isMyTurn)
             {
-                MessageBox.Show("It's your turn!");
+                turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Your Turn"; }));
             }
             else
             {
-                MessageBox.Show("It's the enemy's turn!");
+                turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Enemy's Turn"; }));
             }
         }
     }

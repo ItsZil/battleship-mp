@@ -50,6 +50,12 @@ namespace ServerApp
                 string hitPlayerId = hitResult.HitShip.PlayerId;
                 await Clients.Client(hitPlayerId).SendAsync("SendHitResult", hitResult);
             }
+            var playerIds = game.GetAllPlayerIds();
+            
+            // Trigger the SetNextTurn method on all clients.
+            var nextTurnPlayerId = playerIds.First(id => id != shot.PlayerId);
+            await Clients.Clients(playerIds).SendAsync("SetNextTurn", nextTurnPlayerId);
+            
             return hitResult;
         }
 
@@ -89,8 +95,10 @@ namespace ServerApp
         {
             if (game.ReadyCount == 2)
             {
-                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();                
-                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady", game.Ships);
+                List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();
+                string firstTurnPlayerId = connectedPlayerIds.First();
+                
+                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady", game.Ships, firstTurnPlayerId);
             }
         }
         #endregion
