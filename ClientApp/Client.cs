@@ -99,5 +99,20 @@ namespace ClientApp
                 return null;
             }
         }
+
+        public object SendMessage(string methodName, object obj)
+        {
+            if (_gameHub.State == HubConnectionState.Connected)
+            {
+                var task = _gameHub.InvokeAsync<object>(methodName, obj);
+                task.Wait();
+                return task.Result;
+            }
+            else
+            {
+                MessageBox.Show("Connection is not established.");
+                return null;
+            }
+        }
     }
 }

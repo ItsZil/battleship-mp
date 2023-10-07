@@ -3,6 +3,8 @@ using SharedLibrary.Observers;
 using SharedLibrary.Events;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Models.Request_Models;
+using SharedLibrary.Factories;
+using Microsoft.AspNet.SignalR;
 
 namespace ServerApp.Managers
 {
@@ -12,6 +14,8 @@ namespace ServerApp.Managers
         private static ServerManager _instance;
         private readonly List<IServerObserver> _observers = new List<IServerObserver>();
         private readonly List<Game> _gameServers = new List<Game>();
+
+        private readonly LevelOneGameFactory _levelOneGameFactory = new LevelOneGameFactory();
 
         public event EventHandler<GameCreatedEventArgs> GameCreated;
         public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
@@ -66,12 +70,28 @@ namespace ServerApp.Managers
         }
         #endregion
 
-        public Game CreateGameServer(Game gameServer)
+        public async Task<int> CreateGameServer(Game game)
         {
-            _gameServers.Add(gameServer);
-            OnGameCreated(new GameCreatedEventArgs(gameServer));
+            if (IsServerNameTaken(game.Name))
+            {
+                throw new HubException("Server name taken!", new ServerNameTakenException());
+            }
+            
+            switch (game.Level)
+            {
+                case 1:
+                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
+                    break;
+                case 2:
+                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
+                    break;
+                default:
+                    throw new Exception("Invalid game level!");
+            }
+            _gameServers.Add(game);
+            OnGameCreated(new GameCreatedEventArgs(game));
 
-            return gameServer;
+            return game.GameId;
         }
 
         public List<Game> GetAvailableGames()
@@ -79,7 +99,7 @@ namespace ServerApp.Managers
             return _gameServers;
         }
 
-        public Game GetGameById(int id)
+        public async Task<Game> GetGameById(int id)
         {
             return _gameServers.FirstOrDefault(g => g.GameId == id);
         }

@@ -2,6 +2,7 @@
 using ServerApp.Managers;
 using SharedLibrary.Events;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;
 
 namespace ServerApp
@@ -33,15 +34,51 @@ namespace ServerApp
             return Context.ConnectionId;
         }
 
+        public async Task<int> CreateGameServer(Game game)
+        {
+            try
+            {
+                return await _serverManager.CreateGameServer(game);
+            }
+            catch (Exception ex)
+            {
+                // Re-throw to preserve the exception message.
+                throw new HubException(ex.Message);
+            }
+        }
+
+        public async Task<JoinGameDetails> JoinGameServer(JoinGameDetails joinGameDetails)
+        {
+            try
+            {
+                return await _serverManager.JoinGameServer(joinGameDetails);
+            }
+            catch (Exception ex)
+            {
+                // Re-throw to preserve the exception message.
+                throw new HubException(ex.Message);
+            }
+        }
+
         public async Task SendAvailableGameList(string clientConnectionId)
         {
             var availableGames = _serverManager.GetAvailableGames();
             await Clients.Client(clientConnectionId).SendAsync("SendAvailableGameList", availableGames);
         }
 
+        public async Task<Game> GetGameById(int gameId)
+        {
+            return await _serverManager.GetGameById(gameId);
+        }
+
+        public async Task<bool> SetPlayerAsReady(PlayerReadyDetails playerReadyDetails)
+        {
+            return await _serverManager.SetPlayerAsReady(playerReadyDetails);
+        }
+
         public async Task<HitDetails> SendShot(Shot shot)
         {
-            var game = _serverManager.GetGameById(shot.GameId);
+            var game = await _serverManager.GetGameById(shot.GameId);
             var hitResult = game.HandleShot(shot);
 
             if (hitResult.HitShip != null)

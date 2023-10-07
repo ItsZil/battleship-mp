@@ -11,7 +11,6 @@ namespace SharedLibrary.Models.Request_Models
         public string PlayerId { get; set; }
         public int GameId { get; set; }
         public List<Ship> Ships { get; set; } = new List<Ship>();
-        public bool IsServerReady { get; set; } = false;
 
         public PlayerReadyDetails(string PlayerId, int GameId, List<Ship> Ships)
         {
