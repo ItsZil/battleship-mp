@@ -1,5 +1,4 @@
 using ClientApp.Forms;
-using ClientApp.Utilities;
 using Microsoft.AspNetCore.SignalR.Client;
 using SharedLibrary.Models;
 using System.Diagnostics;

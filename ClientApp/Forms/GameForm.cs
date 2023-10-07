@@ -1,5 +1,5 @@
-﻿using ClientApp.Utilities;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using SharedLibrary.Events;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;
@@ -8,7 +8,6 @@ namespace ClientApp.Forms
 {
     public partial class GameForm : Form
     {
-        private static HttpUtility _httpUtility = new HttpUtility();
         private static Client _client;
         private static Game _game;
 
@@ -18,13 +17,15 @@ namespace ClientApp.Forms
 
         private bool isMyTurn = false;
 
-        public GameForm(Client client, Game game)
+        public GameForm(Client client, int gameId)
         {
             InitializeComponent();
             _client = client;
-            _game = game;
+            
+            object gameObj = _client.SendMessage("GetGameById", gameId);
+            _game = JsonConvert.DeserializeObject<Game>(gameObj.ToString());
 
-            Text = $"Game: {game.Name} Game ID: {game.GameId} Player ID: {client.Id}";
+            Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
         }
 
@@ -46,7 +47,10 @@ namespace ClientApp.Forms
 
         private void readyButton_Click(object sender, EventArgs e)
         {
-            bool isServerReady = _httpUtility.Post("api/server/SetPlayerAsReady", new PlayerReadyDetails(_client.Id, _game.GameId, _ships)).IsServerReady;
+            PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails(_client.Id, _game.GameId, _ships);
+            object isServerReadyObj = _client.SendMessage("SetPlayerAsReady", playerReadyDetails);
+            bool isServerReady = JsonConvert.DeserializeObject<bool>(isServerReadyObj.ToString().ToLower());
+            
             if (!isServerReady)
             {
                 MessageBox.Show("Waiting for other player to ready up...");
