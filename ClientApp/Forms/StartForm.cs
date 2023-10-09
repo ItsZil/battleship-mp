@@ -23,9 +23,10 @@ namespace ClientApp
             string serverPassword = CreateGamePasswordTextbox.Text;
             string levelName = createGameLevelComboBox.Text;
 
-            if (levelName == string.Empty)
+            if (serverName == string.Empty || serverPassword == string.Empty || levelName == string.Empty)
             {
-                MessageBox.Show("Select a level!", "Error creating game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please fill in all fields!", "Error creating game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             CreateGameDetails createGameDetails = new CreateGameDetails(_client.Id, serverName, serverPassword, levelName);
@@ -58,6 +59,12 @@ namespace ClientApp
         {
             string serverName = JoinGameNameTextbox.Text;
             string serverPassword = JoinGamePasswordTextbox.Text;
+
+            if (serverName == string.Empty || serverPassword == string.Empty)
+            {
+                MessageBox.Show("Please fill in all fields!", "Error joining game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             JoinGameDetails joinGameDetails = new JoinGameDetails(_client.Id, serverName, serverPassword);
             try
