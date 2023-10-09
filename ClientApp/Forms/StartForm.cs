@@ -13,7 +13,7 @@ namespace ClientApp
         public StartForm(Client client)
         {
             _client = client;
-            
+
             InitializeComponent();
         }
 
@@ -21,12 +21,19 @@ namespace ClientApp
         {
             string serverName = CreateGameNameTextbox.Text;
             string serverPassword = CreateGamePasswordTextbox.Text;
+            string levelName = createGameLevelComboBox.Text;
 
-            Game game = new Game(_client.Id, serverName, serverPassword, 1);
+            if (serverName == string.Empty || serverPassword == string.Empty || levelName == string.Empty)
+            {
+                MessageBox.Show("Please fill in all fields!", "Error creating game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            CreateGameDetails createGameDetails = new CreateGameDetails(_client.Id, serverName, serverPassword, levelName);
             int gameId = int.MinValue;
             try
             {
-                object gameIdObj = await _client.SendMessageAsync("CreateGameServer", game);
+                object gameIdObj = await _client.SendMessageAsync("CreateGameServer", createGameDetails);
                 gameId = JsonConvert.DeserializeObject<int>(gameIdObj.ToString());
             }
             catch (Exception ex)
@@ -37,21 +44,27 @@ namespace ClientApp
                 {
                     exceptionMessage = errorMessage;
                 }
-                
+
                 MessageBox.Show(exceptionMessage, "Error creating server!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            
-            MessageBox.Show($"Succesfully created game {game.Name}, ID: {game.GameId}");
+
+            MessageBox.Show($"Succesfully created game {createGameDetails.Name}, {createGameDetails.LevelName}, ID: {gameId}");
             Hide();
             new GameForm(_client, gameId).ShowDialog();
             Show();
         }
-        
+
         private async void JoinGameButton_Click(object sender, EventArgs e)
         {
             string serverName = JoinGameNameTextbox.Text;
             string serverPassword = JoinGamePasswordTextbox.Text;
+
+            if (serverName == string.Empty || serverPassword == string.Empty)
+            {
+                MessageBox.Show("Please fill in all fields!", "Error joining game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             JoinGameDetails joinGameDetails = new JoinGameDetails(_client.Id, serverName, serverPassword);
             try
@@ -72,7 +85,7 @@ namespace ClientApp
                 return;
             }
             MessageBox.Show($"Succesfully joined game {joinGameDetails.Name}, player count: {joinGameDetails.PlayerCount}, game Id :{joinGameDetails.GameId}");
-            
+
             Hide();
             new GameForm(_client, joinGameDetails.GameId).ShowDialog();
             Show();

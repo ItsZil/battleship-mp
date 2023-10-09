@@ -1,5 +1,4 @@
 ﻿using SharedLibrary.Models;
-using SharedLibrary.Observers;
 using SharedLibrary.Events;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Models.Request_Models;
@@ -9,13 +8,15 @@ using Microsoft.AspNet.SignalR;
 namespace ServerApp.Managers
 {
     // Observer, singleton sablonas?
-    public class ServerManager : IServerObserver
+    public class ServerManager
     {
         private static ServerManager _instance;
-        private readonly List<IServerObserver> _observers = new List<IServerObserver>();
         private readonly List<Game> _gameServers = new List<Game>();
 
-        private readonly LevelOneGameFactory _levelOneGameFactory = new LevelOneGameFactory();
+        private readonly BasicLevelGameFactory _basicLevelGameFactory = new BasicLevelGameFactory();
+        private readonly EnhancedLevelGameFactory _enhancedLevelGameFactory = new EnhancedLevelGameFactory();
+        private readonly AdvancedLevelGameFactory _advancedLevelGameFactory = new AdvancedLevelGameFactory();
+        private readonly ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
 
         public event EventHandler<GameCreatedEventArgs> GameCreated;
         public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
@@ -50,40 +51,27 @@ namespace ServerApp.Managers
         }
         #endregion
 
-        #region Observer methods
-        public void Subscribe(IServerObserver observer)
+        public async Task<int> CreateGameServer(CreateGameDetails createGameDetails)
         {
-            _observers.Add(observer);
-        }
-
-        public void Unsubscribe(IServerObserver observer)
-        {
-            _observers.Remove(observer);
-        }
-        
-        public void Update(Game game)
-        {
-            foreach (var observer in _observers)
-            {
-                observer.Update(game);
-            }
-        }
-        #endregion
-
-        public async Task<int> CreateGameServer(Game game)
-        {
-            if (IsServerNameTaken(game.Name))
+            if (IsServerNameTaken(createGameDetails.Name))
             {
                 throw new HubException("Server name taken!", new ServerNameTakenException());
             }
-            
-            switch (game.Level)
+
+            Game game = null;
+            switch (createGameDetails.LevelName)
             {
-                case 1:
-                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
+                case "Basic Level":
+                    game = _basicLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
                     break;
-                case 2:
-                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
+                case "Enhanced Level":
+                    game = _enhancedLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
+                    break;
+                case "Advanced Level":
+                    game = _advancedLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
+                    break;
+                case "Expert Level":
+                    game = _expertLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
                     break;
                 default:
                     throw new Exception("Invalid game level!");
@@ -134,7 +122,6 @@ namespace ServerApp.Managers
                             // Prepare response object
                             joinGameDetails.GameId = gameServer.GameId;
                             joinGameDetails.PlayerCount = gameServer.Players.Count;
-                            joinGameDetails.Level = gameServer.Level;
                             
                             return joinGameDetails;
                         }

@@ -13,7 +13,6 @@ namespace SharedLibrary.Models.Request_Models
         public string Name { get; set; }
         public string Password { get; set; }
         public int PlayerCount { get; set; } = 0;
-        public int Level { get; set; } = 1;
 
         public JoinGameDetails(string ClientId, string Name, string Password)
         {
