@@ -3,9 +3,9 @@ using SharedLibrary.Models;
 
 namespace SharedLibrary.Factories
 {
-    public class LevelOneGameFactory : IGameFactory
+    public class LevelTwoGameFactory : IGameFactory
     {
-        private string _levelName = "Basic Level";
+        private string _levelName = "Enhanced Level";
         
         public Game CreateGame(string creatorId, string serverName, string password, int level)
         {
@@ -15,7 +15,7 @@ namespace SharedLibrary.Factories
             };
 
             var game = new Game(creatorId, serverName, password, level, players);
-            game.SupportsIslands = false;
+            game.SupportsIslands = true;
             
             return game;
         }

@@ -16,6 +16,7 @@ namespace ServerApp.Managers
         private readonly List<Game> _gameServers = new List<Game>();
 
         private readonly LevelOneGameFactory _levelOneGameFactory = new LevelOneGameFactory();
+        private readonly LevelTwoGameFactory _levelTwoGameFactory = new LevelTwoGameFactory();
 
         public event EventHandler<GameCreatedEventArgs> GameCreated;
         public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
@@ -83,7 +84,7 @@ namespace ServerApp.Managers
                     game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
                     break;
                 case 2:
-                    game = _levelOneGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
+                    game = _levelTwoGameFactory.CreateGame(game.CreatorId, game.Name, game.Password, game.Level);
                     break;
                 default:
                     throw new Exception("Invalid game level!");

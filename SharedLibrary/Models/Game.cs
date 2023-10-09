@@ -15,6 +15,8 @@ namespace SharedLibrary.Models
         public List<Player> Players { get; set; } = new List<Player>();
         public List<Ship> Ships { get; set; } = new List<Ship>();
 
+        public bool SupportsIslands { get; set; }
+
         #region Constructors
         public Game()
         {
