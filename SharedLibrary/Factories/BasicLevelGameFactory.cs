@@ -3,19 +3,19 @@ using SharedLibrary.Models;
 
 namespace SharedLibrary.Factories
 {
-    public class LevelOneGameFactory : IGameFactory
+    public class BasicLevelGameFactory : IGameFactory
     {
         private string _levelName = "Basic Level";
         
-        public Game CreateGame(string creatorId, string serverName, string password, int level)
+        public Game CreateGame(string creatorId, string serverName, string password)
         {
             var players = new List<Player>
             {
                 new Player(creatorId, "Player 1")
             };
 
-            var game = new Game(creatorId, serverName, password, level, players);
-            game.SupportsIslands = false;
+            var game = new Game(creatorId, serverName, password, _levelName, players);
+            // All game rules are false by default.
             
             return game;
         }

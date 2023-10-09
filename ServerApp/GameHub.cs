@@ -34,11 +34,11 @@ namespace ServerApp
             return Context.ConnectionId;
         }
 
-        public async Task<int> CreateGameServer(Game game)
+        public async Task<int> CreateGameServer(CreateGameDetails createGameDetails)
         {
             try
             {
-                return await _serverManager.CreateGameServer(game);
+                return await _serverManager.CreateGameServer(createGameDetails);
             }
             catch (Exception ex)
             {

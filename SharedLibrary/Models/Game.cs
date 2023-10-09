@@ -8,14 +8,17 @@ namespace SharedLibrary.Models
         public string CreatorId { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
-        public int Level { get; set; }
+        public string LevelName { get; set; }
 
         public int ReadyCount { get; set; } = 0;
 
         public List<Player> Players { get; set; } = new List<Player>();
         public List<Ship> Ships { get; set; } = new List<Ship>();
 
-        public bool SupportsIslands { get; set; }
+        // Game rules
+        public bool SupportsAllShips { get; set; } = false; // Can the player place bigger than one piece ships?
+        public bool SupportsRadars { get; set; } = false;
+        public bool SupportsMovingShips { get; set; } = false;
 
         #region Constructors
         public Game()
@@ -30,7 +33,7 @@ namespace SharedLibrary.Models
             this.Password = Password;
         }
 
-        public Game(string CreatorId, string Name, string Password, int Level)
+        public Game(string CreatorId, string Name, string Password, string LevelName)
         {
             var random = new Random();
             
@@ -38,10 +41,10 @@ namespace SharedLibrary.Models
             this.CreatorId = CreatorId;
             this.Name = Name;
             this.Password = Password;
-            this.Level = Level;
+            this.LevelName = LevelName;
         }
 
-        public Game(string CreatorId, string Name, string Password, int Level, List<Player> Players)
+        public Game(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
         {
             var random = new Random();
 
@@ -49,7 +52,7 @@ namespace SharedLibrary.Models
             this.CreatorId = CreatorId;
             this.Name = Name;
             this.Password = Password;
-            this.Level = Level;
+            this.LevelName = LevelName;
             this.Players = Players;
         }
         #endregion

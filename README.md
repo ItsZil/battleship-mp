@@ -1,7 +1,7 @@
 Žaidimas skirtas dviem žaidėjams. Jame bus keturi lygiai, prie kurių galima prieiti bet kokia norima tvarka:
 - Basic: nėra specialių taisyklių, reikia atspėti kur priešininkas padėjo laivus;
-- Enhanced: atsiranda galimybė pakeisti dviejų laivų poziciją viduryje žaidimo;
-- Advanced: yra įvairūs laivų tipai su skirtingomis gyvybėmis;
+- Enhanced: yra įvairūs laivų tipai su skirtingomis gyvybėmis;
+- Advanced: atsiranda galimybė pakeisti dviejų laivų poziciją viduryje žaidimo;
 - Expert: leidžiama padėti radarus, kurie praneša apie pastatytus arba perkeltus laivus tam tikroje dalyje žemėlapio.
 
 Objektų tipai:
