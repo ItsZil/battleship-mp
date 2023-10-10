@@ -1,4 +1,5 @@
 using ServerApp.Managers;
+using SharedLibrary.Models.Strategies;
 
 namespace ServerApp
 {
@@ -21,6 +22,7 @@ namespace ServerApp
 
             // Game services
             builder.Services.AddSingleton<ServerManager>();
+            builder.Services.AddSingleton<ShootStrategy>();
 
             var app = builder.Build();
 

@@ -3,6 +3,7 @@ using ServerApp.Managers;
 using SharedLibrary.Events;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
+using SharedLibrary.Models.Strategies;
 using SharedLibrary.Structs;
 
 namespace ServerApp
@@ -10,17 +11,19 @@ namespace ServerApp
     public class GameHub : Hub
     {
         private readonly ServerManager _serverManager;
-        
-        public GameHub(ServerManager serverManager)
+        private readonly ShootStrategy _shootStrategy;
+
+        public GameHub(ServerManager serverManager, ShootStrategy shootStrategy)
         {
             _serverManager = serverManager;
-            
+            _shootStrategy = shootStrategy;
+
             // Register event handlers
             _serverManager.GameCreated += OnNewCreatedGame;
             _serverManager.PlayerJoinedGame += OnPlayerJoinedGame;
             _serverManager.AllPlayersReady += OnAllPlayersReady;
         }
-        
+
         public override async Task OnConnectedAsync()
         {
             await SendAvailableGameList(Context.ConnectionId);
@@ -79,7 +82,8 @@ namespace ServerApp
         public async Task<HitDetails> SendShot(Shot shot)
         {
             var game = await _serverManager.GetGameById(shot.GameId);
-            var hitResult = game.HandleShot(shot);
+            //var hitResult = game.HandleShot(shot);
+            var hitResult = _shootStrategy.Interact(game, shot);
 
             if (hitResult.HitShip != null)
             {
