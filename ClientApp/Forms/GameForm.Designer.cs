@@ -34,7 +34,7 @@
             label2 = new Label();
             readyButton = new Button();
             label3 = new Label();
-            comboBox1 = new ComboBox();
+            shipPlacementTypeComboBox = new ComboBox();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
             label4 = new Label();
@@ -43,14 +43,14 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             interactionModeTableLayoutPanel = new TableLayoutPanel();
             shootModeRadioButton = new RadioButton();
+            radioButton3 = new RadioButton();
             placeRadarModeButton = new RadioButton();
             activeModeLabel = new Label();
-            radioButton3 = new RadioButton();
             remainingItemTableLayoutPanel = new TableLayoutPanel();
-            remainingMoveShipsTextLabel = new Label();
-            remainingMoveShipsCountLabel = new Label();
             remainingRadarTextLabel = new Label();
             remainingRadarCountLabel = new Label();
+            remainingMoveShipsTextLabel = new Label();
+            remainingMoveShipsCountLabel = new Label();
             flowLayoutPanel1.SuspendLayout();
             interactionModeTableLayoutPanel.SuspendLayout();
             remainingItemTableLayoutPanel.SuspendLayout();
@@ -142,15 +142,15 @@
             label3.TabIndex = 40;
             label3.Text = "Available Ships:";
             // 
-            // comboBox1
+            // shipPlacementTypeComboBox
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "One piece", "Two piece (horizontal)", "Two piece (vertical)", "Three piece (vertical)" });
-            comboBox1.Location = new Point(32, 316);
-            comboBox1.Margin = new Padding(3, 2, 3, 2);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(133, 23);
-            comboBox1.TabIndex = 41;
+            shipPlacementTypeComboBox.FormattingEnabled = true;
+            shipPlacementTypeComboBox.Items.AddRange(new object[] { "One piece", "Two piece (horizontal)", "Two piece (vertical)", "Three piece (vertical)" });
+            shipPlacementTypeComboBox.Location = new Point(32, 316);
+            shipPlacementTypeComboBox.Margin = new Padding(3, 2, 3, 2);
+            shipPlacementTypeComboBox.Name = "shipPlacementTypeComboBox";
+            shipPlacementTypeComboBox.Size = new Size(133, 23);
+            shipPlacementTypeComboBox.TabIndex = 41;
             // 
             // textBox1
             // 
@@ -228,6 +228,7 @@
             interactionModeTableLayoutPanel.RowStyles.Add(new RowStyle());
             interactionModeTableLayoutPanel.Size = new Size(107, 89);
             interactionModeTableLayoutPanel.TabIndex = 48;
+            interactionModeTableLayoutPanel.Visible = false;
             // 
             // shootModeRadioButton
             // 
@@ -240,6 +241,16 @@
             shootModeRadioButton.TabStop = true;
             shootModeRadioButton.Text = "Shoot";
             shootModeRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            radioButton3.AutoSize = true;
+            radioButton3.Location = new Point(3, 43);
+            radioButton3.Name = "radioButton3";
+            radioButton3.Size = new Size(81, 19);
+            radioButton3.TabIndex = 5;
+            radioButton3.Text = "Move Ship";
+            radioButton3.UseVisualStyleBackColor = true;
             // 
             // placeRadarModeButton
             // 
@@ -260,58 +271,29 @@
             activeModeLabel.TabIndex = 4;
             activeModeLabel.Text = "Active mode:";
             // 
-            // radioButton3
-            // 
-            radioButton3.AutoSize = true;
-            radioButton3.Location = new Point(3, 43);
-            radioButton3.Name = "radioButton3";
-            radioButton3.Size = new Size(81, 19);
-            radioButton3.TabIndex = 5;
-            radioButton3.Text = "Move Ship";
-            radioButton3.UseVisualStyleBackColor = true;
-            // 
             // remainingItemTableLayoutPanel
             // 
             remainingItemTableLayoutPanel.ColumnCount = 2;
-            remainingItemTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 76.92308F));
-            remainingItemTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.0769234F));
+            remainingItemTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80.1282043F));
+            remainingItemTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.8717957F));
             remainingItemTableLayoutPanel.Controls.Add(remainingRadarTextLabel, 0, 1);
             remainingItemTableLayoutPanel.Controls.Add(remainingRadarCountLabel, 1, 1);
             remainingItemTableLayoutPanel.Controls.Add(remainingMoveShipsTextLabel, 0, 0);
             remainingItemTableLayoutPanel.Controls.Add(remainingMoveShipsCountLabel, 1, 0);
-            remainingItemTableLayoutPanel.Location = new Point(487, 298);
+            remainingItemTableLayoutPanel.Location = new Point(527, 298);
             remainingItemTableLayoutPanel.Name = "remainingItemTableLayoutPanel";
             remainingItemTableLayoutPanel.RowCount = 2;
             remainingItemTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             remainingItemTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            remainingItemTableLayoutPanel.Size = new Size(247, 100);
+            remainingItemTableLayoutPanel.Size = new Size(140, 100);
             remainingItemTableLayoutPanel.TabIndex = 49;
-            // 
-            // remainingMoveShipsTextLabel
-            // 
-            remainingMoveShipsTextLabel.Anchor = AnchorStyles.None;
-            remainingMoveShipsTextLabel.AutoSize = true;
-            remainingMoveShipsTextLabel.Location = new Point(16, 17);
-            remainingMoveShipsTextLabel.Name = "remainingMoveShipsTextLabel";
-            remainingMoveShipsTextLabel.Size = new Size(158, 15);
-            remainingMoveShipsTextLabel.TabIndex = 0;
-            remainingMoveShipsTextLabel.Text = "Remaining ship movements:";
-            // 
-            // remainingMoveShipsCountLabel
-            // 
-            remainingMoveShipsCountLabel.Anchor = AnchorStyles.None;
-            remainingMoveShipsCountLabel.AutoSize = true;
-            remainingMoveShipsCountLabel.Location = new Point(212, 17);
-            remainingMoveShipsCountLabel.Name = "remainingMoveShipsCountLabel";
-            remainingMoveShipsCountLabel.Size = new Size(13, 15);
-            remainingMoveShipsCountLabel.TabIndex = 1;
-            remainingMoveShipsCountLabel.Text = "0";
+            remainingItemTableLayoutPanel.Visible = false;
             // 
             // remainingRadarTextLabel
             // 
-            remainingRadarTextLabel.Anchor = AnchorStyles.None;
+            remainingRadarTextLabel.Anchor = AnchorStyles.Left;
             remainingRadarTextLabel.AutoSize = true;
-            remainingRadarTextLabel.Location = new Point(44, 67);
+            remainingRadarTextLabel.Location = new Point(3, 67);
             remainingRadarTextLabel.Name = "remainingRadarTextLabel";
             remainingRadarTextLabel.Size = new Size(102, 15);
             remainingRadarTextLabel.TabIndex = 2;
@@ -319,13 +301,33 @@
             // 
             // remainingRadarCountLabel
             // 
-            remainingRadarCountLabel.Anchor = AnchorStyles.None;
+            remainingRadarCountLabel.Anchor = AnchorStyles.Left;
             remainingRadarCountLabel.AutoSize = true;
-            remainingRadarCountLabel.Location = new Point(212, 67);
+            remainingRadarCountLabel.Location = new Point(115, 67);
             remainingRadarCountLabel.Name = "remainingRadarCountLabel";
             remainingRadarCountLabel.Size = new Size(13, 15);
             remainingRadarCountLabel.TabIndex = 3;
             remainingRadarCountLabel.Text = "0";
+            // 
+            // remainingMoveShipsTextLabel
+            // 
+            remainingMoveShipsTextLabel.Anchor = AnchorStyles.Left;
+            remainingMoveShipsTextLabel.AutoSize = true;
+            remainingMoveShipsTextLabel.Location = new Point(3, 10);
+            remainingMoveShipsTextLabel.Name = "remainingMoveShipsTextLabel";
+            remainingMoveShipsTextLabel.Size = new Size(92, 30);
+            remainingMoveShipsTextLabel.TabIndex = 0;
+            remainingMoveShipsTextLabel.Text = "Remaining ship movements:";
+            // 
+            // remainingMoveShipsCountLabel
+            // 
+            remainingMoveShipsCountLabel.Anchor = AnchorStyles.Left;
+            remainingMoveShipsCountLabel.AutoSize = true;
+            remainingMoveShipsCountLabel.Location = new Point(115, 17);
+            remainingMoveShipsCountLabel.Name = "remainingMoveShipsCountLabel";
+            remainingMoveShipsCountLabel.Size = new Size(13, 15);
+            remainingMoveShipsCountLabel.TabIndex = 1;
+            remainingMoveShipsCountLabel.Text = "0";
             // 
             // GameForm
             // 
@@ -340,7 +342,7 @@
             Controls.Add(label4);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
-            Controls.Add(comboBox1);
+            Controls.Add(shipPlacementTypeComboBox);
             Controls.Add(label3);
             Controls.Add(readyButton);
             Controls.Add(label2);
@@ -348,9 +350,10 @@
             Controls.Add(gameBoardRight);
             Controls.Add(gameBoardLeft);
             Margin = new Padding(3, 2, 3, 2);
+            MaximizeBox = false;
             Name = "GameForm";
             Tag = "1_1";
-            Text = "GameForm";
+            Text = "Battleship";
             flowLayoutPanel1.ResumeLayout(false);
             interactionModeTableLayoutPanel.ResumeLayout(false);
             interactionModeTableLayoutPanel.PerformLayout();
@@ -368,7 +371,7 @@
         private Label label2;
         private Button readyButton;
         private Label label3;
-        private ComboBox comboBox1;
+        private ComboBox shipPlacementTypeComboBox;
         private TextBox textBox1;
         private TextBox textBox2;
         private Label label4;
