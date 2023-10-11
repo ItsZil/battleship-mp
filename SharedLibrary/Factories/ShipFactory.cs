@@ -1,5 +1,4 @@
-﻿using SharedLibrary.Interfaces;
-using SharedLibrary.Models;
+﻿using SharedLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace SharedLibrary.Factories
 {
-    public class TwoPieceShipFactory : IShipFactory
+    public class ShipFactory
     {
         public Ship CreateShip(string clientId, int size, bool isVertical)
         {
-            if (size == 1)
+            if (size >= 1 && size <= 3)
             {
                 return new Ship(clientId, size, isVertical);
             }
             else
             {
-                throw new ArgumentException("Invalid ship size for OnePieceShipFactory");
+                throw new ArgumentException("Invalid ship size!");
             }
         }
     }

@@ -2,8 +2,8 @@
 using SharedLibrary.Events;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Models.Request_Models;
-using SharedLibrary.Factories;
 using Microsoft.AspNet.SignalR;
+using SharedLibrary.Factories.GameLevel;
 
 namespace ServerApp.Managers
 {

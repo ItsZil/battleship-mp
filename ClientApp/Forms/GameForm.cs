@@ -16,9 +16,7 @@ namespace ClientApp.Forms
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
-        private OnePieceShipFactory onePieceShipFactory = new OnePieceShipFactory();
-        private TwoPieceShipFactory twoPieceShipFactory = new TwoPieceShipFactory();
-        private ThreePieceShipFactory threePieceShipFactory = new ThreePieceShipFactory();
+        private ShipFactory shipFactory = new ShipFactory();
 
         private bool isMyTurn = false;
 
@@ -111,21 +109,7 @@ namespace ClientApp.Forms
 
             if (CanPlaceShip(coordinates, size, x, y, isVertical))
             {
-                Ship newShip = null;
-                switch (size)
-                {
-                    case 1:
-                        newShip = onePieceShipFactory.CreateShip(_client.Id, size, isVertical);
-                        break;
-                    case 2:
-                        newShip = onePieceShipFactory.CreateShip(_client.Id, size, isVertical);
-                        break;
-                    case 3:
-                        newShip = onePieceShipFactory.CreateShip(_client.Id, size, isVertical);
-                        break;
-
-                }
-                //Ship newShip = new Ship(_client.Id, size, isVertical);
+                Ship newShip = shipFactory.CreateShip(_client.Id, size, isVertical); ;
                 PlaceShip(gameBoard, x, y, size, isVertical);
 
                 newShip.AddCoordinate(x, y);

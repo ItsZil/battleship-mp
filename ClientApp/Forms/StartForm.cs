@@ -15,6 +15,9 @@ namespace ClientApp
             _client = client;
 
             InitializeComponent();
+
+            // Set default values
+            createGameLevelComboBox.SelectedIndex = 0;
         }
 
         private async void CreateGameButton_Click(object sender, EventArgs e)
