@@ -24,19 +24,34 @@ namespace ClientApp.Forms
         {
             InitializeComponent();
             _client = client;
-            
+
             object gameObj = _client.SendMessage("GetGameById", gameId);
             _game = JsonConvert.DeserializeObject<Game>(gameObj.ToString());
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
+            RemoveUnallowedShipSizes();
+        }
+
+        private void RemoveUnallowedShipSizes()
+        {
+            shipPlacementTypeComboBox.SelectedIndex = 0;
+            
+            if (!_game.SupportsAllShips)
+            {
+                // Only allow the first (one piece) ship type
+                for (int i = shipPlacementTypeComboBox.Items.Count - 1; i > 0; i--)
+                {
+                    shipPlacementTypeComboBox.Items.RemoveAt(i);
+                }
+            }
         }
 
         private async void Cell_Click(object sender, EventArgs e)
         {
             if (!isMyTurn)
                 return;
-            
+
             Control clickedCell = (Control)sender;
             string[] tagParts = clickedCell.Tag.ToString().Split('_'); // x_y
 
@@ -50,10 +65,12 @@ namespace ClientApp.Forms
 
         private void readyButton_Click(object sender, EventArgs e)
         {
+            shipPlacementTypeComboBox.Enabled = false;
+            
             PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails(_client.Id, _game.GameId, _ships);
             object isServerReadyObj = _client.SendMessage("SetPlayerAsReady", playerReadyDetails);
             bool isServerReady = JsonConvert.DeserializeObject<bool>(isServerReadyObj.ToString().ToLower());
-            
+
             if (!isServerReady)
             {
                 MessageBox.Show("Waiting for other player to ready up...");
@@ -65,12 +82,11 @@ namespace ClientApp.Forms
 
         private void placeShipButton_Click(object sender, EventArgs e)
         {
-            string ship = comboBox1.SelectedItem.ToString();
+            string ship = shipPlacementTypeComboBox.SelectedItem.ToString();
             int x = int.Parse(textBox1.Text);
             int y = int.Parse(textBox2.Text);
 
             Ship newShip = null;
-
             switch (ship)
             {
                 case "One piece":
@@ -93,7 +109,7 @@ namespace ClientApp.Forms
             if (newShip != null)
             {
                 _ships.Add(newShip);
-                RemoveSelectedShipFromComboBox();
+                RemoveSelectedShipFromComboBox(); // TODO: allow multiple ships of same type
             }
         }
 
@@ -156,21 +172,56 @@ namespace ClientApp.Forms
 
         private void RemoveSelectedShipFromComboBox()
         {
-            if (comboBox1.Items.Count > 0)
+            if (shipPlacementTypeComboBox.Items.Count > 0)
             {
-                comboBox1.Items.RemoveAt(comboBox1.SelectedIndex);
-                if (comboBox1.Items.Count > 0)
-                    comboBox1.SelectedIndex = 0;
+                shipPlacementTypeComboBox.Items.RemoveAt(shipPlacementTypeComboBox.SelectedIndex);
+                if (shipPlacementTypeComboBox.Items.Count > 0)
+                    shipPlacementTypeComboBox.SelectedIndex = 0;
                 else
                 {
-                    comboBox1.Enabled = false;
+                    shipPlacementTypeComboBox.Enabled = false;
                     placeShipButton.Enabled = false;
                 }
             }
         }
 
+        private void InitializeInteractionElements()
+        {
+            // Enables or disables certain form elements that are not used in all game levels.
+            if (_game.SupportsMovingShips || _game.SupportsRadars)
+            {
+                // If either of these are true, we can enable mode selector buttons, as well as the remaining special move counts.
+                interactionModeTableLayoutPanel.Invoke(new MethodInvoker(delegate
+                {
+                    interactionModeTableLayoutPanel.Visible = true;
+                }));
+
+                remainingItemTableLayoutPanel.Invoke(new MethodInvoker(delegate
+                {
+                    remainingItemTableLayoutPanel.Visible = true;
+                }));
+            }
+
+            if (!_game.SupportsRadars)
+            {
+                // If radars are not allowed, remove the radar button as well as the count.
+                placeRadarModeButton.Invoke(new MethodInvoker(delegate
+                {
+                    placeRadarModeButton.Enabled = false;
+                    placeRadarModeButton.Visible = false;
+                    interactionModeTableLayoutPanel.RowCount--;
+
+                    remainingRadarTextLabel.Visible = false;
+                    remainingRadarCountLabel.Visible = false;
+                    remainingItemTableLayoutPanel.RowCount--;
+                }));
+            }
+        }
+
         public void InitializeBoard(List<Ship> otherPlayerShips, string firstTurnPlayerId)
-        {   
+        {
+            InitializeInteractionElements();
+
             if (otherPlayerShips.Count == 0)
             {
                 MessageBox.Show("Failed to retrieve enemy ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -285,7 +336,7 @@ namespace ClientApp.Forms
             // isMyTurn determines whether button clicks are handled.
             // Use invoke because this might not always be triggered by the UI thread.
             isMyTurn = nextTurnPlayerId == _client.Id;
-            
+
             if (isMyTurn)
             {
                 turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Your Turn"; }));
