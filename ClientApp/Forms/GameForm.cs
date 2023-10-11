@@ -3,6 +3,7 @@ using SharedLibrary.Events;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;
+using SharedLibrary.Factories;
 
 namespace ClientApp.Forms
 {
@@ -14,6 +15,8 @@ namespace ClientApp.Forms
         private List<Ship> _ships = new List<Ship>();
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
+
+        private ShipFactory shipFactory = new ShipFactory();
 
         private bool isMyTurn = false;
 
@@ -106,7 +109,7 @@ namespace ClientApp.Forms
 
             if (CanPlaceShip(coordinates, size, x, y, isVertical))
             {
-                Ship newShip = new Ship(_client.Id, size, isVertical);
+                Ship newShip = shipFactory.CreateShip(_client.Id, size, isVertical); ;
                 PlaceShip(gameBoard, x, y, size, isVertical);
 
                 newShip.AddCoordinate(x, y);

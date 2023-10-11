@@ -1,12 +1,12 @@
 ﻿using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 
-namespace SharedLibrary.Factories
+namespace SharedLibrary.Factories.GameLevel
 {
-    public class BasicLevelGameFactory : IGameFactory
+    public class AdvancedLevelGameFactory : IGameFactory
     {
-        private string _levelName = "Basic Level";
-        
+        private string _levelName = "Advanced Level";
+
         public Game CreateGame(string creatorId, string serverName, string password)
         {
             var players = new List<Player>
@@ -15,8 +15,11 @@ namespace SharedLibrary.Factories
             };
 
             var game = new Game(creatorId, serverName, password, _levelName, players);
-            // All game rules are false by default.
-            
+
+            // Set additional game rules
+            game.SupportsAllShips = true;
+            game.SupportsMovingShips = true;
+
             return game;
         }
 

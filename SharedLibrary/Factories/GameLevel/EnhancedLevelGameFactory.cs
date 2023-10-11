@@ -1,12 +1,12 @@
 ﻿using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 
-namespace SharedLibrary.Factories
+namespace SharedLibrary.Factories.GameLevel
 {
     public class EnhancedLevelGameFactory : IGameFactory
     {
         private string _levelName = "Enhanced Level";
-        
+
         public Game CreateGame(string creatorId, string serverName, string password)
         {
             var players = new List<Player>
@@ -18,7 +18,7 @@ namespace SharedLibrary.Factories
 
             // Set additional game rules
             game.SupportsAllShips = true;
-            
+
             return game;
         }
 
