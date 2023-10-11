@@ -24,7 +24,7 @@ namespace ClientApp.Forms
         {
             InitializeComponent();
             _client = client;
-            
+
             object gameObj = _client.SendMessage("GetGameById", gameId);
             _game = JsonConvert.DeserializeObject<Game>(gameObj.ToString());
 
@@ -36,7 +36,7 @@ namespace ClientApp.Forms
         {
             if (!isMyTurn)
                 return;
-            
+
             Control clickedCell = (Control)sender;
             string[] tagParts = clickedCell.Tag.ToString().Split('_'); // x_y
 
@@ -53,7 +53,7 @@ namespace ClientApp.Forms
             PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails(_client.Id, _game.GameId, _ships);
             object isServerReadyObj = _client.SendMessage("SetPlayerAsReady", playerReadyDetails);
             bool isServerReady = JsonConvert.DeserializeObject<bool>(isServerReadyObj.ToString().ToLower());
-            
+
             if (!isServerReady)
             {
                 MessageBox.Show("Waiting for other player to ready up...");
@@ -170,7 +170,7 @@ namespace ClientApp.Forms
         }
 
         public void InitializeBoard(List<Ship> otherPlayerShips, string firstTurnPlayerId)
-        {   
+        {
             if (otherPlayerShips.Count == 0)
             {
                 MessageBox.Show("Failed to retrieve enemy ships!", "Error initializing board", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -285,7 +285,7 @@ namespace ClientApp.Forms
             // isMyTurn determines whether button clicks are handled.
             // Use invoke because this might not always be triggered by the UI thread.
             isMyTurn = nextTurnPlayerId == _client.Id;
-            
+
             if (isMyTurn)
             {
                 turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Your Turn"; }));
