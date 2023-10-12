@@ -1,26 +1,15 @@
 ﻿namespace ServerApp.Managers
 {
     // Singleton sablonas
-    // TODO: thread safety
     public class GameManager
     {
-        private static GameManager _instance;
-        
+        private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
+
         private GameManager()
         {
             
         }
 
-        public static GameManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new GameManager();
-                }
-                return _instance;
-            }
-        }
+        public static GameManager Instance => _instance.Value;
     }
 }

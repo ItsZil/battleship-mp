@@ -6,7 +6,6 @@ using SharedLibrary.Structs;
 namespace ClientApp
 {
     // Singleton to allow ClientApp to interact with the game hub (server)
-    // TODO: thread safety (lazy?)
     public class Client
     {
         private static readonly Lazy<Client> _instance = new Lazy<Client>(() => new Client());

@@ -10,7 +10,7 @@ namespace ServerApp.Managers
     // Observer, singleton sablonas?
     public class ServerManager
     {
-        private static ServerManager _instance;
+        private static readonly Lazy<ServerManager> _instance = new Lazy<ServerManager>(() => new ServerManager());
         private readonly List<Game> _gameServers = new List<Game>();
 
         private readonly BasicLevelGameFactory _basicLevelGameFactory = new BasicLevelGameFactory();
@@ -22,17 +22,7 @@ namespace ServerApp.Managers
         public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
         public EventHandler<Game> AllPlayersReady;
 
-        public static ServerManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new ServerManager();
-                }
-                return _instance;
-            }
-        }
+        public static ServerManager Instance => _instance.Value;
 
         #region Observer event methods
         protected virtual void OnGameCreated(GameCreatedEventArgs e)
