@@ -37,7 +37,7 @@
             textBox2 = new TextBox();
             placeShipButton = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
-            turnIndicatorLabel1 = new Components.CustomOutlinedLabel();
+            turnIndicatorLabel = new Components.CustomOutlinedLabel();
             interactionModeTableLayoutPanel = new TableLayoutPanel();
             activeModeLabel = new Components.CustomOutlinedLabel();
             shootModeRadioButton = new RadioButton();
@@ -157,26 +157,26 @@
             // 
             flowLayoutPanel1.AutoSize = true;
             flowLayoutPanel1.BackColor = Color.Transparent;
-            flowLayoutPanel1.Controls.Add(turnIndicatorLabel1);
+            flowLayoutPanel1.Controls.Add(turnIndicatorLabel);
             flowLayoutPanel1.Location = new Point(438, 116);
             flowLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(97, 96);
             flowLayoutPanel1.TabIndex = 47;
             // 
-            // turnIndicatorLabel1
+            // turnIndicatorLabel
             // 
-            turnIndicatorLabel1.AutoSize = true;
-            turnIndicatorLabel1.BackColor = Color.Transparent;
-            turnIndicatorLabel1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            turnIndicatorLabel1.ForeColor = Color.Coral;
-            turnIndicatorLabel1.Location = new Point(0, 0);
-            turnIndicatorLabel1.Margin = new Padding(0);
-            turnIndicatorLabel1.Name = "turnIndicatorLabel1";
-            turnIndicatorLabel1.Size = new Size(0, 20);
-            turnIndicatorLabel1.TabIndex = 54;
-            turnIndicatorLabel1.TextAlign = ContentAlignment.MiddleCenter;
-            turnIndicatorLabel1.TextOutlineColor = Color.Black;
+            turnIndicatorLabel.AutoSize = true;
+            turnIndicatorLabel.BackColor = Color.Transparent;
+            turnIndicatorLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            turnIndicatorLabel.ForeColor = Color.Coral;
+            turnIndicatorLabel.Location = new Point(0, 0);
+            turnIndicatorLabel.Margin = new Padding(0);
+            turnIndicatorLabel.Name = "turnIndicatorLabel";
+            turnIndicatorLabel.Size = new Size(0, 20);
+            turnIndicatorLabel.TabIndex = 54;
+            turnIndicatorLabel.TextAlign = ContentAlignment.MiddleCenter;
+            turnIndicatorLabel.TextOutlineColor = Color.Black;
             // 
             // interactionModeTableLayoutPanel
             // 
@@ -449,6 +449,6 @@
         private Components.CustomOutlinedLabel remainingMoveShipsTextLabel;
         private Components.CustomOutlinedLabel AvailableShipsLabel;
         private Components.CustomOutlinedLabel EnterStartingCoordsLabel;
-        private Components.CustomOutlinedLabel turnIndicatorLabel1;
+        private Components.CustomOutlinedLabel turnIndicatorLabel;
     }
 }

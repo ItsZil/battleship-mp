@@ -341,11 +341,11 @@ namespace ClientApp.Forms
 
             if (isMyTurn)
             {
-                turnIndicatorLabel1.Invoke(new MethodInvoker(delegate { turnIndicatorLabel1.Text = "Your Turn"; }));
+                turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Your Turn"; }));
             }
             else
             {
-                turnIndicatorLabel1.Invoke(new MethodInvoker(delegate { turnIndicatorLabel1.Text = "Enemy's Turn"; }));
+                turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Enemy's Turn"; }));
             }
         }
     }
