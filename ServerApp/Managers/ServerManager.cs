@@ -7,7 +7,7 @@ using SharedLibrary.Interfaces;
 
 namespace ServerApp.Managers
 {
-    // Singleton and part of observer patterns
+    // Singleton and part of observer
     public class ServerManager
     {
         private static readonly Lazy<ServerManager> _instance = new Lazy<ServerManager>(() => new ServerManager());

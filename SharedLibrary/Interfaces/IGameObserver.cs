@@ -2,6 +2,7 @@
 
 namespace SharedLibrary.Interfaces
 {
+    // Observer pattern interface
     public interface IGameObserver
     {
         void NotifyNewGameCreated(Game createdGame);
