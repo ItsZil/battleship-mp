@@ -1,13 +1,13 @@
 ﻿using SharedLibrary.Models;
-using SharedLibrary.Events;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Models.Request_Models;
 using Microsoft.AspNet.SignalR;
 using SharedLibrary.Factories.GameLevel;
+using SharedLibrary.Interfaces;
 
 namespace ServerApp.Managers
 {
-    // Observer, singleton sablonas?
+    // Singleton and part of observer
     public class ServerManager
     {
         private static readonly Lazy<ServerManager> _instance = new Lazy<ServerManager>(() => new ServerManager());
@@ -18,26 +18,34 @@ namespace ServerApp.Managers
         private readonly AdvancedLevelGameFactory _advancedLevelGameFactory = new AdvancedLevelGameFactory();
         private readonly ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
 
-        public event EventHandler<GameCreatedEventArgs> GameCreated;
-        public event EventHandler<PlayerJoinedGameEventArgs> PlayerJoinedGame;
-        public EventHandler<Game> AllPlayersReady;
+        private IGameObserver _gameObserver;
 
         public static ServerManager Instance => _instance.Value;
 
-        #region Observer event methods
-        protected virtual void OnGameCreated(GameCreatedEventArgs e)
+        #region Observer methods
+        public void Subscribe(IGameObserver observer)
         {
-            GameCreated?.Invoke(this, e);
+            _gameObserver = observer;
         }
 
-        protected virtual void OnPlayerJoinedGame(PlayerJoinedGameEventArgs e)
+        public void Unsubscribe()
         {
-            PlayerJoinedGame?.Invoke(this, e);
+            _gameObserver = null;
+        }
+
+        protected virtual void OnGameCreated(Game createdGame)
+        {
+            _gameObserver.NotifyNewGameCreated(createdGame);
+        }
+
+        protected virtual void OnPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
+        {
+            _gameObserver.NotifyPlayerJoinedGame(joinedPlayerId, connectedPlayers);
         }
 
         protected virtual void OnAllPlayersReady(Game game)
         {
-            AllPlayersReady?.Invoke(this, game);
+            _gameObserver.NotifyAllPlayersReady(game);
         }
         #endregion
 
@@ -67,7 +75,7 @@ namespace ServerApp.Managers
                     throw new Exception("Invalid game level!");
             }
             _gameServers.Add(game);
-            OnGameCreated(new GameCreatedEventArgs(game));
+            OnGameCreated(game);
 
             return game.GameId;
         }
@@ -107,7 +115,7 @@ namespace ServerApp.Managers
                             string playerName = "Player " + (gameServer.Players.Count + 1);
                             
                             gameServer.Players.Add(new Player(joinGameDetails.ClientId, playerName));
-                            OnPlayerJoinedGame(new PlayerJoinedGameEventArgs(joinGameDetails.ClientId, gameServer.Players));
+                            OnPlayerJoinedGame(joinGameDetails.ClientId, gameServer.Players);
 
                             // Prepare response object
                             joinGameDetails.GameId = gameServer.GameId;

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SharedLibrary.Events;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;
@@ -63,6 +62,12 @@ namespace ClientApp.Forms
 
         private void readyButton_Click(object sender, EventArgs e)
         {
+            if (_ships.Count == 0)
+            {
+                MessageBox.Show("You must place at least one ship!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
             shipPlacementTypeComboBox.Enabled = false;
 
             PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails(_client.Id, _game.GameId, _ships);
