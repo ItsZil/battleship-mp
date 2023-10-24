@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SharedLibrary.Events;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;

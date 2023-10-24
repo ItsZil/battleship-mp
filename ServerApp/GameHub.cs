@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
-using SharedLibrary.Events;
+using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Models.Strategies;
@@ -8,7 +8,7 @@ using SharedLibrary.Structs;
 
 namespace ServerApp
 {
-    public class GameHub : Hub
+    public class GameHub : Hub, IGameObserver
     {
         private readonly ServerManager _serverManager;
         private readonly ShootStrategy _shootStrategy;
@@ -18,10 +18,7 @@ namespace ServerApp
             _serverManager = serverManager;
             _shootStrategy = shootStrategy;
 
-            // Register event handlers
-            _serverManager.GameCreated += OnNewCreatedGame;
-            _serverManager.PlayerJoinedGame += OnPlayerJoinedGame;
-            _serverManager.AllPlayersReady += OnAllPlayersReady;
+            _serverManager.Subscribe(this);
         }
 
         public override async Task OnConnectedAsync()
@@ -100,24 +97,24 @@ namespace ServerApp
             return hitResult;
         }
 
-        #region Event receiver methods
-        private void OnNewCreatedGame(object sender, GameCreatedEventArgs e)
+        #region Observer receiver methods
+        public async void NotifyNewGameCreated(Game createdGame)
         {
-            SendNewCreatedGame(e.CreatedGame);
+            await SendNewCreatedGame(createdGame);
         }
 
-        private void OnPlayerJoinedGame(object sender, PlayerJoinedGameEventArgs e)
+        public async void NotifyPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
         {
-            SendPlayerJoinedGame(e.JoinedPlayerId, e.ConnectedPlayers);
+            await SendPlayerJoinedGame(joinedPlayerId, connectedPlayers);
         }
 
-        private void OnAllPlayersReady(object sender, Game game)
+        public async void NotifyAllPlayersReady(Game game)
         {
-            SendPlayerReady(game);
+            await SendPlayerReady(game);
         }
         #endregion
 
-        #region Event handler methods
+        #region Observer event handler methods
         public async Task SendNewCreatedGame(Game newGame)
         {
             string creatorId = newGame.CreatorId;
