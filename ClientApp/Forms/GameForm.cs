@@ -34,7 +34,7 @@ namespace ClientApp.Forms
         private void RemoveUnallowedShipSizes()
         {
             shipPlacementTypeComboBox.SelectedIndex = 0;
-            
+
             if (!_game.SupportsAllShips)
             {
                 // Only allow the first (one piece) ship type
@@ -64,7 +64,7 @@ namespace ClientApp.Forms
         private void readyButton_Click(object sender, EventArgs e)
         {
             shipPlacementTypeComboBox.Enabled = false;
-            
+
             PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails(_client.Id, _game.GameId, _ships);
             object isServerReadyObj = _client.SendMessage("SetPlayerAsReady", playerReadyDetails);
             bool isServerReady = JsonConvert.DeserializeObject<bool>(isServerReadyObj.ToString().ToLower());
@@ -341,11 +341,11 @@ namespace ClientApp.Forms
 
             if (isMyTurn)
             {
-                turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Your Turn"; }));
+                turnIndicatorLabel1.Invoke(new MethodInvoker(delegate { turnIndicatorLabel1.Text = "Your Turn"; }));
             }
             else
             {
-                turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Enemy's Turn"; }));
+                turnIndicatorLabel1.Invoke(new MethodInvoker(delegate { turnIndicatorLabel1.Text = "Enemy's Turn"; }));
             }
         }
     }
