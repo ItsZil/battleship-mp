@@ -15,6 +15,12 @@
             return this;
         }
 
+        public ShipBuilder AddCoordinates(List<Coordinate> coordinates)
+        {
+            ship.Coordinates.AddRange(coordinates);
+            return this;
+        }
+
         public ShipBuilder AddCannons(int cannonSize)
         {
             ship.CannonSize = cannonSize;
