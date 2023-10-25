@@ -11,11 +11,13 @@ namespace ServerApp
     public class GameHub : Hub, IGameObserver
     {
         private readonly ServerManager _serverManager;
+        private readonly GameManager _gameManager;
         private readonly ShootStrategy _shootStrategy;
 
-        public GameHub(ServerManager serverManager, ShootStrategy shootStrategy)
+        public GameHub(ServerManager serverManager, GameManager gameManager, ShootStrategy shootStrategy)
         {
             _serverManager = serverManager;
+            _gameManager = gameManager;
             _shootStrategy = shootStrategy;
 
             _serverManager.Subscribe(this);
