@@ -335,7 +335,7 @@ namespace ClientApp.Forms
                     message = "You sunk an enemy ship!";
                     caption = "Sunk!";
                 }
-                cell.BackColor = ButtonColors.Sunk;
+                ColorSunkShip(shotGameBoard, hitDetails.HitShip);
             }
             else
             {
@@ -343,6 +343,18 @@ namespace ClientApp.Forms
             }
             MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
             cell.Enabled = false;
+        }
+
+        private void ColorSunkShip(TableLayoutPanel gameBoard, Ship ship)
+        {
+            foreach (var coordinate in ship.Coordinates)
+            {
+                foreach (Control cell in gameBoard.Controls)
+                {
+                    if (cell?.Tag?.ToString() == coordinate.X + "_" + coordinate.Y)
+                        cell.BackColor = ButtonColors.Sunk;
+                }
+            }
         }
 
         /// <summary>
