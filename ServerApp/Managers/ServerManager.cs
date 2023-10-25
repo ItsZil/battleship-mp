@@ -85,6 +85,11 @@ namespace ServerApp.Managers
             return _gameServers;
         }
 
+        public void AddGameToServerList(Game game)
+        {
+            _gameServers.Add(game);
+        }
+
         public async Task<Game> GetGameById(int id)
         {
             return _gameServers.FirstOrDefault(g => g.GameId == id);
@@ -145,6 +150,10 @@ namespace ServerApp.Managers
                 {
                     gameServer.ReadyCount++;
                     gameServer.Ships.AddRange(playerReadyDetails.Ships);
+                    
+                    // If this game is cloned from a prototype template, we can end up with duplicate ships (some already exist in the game server)
+                    // So we need to remove the duplicates.
+                    gameServer.Ships = gameServer.Ships.GroupBy(s => s.ShipId).Select(s => s.First()).ToList();
                     
                     if (gameServer.ReadyCount == 2)
                     {

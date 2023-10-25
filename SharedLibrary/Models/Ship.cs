@@ -1,6 +1,8 @@
-﻿namespace SharedLibrary.Models
+﻿using SharedLibrary.Interfaces;
+
+namespace SharedLibrary.Models
 {
-    public class Ship
+    public class Ship : IGamePrototype
     {
         public string PlayerId { get; set; }
         public int ShipId { get; set; }
@@ -20,5 +22,21 @@
         {
             Coordinates.Add(new Coordinate(x,y));
         }
+
+        #region Prototype pattern
+        public IGamePrototype Clone()
+        {
+            return new Ship
+            {
+                PlayerId = PlayerId,
+                ShipId = ShipId,
+                Health = Health,
+                MaxHealth = MaxHealth,
+                CannonSize = CannonSize,
+                Coordinates = Coordinates,
+                IsVertical = IsVertical
+            };
+        }
+        #endregion
     }
 }

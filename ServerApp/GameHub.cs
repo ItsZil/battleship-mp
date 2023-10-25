@@ -11,11 +11,13 @@ namespace ServerApp
     public class GameHub : Hub, IGameObserver
     {
         private readonly ServerManager _serverManager;
+        private readonly GameManager _gameManager;
         private readonly ShootStrategy _shootStrategy;
 
-        public GameHub(ServerManager serverManager, ShootStrategy shootStrategy)
+        public GameHub(ServerManager serverManager, GameManager gameManager, ShootStrategy shootStrategy)
         {
             _serverManager = serverManager;
+            _gameManager = gameManager;
             _shootStrategy = shootStrategy;
 
             _serverManager.Subscribe(this);
@@ -138,6 +140,31 @@ namespace ServerApp
                 
                 await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady", game.Ships, firstTurnPlayerId);
             }
+        }
+        #endregion
+
+        #region Prototype pattern methods
+        public async Task<Game> CloneEmptyPrototype(string clientId)
+        {
+            var game = await _gameManager.CreateNewGameFromTemplate("EmptyExpertTemplate");
+            game.Name = _serverManager.IsServerNameTaken("emptyTemp") ? "emptyTemp2" : "emptyTemp";
+            game.Password = "123";
+            game.Players.Add(new Player(clientId, "Player 1"));
+
+            _serverManager.AddGameToServerList(game);
+            return game;
+        }
+
+        public async Task<Game> CloneShipPrototype(string clientId)
+        {
+            var game = await _gameManager.CreateNewGameFromTemplate("ShipsExpertTemplate");
+            game.Name = _serverManager.IsServerNameTaken("shipTemp") ? "shipTemp2" : "shipTemp";
+            game.Password = "123";
+            game.Players.Add(new Player(clientId, "Player 1"));
+            game.Ships.ForEach(s => s.PlayerId = clientId);
+
+            _serverManager.AddGameToServerList(game);
+            return game;
         }
         #endregion
     }
