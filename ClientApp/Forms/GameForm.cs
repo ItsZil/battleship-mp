@@ -27,6 +27,7 @@ namespace ClientApp.Forms
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
+
             RemoveUnallowedShipSizes();
         }
 
@@ -353,5 +354,24 @@ namespace ClientApp.Forms
                 turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Enemy's Turn"; }));
             }
         }
+
+        #region Prototype pattern methods
+        private void InitializeTemplateShips()
+        {
+            foreach (Ship ship in _game.Ships)
+            {
+                if (ship.PlayerId == _client.Id)
+                {
+                    TryPlaceShip(gameBoardLeft, ship.MaxHealth, ship.Coordinates[0].X, ship.Coordinates[0].Y, ship.IsVertical);
+                    _ships.Add(ship);
+                }
+            }
+        }
+
+        private void GameForm_Load(object sender, EventArgs e)
+        {
+            InitializeTemplateShips();
+        }
+        #endregion
     }
 }

@@ -255,6 +255,7 @@
             startEmptyGameButton.TabIndex = 5;
             startEmptyGameButton.Text = "Empty Expert Prot.";
             startEmptyGameButton.UseVisualStyleBackColor = true;
+            startEmptyGameButton.Click += startEmptyGameButton_Click;
             // 
             // startPlacedShipsGameButton
             // 
@@ -265,6 +266,7 @@
             startPlacedShipsGameButton.TabIndex = 6;
             startPlacedShipsGameButton.Text = "Ships Expert Prot.";
             startPlacedShipsGameButton.UseVisualStyleBackColor = true;
+            startPlacedShipsGameButton.Click += startPlacedShipsGameButton_Click;
             // 
             // StartForm
             // 

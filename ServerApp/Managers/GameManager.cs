@@ -25,7 +25,7 @@ namespace ServerApp.Managers
             _gameTemplates[key] = gameTemplate;
         }
 
-        public Game CreateNewGameFromTemplate(string templateKey)
+        public async Task<Game> CreateNewGameFromTemplate(string templateKey)
         {
             if (_gameTemplates.TryGetValue(templateKey, out var gameTemplate))
             {
@@ -38,7 +38,7 @@ namespace ServerApp.Managers
         {
             // Empty template, expert level
             var emptyLevelPrototype = _expertLevelGameFactory.CreateGame("", "Empty Expert Prototype", "");
-            emptyLevelPrototype.Players = new List<Player>();
+            emptyLevelPrototype.Players = new List<Player>(); // Reset players because we will add client on creation.
             RegisterGameTemplate("EmptyExpertTemplate", emptyLevelPrototype);
 
             // Ships placed template, expert level
@@ -54,6 +54,7 @@ namespace ServerApp.Managers
                 .GetShip();
             shipsLevelPrototype.Ships.Add(ship1);
             shipsLevelPrototype.Ships.Add(ship2);
+            shipsLevelPrototype.Players = new List<Player>();
             RegisterGameTemplate("ShipsExpertTemplate", shipsLevelPrototype);
         }
         #endregion

@@ -142,5 +142,30 @@ namespace ServerApp
             }
         }
         #endregion
+
+        #region Prototype pattern methods
+        public async Task<Game> CloneEmptyPrototype(string clientId)
+        {
+            var game = await _gameManager.CreateNewGameFromTemplate("EmptyExpertTemplate");
+            game.Name = _serverManager.IsServerNameTaken("emptyTemp") ? "emptyTemp2" : "emptyTemp";
+            game.Password = "123";
+            game.Players.Add(new Player(clientId, "Player 1"));
+
+            _serverManager.AddGameToServerList(game);
+            return game;
+        }
+
+        public async Task<Game> CloneShipPrototype(string clientId)
+        {
+            var game = await _gameManager.CreateNewGameFromTemplate("ShipsExpertTemplate");
+            game.Name = _serverManager.IsServerNameTaken("shipTemp") ? "shipTemp2" : "shipTemp";
+            game.Password = "123";
+            game.Players.Add(new Player(clientId, "Player 1"));
+            game.Ships.ForEach(s => s.PlayerId = clientId);
+
+            _serverManager.AddGameToServerList(game);
+            return game;
+        }
+        #endregion
     }
 }
