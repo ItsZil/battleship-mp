@@ -10,8 +10,11 @@
 
   <ItemGroup>
     <Compile Remove="Resources\**" />
+    <Compile Remove="Utilities\**" />
     <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="Utilities\**" />
     <None Remove="Resources\**" />
+    <None Remove="Utilities\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +38,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Utilities\" />
   </ItemGroup>
 
 </Project>

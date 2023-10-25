@@ -129,31 +129,32 @@ namespace ClientApp.Forms
 
             if (CanPlaceShip(coordinates, size, x, y, isVertical))
             {
+                var shipCoordinates = CreateShipCoordinates(size, x, y, isVertical);
                 var shipBuilder = new ShipBuilder();
                 var newShip = shipBuilder.Build(_client.Id, size, isVertical)
-                    .AddCoordinate(x, y)
+                    .AddCoordinates(shipCoordinates)
                     .AddCannons(size)
                     .GetShip();
 
-                PlaceShip(gameBoard, x, y, size, isVertical);
+                PlaceShip(gameBoard, shipCoordinates);
 
-                coordinates.Add(new Coordinate(x, y));
+                coordinates.AddRange(shipCoordinates);
                 return newShip;
             }
             MessageBox.Show("Invalid ship location!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
         }
 
-        private void PlaceShip(TableLayoutPanel gameBoard, int x, int y, int size, bool isVertical)
+        private void PlaceShip(TableLayoutPanel gameBoard, List<Coordinate> shipCoordinates)
         {
-            for (int i = 0; i < size; i++)
+            foreach (var coordinate in shipCoordinates)
             {
                 Button cellButton = new Button();
                 cellButton.Text = "";
                 cellButton.BackColor = ButtonColors.Ship; // TODO: Change to ButtonColors.Empty when not testing (unless gameBoard is left)
-                cellButton.Tag = x + "_" + y;
+                cellButton.Tag = coordinate.X + "_" + coordinate.Y;
 
-                gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, isVertical ? y - 1 : x - 1 + i, isVertical ? x - 1 + i : y - 1); }));
+                gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
             }
         }
 
@@ -177,6 +178,20 @@ namespace ClientApp.Forms
             return true;
         }
 
+        private List<Coordinate> CreateShipCoordinates(int size, int x, int y, bool isVertical)
+        {
+            List<Coordinate> coordinates = new List<Coordinate>();
+            for (int i = 0; i < size; i++)
+            {
+                var column = isVertical ? x - 1 : x + i - 1;
+                var row = isVertical ? y + i - 1 : y - 1;
+                var coordinate = new Coordinate(column, row);
+
+                coordinates.Add(coordinate);
+            }
+
+            return coordinates;
+        }
 
         private void RemoveSelectedShipFromComboBox()
         {
@@ -244,12 +259,7 @@ namespace ClientApp.Forms
             // Populate gameBoardRight (other player's board)
             foreach (var ship in otherPlayerShips)
             {
-                foreach (var coord in ship.Coordinates)
-                {
-                    int x = coord.X;
-                    int y = coord.Y;
-                    PlaceShip(gameBoardRight, x, y, ship.MaxHealth, ship.IsVertical);
-                }
+                PlaceShip(gameBoardRight, ship.Coordinates);
             }
             FillRemainingCells();
         }
