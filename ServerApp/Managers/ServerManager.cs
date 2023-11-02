@@ -56,7 +56,7 @@ namespace ServerApp.Managers
                 throw new HubException("Server name taken!", new ServerNameTakenException());
             }
 
-            Game game = null;
+            Game game;
             switch (createGameDetails.LevelName)
             {
                 case "Basic Level":
@@ -125,6 +125,7 @@ namespace ServerApp.Managers
                             // Prepare response object
                             joinGameDetails.GameId = gameServer.GameId;
                             joinGameDetails.PlayerCount = gameServer.Players.Count;
+                            joinGameDetails.LevelName = gameServer.LevelName;
                             
                             return joinGameDetails;
                         }

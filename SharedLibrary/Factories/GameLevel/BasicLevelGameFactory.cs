@@ -1,28 +1,28 @@
-﻿using SharedLibrary.Interfaces;
-using SharedLibrary.Models;
+﻿using SharedLibrary.Models;
+using SharedLibrary.Models.Levels;
 
 namespace SharedLibrary.Factories.GameLevel
 {
-    public class BasicLevelGameFactory : IGameFactory
+    public class BasicLevelGameFactory : GameFactory
     {
-        private string _levelName = "Basic Level";
+        private string levelName = "Basic Level";
 
-        public Game CreateGame(string creatorId, string serverName, string password)
+        public override Game CreateGame(string creatorId, string serverName, string password)
         {
             var players = new List<Player>
             {
                 new Player(creatorId, "Player 1")
             };
 
-            var game = new Game(creatorId, serverName, password, _levelName, players);
+            var game = new BasicGame(creatorId, serverName, password, levelName, players);
             // All game rules are false by default.
 
             return game;
         }
 
-        public string GetLevelName()
+        public override string GetLevelName()
         {
-            return _levelName;
+            return levelName;
         }
     }
 }

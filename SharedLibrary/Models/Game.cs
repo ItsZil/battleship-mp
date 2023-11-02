@@ -1,9 +1,8 @@
 ﻿using SharedLibrary.Interfaces;
-using SharedLibrary.Structs;
 
 namespace SharedLibrary.Models
 {
-    public class Game : IGamePrototype
+    public abstract class Game : IGamePrototype
     {
         public int GameId { get; set; }
         public string CreatorId { get; set; }
@@ -27,24 +26,6 @@ namespace SharedLibrary.Models
             
         }
 
-        public Game(string CreatorId, string Name, string Password)
-        {
-            this.CreatorId = CreatorId;
-            this.Name = Name;
-            this.Password = Password;
-        }
-
-        public Game(string CreatorId, string Name, string Password, string LevelName)
-        {
-            var random = new Random();
-            
-            GameId = random.Next(1000, 9999);
-            this.CreatorId = CreatorId;
-            this.Name = Name;
-            this.Password = Password;
-            this.LevelName = LevelName;
-        }
-
         public Game(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
         {
             var random = new Random();
@@ -58,36 +39,13 @@ namespace SharedLibrary.Models
         }
         #endregion
 
-        public void RemovePlayer(string playerId)
-        {
-            var player = Players.FirstOrDefault(p => p.PlayerId == playerId);
-            if (player != null)
-            {
-                Players.Remove(player);
-            }
-        }
-
-        public Player GetPlayerById(string playerId)
-        {
-            var player = Players.FirstOrDefault(p => p.PlayerId == playerId);
-            if (player != null)
-                return player;
-            
-            throw new Exception("Player not found!");
-        }
-
-        public List<Player> GetAllPlayers()
-        {
-            return Players;
-        }
-
         public List<string> GetAllPlayerIds()
         {
             return Players.Select(p => p.PlayerId).ToList();
         }
 
         #region Game methods
-        public HitDetails HandleShot(Shot shot)
+        /*public HitDetails HandleShot(Shot shot)
         {
             // TODO: take into account shot.Radius
             var hitDetails = new HitDetails(shot.X, shot.Y);
@@ -110,27 +68,11 @@ namespace SharedLibrary.Models
                 }
             }
             return hitDetails;
-        }
+        }*/
         #endregion
 
         #region Prototype pattern
-        public IGamePrototype Clone()
-        {
-            return new Game
-            {
-                GameId = this.GameId,
-                CreatorId = this.CreatorId,
-                Name = this.Name,
-                Password = this.Password,
-                LevelName = this.LevelName,
-                ReadyCount = this.ReadyCount,
-                Players = this.Players.Select(player => player.Clone() as Player).ToList(),
-                Ships = this.Ships.Select(ship => ship.Clone() as Ship).ToList(),
-                SupportsAllShips = this.SupportsAllShips,
-                SupportsRadars = this.SupportsRadars,
-                SupportsMovingShips = this.SupportsMovingShips
-            };
-        }
+        public abstract IGamePrototype Clone();
         #endregion
     }
 }
