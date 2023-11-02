@@ -3,7 +3,7 @@ using SharedLibrary.Structs;
 
 namespace SharedLibrary.Models
 {
-    public class Game : IGamePrototype
+    public abstract class Game : IGamePrototype
     {
         public int GameId { get; set; }
         public string CreatorId { get; set; }
@@ -114,23 +114,7 @@ namespace SharedLibrary.Models
         #endregion
 
         #region Prototype pattern
-        public IGamePrototype Clone()
-        {
-            return new Game
-            {
-                GameId = this.GameId,
-                CreatorId = this.CreatorId,
-                Name = this.Name,
-                Password = this.Password,
-                LevelName = this.LevelName,
-                ReadyCount = this.ReadyCount,
-                Players = this.Players.Select(player => player.Clone() as Player).ToList(),
-                Ships = this.Ships.Select(ship => ship.Clone() as Ship).ToList(),
-                SupportsAllShips = this.SupportsAllShips,
-                SupportsRadars = this.SupportsRadars,
-                SupportsMovingShips = this.SupportsMovingShips
-            };
-        }
+        public abstract IGamePrototype Clone();
         #endregion
     }
 }

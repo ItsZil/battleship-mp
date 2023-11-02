@@ -1,5 +1,6 @@
 ﻿using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Levels;
 
 namespace SharedLibrary.Factories.GameLevel
 {
@@ -14,7 +15,7 @@ namespace SharedLibrary.Factories.GameLevel
                 new Player(creatorId, "Player 1")
             };
 
-            var game = new Game(creatorId, serverName, password, _levelName, players);
+            var game = new BasicGameLevel(creatorId, serverName, password, _levelName, players);
             // All game rules are false by default.
 
             return game;

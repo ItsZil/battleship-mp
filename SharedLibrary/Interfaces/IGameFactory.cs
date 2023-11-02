@@ -5,7 +5,7 @@ namespace SharedLibrary.Interfaces
     // Abstract factory sablonas
     public interface IGameFactory
     {
-        Game CreateGame(string CreatorId, string serverName, string password);
+        Game CreateGame(string creatorId, string serverName, string password);
         string GetLevelName();
     }
 }
