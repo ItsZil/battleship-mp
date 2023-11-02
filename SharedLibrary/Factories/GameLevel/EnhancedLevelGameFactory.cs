@@ -1,14 +1,13 @@
-﻿using SharedLibrary.Interfaces;
-using SharedLibrary.Models;
+﻿using SharedLibrary.Models;
 using SharedLibrary.Models.Levels;
 
 namespace SharedLibrary.Factories.GameLevel
 {
-    public class EnhancedLevelGameFactory : IGameFactory
+    public class EnhancedLevelGameFactory : GameFactory
     {
         private string levelName = "Enhanced Level";
 
-        public Game CreateGame(string creatorId, string serverName, string password)
+        public override Game CreateGame(string creatorId, string serverName, string password)
         {
             var players = new List<Player>
             {
@@ -23,7 +22,7 @@ namespace SharedLibrary.Factories.GameLevel
             return game;
         }
 
-        public string GetLevelName()
+        public override string GetLevelName()
         {
             return levelName;
         }

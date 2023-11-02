@@ -56,7 +56,7 @@ namespace ServerApp.Managers
                 throw new HubException("Server name taken!", new ServerNameTakenException());
             }
 
-            Game game = null;
+            Game game;
             switch (createGameDetails.LevelName)
             {
                 case "Basic Level":
