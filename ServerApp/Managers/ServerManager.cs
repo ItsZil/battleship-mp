@@ -7,7 +7,7 @@ using SharedLibrary.Interfaces;
 
 namespace ServerApp.Managers
 {
-    // Singleton and part of observer
+    // Singleton, observer
     public class ServerManager
     {
         private static readonly Lazy<ServerManager> _instance = new Lazy<ServerManager>(() => new ServerManager());
@@ -18,34 +18,43 @@ namespace ServerApp.Managers
         private readonly AdvancedLevelGameFactory _advancedLevelGameFactory = new AdvancedLevelGameFactory();
         private readonly ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
 
-        private IGameObserver _gameObserver;
+        private List<IServerObserver> Clients = new List<IServerObserver>();
 
         public static ServerManager Instance => _instance.Value;
 
         #region Observer methods
-        public void Subscribe(IGameObserver observer)
+        public async Task Subscribe(IServerObserver client)
         {
-            _gameObserver = observer;
+            Clients.Add(client);
         }
 
-        public void Unsubscribe()
+        public async Task Unsubscribe(IServerObserver client)
         {
-            _gameObserver = null;
+            Clients.Remove(client);
         }
 
-        protected virtual void OnGameCreated(Game createdGame)
+        protected async virtual void OnGameCreated(Game createdGame)
         {
-            _gameObserver.NotifyNewGameCreated(createdGame);
+            foreach (IServerObserver client in Clients)
+            {
+                client.UpdateNewGameCreated(createdGame);
+            }
         }
 
         protected virtual void OnPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
         {
-            _gameObserver.NotifyPlayerJoinedGame(joinedPlayerId, connectedPlayers);
+            foreach (IServerObserver client in Clients)
+            {
+                client.UpdatePlayerJoinedGame(joinedPlayerId, connectedPlayers);
+            }
         }
 
         protected virtual void OnAllPlayersReady(Game game)
         {
-            _gameObserver.NotifyAllPlayersReady(game);
+            foreach (IServerObserver client in Clients)
+            {
+                client.UpdateAllPlayersReady(game);
+            }
         }
         #endregion
 
