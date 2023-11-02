@@ -28,16 +28,16 @@ namespace ClientApp.Forms
             switch (gameLevel)
             {
                 case "Basic Level":
-                    _game = _game = JsonConvert.DeserializeObject<BasicGameLevel>(gameObj.ToString());
+                    _game = _game = JsonConvert.DeserializeObject<BasicGame>(gameObj.ToString());
                     break;
                 case "Enhanced Level":
-                    _game = _game = JsonConvert.DeserializeObject<EnhancedGameLevel>(gameObj.ToString());
+                    _game = _game = JsonConvert.DeserializeObject<EnhancedGame>(gameObj.ToString());
                     break;
                 case "Advanced Level":
-                    _game = JsonConvert.DeserializeObject<AdvancedGameLevel>(gameObj.ToString());
+                    _game = JsonConvert.DeserializeObject<AdvancedGame>(gameObj.ToString());
                     break;
                 case "Expert Level":
-                    _game = _game = JsonConvert.DeserializeObject<ExpertGameLevel>(gameObj.ToString());
+                    _game = _game = JsonConvert.DeserializeObject<ExpertGame>(gameObj.ToString());
                     break;
                 default:
                     throw new Exception("Invalid game level!");

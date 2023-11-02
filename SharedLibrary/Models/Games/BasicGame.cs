@@ -2,19 +2,19 @@
 
 namespace SharedLibrary.Models.Levels
 {
-    public class BasicGameLevel : Game
+    public class BasicGame : Game
     {
         #region Constructors
-        public BasicGameLevel() { }
+        public BasicGame() { }
 
-        public BasicGameLevel(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
+        public BasicGame(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
             : base(CreatorId, Name, Password, LevelName, Players) { }
         #endregion
 
         #region Prototype pattern
         public override IGamePrototype Clone()
         {
-            return new BasicGameLevel
+            return new BasicGame
             {
                 GameId = base.GameId,
                 CreatorId = base.CreatorId,

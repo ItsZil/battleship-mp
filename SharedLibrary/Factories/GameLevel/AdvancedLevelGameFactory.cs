@@ -6,7 +6,7 @@ namespace SharedLibrary.Factories.GameLevel
 {
     public class AdvancedLevelGameFactory : IGameFactory
     {
-        private string _levelName = "Advanced Level";
+        private string levelName = "Advanced Level";
 
         public Game CreateGame(string creatorId, string serverName, string password)
         {
@@ -15,7 +15,7 @@ namespace SharedLibrary.Factories.GameLevel
                 new Player(creatorId, "Player 1")
             };
 
-            var game = new AdvancedGameLevel(creatorId, serverName, password, _levelName, players);
+            var game = new AdvancedGame(creatorId, serverName, password, levelName, players);
 
             // Set additional game rules
             game.SupportsAllShips = true;
@@ -26,7 +26,7 @@ namespace SharedLibrary.Factories.GameLevel
 
         public string GetLevelName()
         {
-            return _levelName;
+            return levelName;
         }
     }
 }

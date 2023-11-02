@@ -6,7 +6,7 @@ namespace SharedLibrary.Factories.GameLevel
 {
     public class BasicLevelGameFactory : IGameFactory
     {
-        private string _levelName = "Basic Level";
+        private string levelName = "Basic Level";
 
         public Game CreateGame(string creatorId, string serverName, string password)
         {
@@ -15,7 +15,7 @@ namespace SharedLibrary.Factories.GameLevel
                 new Player(creatorId, "Player 1")
             };
 
-            var game = new BasicGameLevel(creatorId, serverName, password, _levelName, players);
+            var game = new BasicGame(creatorId, serverName, password, levelName, players);
             // All game rules are false by default.
 
             return game;
@@ -23,7 +23,7 @@ namespace SharedLibrary.Factories.GameLevel
 
         public string GetLevelName()
         {
-            return _levelName;
+            return levelName;
         }
     }
 }

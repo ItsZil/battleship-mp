@@ -101,7 +101,7 @@ namespace ClientApp
             try
             {
                 object gameObj = _client.SendMessage("CloneEmptyPrototype", _client.Id);
-                game = JsonConvert.DeserializeObject<ExpertGameLevel>(gameObj.ToString());
+                game = JsonConvert.DeserializeObject<ExpertGame>(gameObj.ToString());
             }
             catch (Exception ex)
             {
@@ -128,7 +128,7 @@ namespace ClientApp
             try
             {
                 object gameObj = _client.SendMessage("CloneShipPrototype", _client.Id);
-                game = JsonConvert.DeserializeObject<ExpertGameLevel>(gameObj.ToString());
+                game = JsonConvert.DeserializeObject<ExpertGame>(gameObj.ToString());
             }
             catch (Exception ex)
             {
