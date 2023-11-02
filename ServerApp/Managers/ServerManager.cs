@@ -18,24 +18,24 @@ namespace ServerApp.Managers
         private readonly AdvancedLevelGameFactory _advancedLevelGameFactory = new AdvancedLevelGameFactory();
         private readonly ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
 
-        private List<Client> Clients = new List<Client>();
+        private List<IServerObserver> Clients = new List<IServerObserver>();
 
         public static ServerManager Instance => _instance.Value;
 
         #region Observer methods
-        public async Task Subscribe(Client client)
+        public async Task Subscribe(IServerObserver client)
         {
             Clients.Add(client);
         }
 
-        public async Task Unsubscribe(Client client)
+        public async Task Unsubscribe(IServerObserver client)
         {
             Clients.Remove(client);
         }
 
         protected async virtual void OnGameCreated(Game createdGame)
         {
-            foreach (Client client in Clients)
+            foreach (IServerObserver client in Clients)
             {
                 client.UpdateNewGameCreated(createdGame);
             }
@@ -43,7 +43,7 @@ namespace ServerApp.Managers
 
         protected virtual void OnPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
         {
-            foreach (Client client in Clients)
+            foreach (IServerObserver client in Clients)
             {
                 client.UpdatePlayerJoinedGame(joinedPlayerId, connectedPlayers);
             }
@@ -51,7 +51,7 @@ namespace ServerApp.Managers
 
         protected virtual void OnAllPlayersReady(Game game)
         {
-            foreach (Client client in Clients)
+            foreach (IServerObserver client in Clients)
             {
                 client.UpdateAllPlayersReady(game);
             }
