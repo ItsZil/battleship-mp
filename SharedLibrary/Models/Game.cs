@@ -27,24 +27,6 @@ namespace SharedLibrary.Models
             
         }
 
-        public Game(string CreatorId, string Name, string Password)
-        {
-            this.CreatorId = CreatorId;
-            this.Name = Name;
-            this.Password = Password;
-        }
-
-        public Game(string CreatorId, string Name, string Password, string LevelName)
-        {
-            var random = new Random();
-            
-            GameId = random.Next(1000, 9999);
-            this.CreatorId = CreatorId;
-            this.Name = Name;
-            this.Password = Password;
-            this.LevelName = LevelName;
-        }
-
         public Game(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
         {
             var random = new Random();
@@ -57,29 +39,6 @@ namespace SharedLibrary.Models
             this.Players = Players;
         }
         #endregion
-
-        public void RemovePlayer(string playerId)
-        {
-            var player = Players.FirstOrDefault(p => p.PlayerId == playerId);
-            if (player != null)
-            {
-                Players.Remove(player);
-            }
-        }
-
-        public Player GetPlayerById(string playerId)
-        {
-            var player = Players.FirstOrDefault(p => p.PlayerId == playerId);
-            if (player != null)
-                return player;
-            
-            throw new Exception("Player not found!");
-        }
-
-        public List<Player> GetAllPlayers()
-        {
-            return Players;
-        }
 
         public List<string> GetAllPlayerIds()
         {
