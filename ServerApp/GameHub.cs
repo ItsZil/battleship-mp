@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
-using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Models.Strategies;
@@ -8,7 +7,7 @@ using SharedLibrary.Structs;
 
 namespace ServerApp
 {
-    public class GameHub : Hub, IGameObserver
+    public class GameHub : Hub
     {
         private readonly ServerManager _serverManager;
         private readonly GameManager _gameManager;
@@ -19,15 +18,21 @@ namespace ServerApp
             _serverManager = serverManager;
             _gameManager = gameManager;
             _shootStrategy = shootStrategy;
-
-            _serverManager.Subscribe(this);
         }
 
         public override async Task OnConnectedAsync()
         {
             await SendAvailableGameList(Context.ConnectionId);
-            
+            await _serverManager.Subscribe(new Client(Context.ConnectionId, this));
+
             await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? ex)
+        {
+            await _serverManager.Unsubscribe(new Client(Context.ConnectionId, this));
+
+            await base.OnDisconnectedAsync(ex);
         }
 
         public async Task<string> GetClientId()
@@ -99,46 +104,32 @@ namespace ServerApp
             return hitResult;
         }
 
-        #region Observer receiver methods
-        public async void NotifyNewGameCreated(Game createdGame)
-        {
-            await SendNewCreatedGame(createdGame);
-        }
-
-        public async void NotifyPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
-        {
-            await SendPlayerJoinedGame(joinedPlayerId, connectedPlayers);
-        }
-
-        public async void NotifyAllPlayersReady(Game game)
-        {
-            await SendPlayerReady(game);
-        }
-        #endregion
-
         #region Observer event handler methods
-        public async Task SendNewCreatedGame(Game newGame)
+        public async Task SendNewCreatedGame(string clientId, Game newGame)
         {
             string creatorId = newGame.CreatorId;
-            await Clients.AllExcept(creatorId).SendAsync("SendNewCreatedGame", newGame);
+            if (clientId != creatorId)
+                await Clients.Client(clientId).SendAsync("SendNewCreatedGame", newGame);
         }
 
-        public async Task SendPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
+        public async Task SendPlayerJoinedGame(string clientId, string joinedPlayerId, List<Player> connectedPlayers)
         {
             List<string> connectedPlayerIds = connectedPlayers.Select(x => x.PlayerId).ToList();
             connectedPlayerIds.Remove(joinedPlayerId);
             
-            await Clients.Clients(connectedPlayerIds).SendAsync("SendPlayerJoinedGame");
+            if (connectedPlayerIds.Contains(clientId))
+                await Clients.Client(clientId).SendAsync("SendPlayerJoinedGame", joinedPlayerId, connectedPlayers);
         }
 
-        public async Task SendPlayerReady(Game game)
+        public async Task SendPlayerReady(string clientId, Game game)
         {
             if (game.ReadyCount == 2)
             {
                 List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();
                 string firstTurnPlayerId = connectedPlayerIds.First();
                 
-                await Clients.Clients(connectedPlayerIds).SendAsync("SendAllPlayersReady", game.Ships, firstTurnPlayerId);
+                if (connectedPlayerIds.Contains(clientId))
+                    await Clients.Client(clientId).SendAsync("SendAllPlayersReady", game.Ships, firstTurnPlayerId);
             }
         }
         #endregion
