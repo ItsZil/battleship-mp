@@ -46,7 +46,7 @@ namespace SharedLibrary.Models
         }
 
         #region Game methods
-        public HitDetails HandleShot(Shot shot)
+        /*public HitDetails HandleShot(Shot shot)
         {
             // TODO: take into account shot.Radius
             var hitDetails = new HitDetails(shot.X, shot.Y);
@@ -69,7 +69,7 @@ namespace SharedLibrary.Models
                 }
             }
             return hitDetails;
-        }
+        }*/
         #endregion
 
         #region Prototype pattern
