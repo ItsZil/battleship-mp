@@ -7,8 +7,8 @@ namespace SharedLibrary.Models.Levels
         #region Constructors
         public BasicGameLevel() { }
 
-        public BasicGameLevel(string creatorId, string Name, string Password, string LevelName, List<Player> Players)
-            : base(creatorId, Name, Password, LevelName, Players) { }
+        public BasicGameLevel(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
+            : base(CreatorId, Name, Password, LevelName, Players) { }
         #endregion
 
         #region Prototype pattern

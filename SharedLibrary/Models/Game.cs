@@ -1,5 +1,4 @@
 ﻿using SharedLibrary.Interfaces;
-using SharedLibrary.Structs;
 
 namespace SharedLibrary.Models
 {

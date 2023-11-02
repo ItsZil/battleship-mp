@@ -3,6 +3,7 @@ using SharedLibrary.Models;
 using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;
 using SharedLibrary.Models.Builders;
+using SharedLibrary.Models.Levels;
 
 namespace ClientApp.Forms
 {
@@ -17,13 +18,30 @@ namespace ClientApp.Forms
 
         private bool isMyTurn = false;
 
-        public GameForm(Client client, int gameId)
+        public GameForm(Client client, int gameId, string gameLevel)
         {
             InitializeComponent();
             _client = client;
 
             object gameObj = _client.SendMessage("GetGameById", gameId);
-            _game = JsonConvert.DeserializeObject<Game>(gameObj.ToString());
+
+            switch (gameLevel)
+            {
+                case "Basic Level":
+                    _game = _game = JsonConvert.DeserializeObject<BasicGameLevel>(gameObj.ToString());
+                    break;
+                case "Enhanced Level":
+                    _game = _game = JsonConvert.DeserializeObject<EnhancedGameLevel>(gameObj.ToString());
+                    break;
+                case "Advanced Level":
+                    _game = JsonConvert.DeserializeObject<AdvancedGameLevel>(gameObj.ToString());
+                    break;
+                case "Expert Level":
+                    _game = _game = JsonConvert.DeserializeObject<ExpertGameLevel>(gameObj.ToString());
+                    break;
+                default:
+                    throw new Exception("Invalid game level!");
+            }
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);

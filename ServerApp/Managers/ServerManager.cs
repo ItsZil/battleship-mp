@@ -125,6 +125,7 @@ namespace ServerApp.Managers
                             // Prepare response object
                             joinGameDetails.GameId = gameServer.GameId;
                             joinGameDetails.PlayerCount = gameServer.Players.Count;
+                            joinGameDetails.LevelName = gameServer.LevelName;
                             
                             return joinGameDetails;
                         }

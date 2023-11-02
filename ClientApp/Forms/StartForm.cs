@@ -2,6 +2,7 @@ using ClientApp.Forms;
 using Microsoft.AspNet.SignalR.Client;
 using Newtonsoft.Json;
 using SharedLibrary.Models;
+using SharedLibrary.Models.Levels;
 using SharedLibrary.Models.Request_Models;
 
 namespace ClientApp
@@ -54,7 +55,7 @@ namespace ClientApp
 
             MessageBox.Show($"Succesfully created game {createGameDetails.Name}, {createGameDetails.LevelName}, ID: {gameId}");
             Hide();
-            new GameForm(_client, gameId).ShowDialog();
+            new GameForm(_client, gameId, createGameDetails.LevelName).ShowDialog();
             Show();
         }
 
@@ -90,7 +91,7 @@ namespace ClientApp
             MessageBox.Show($"Succesfully joined game {joinGameDetails.Name}, player count: {joinGameDetails.PlayerCount}, game id: {joinGameDetails.GameId}");
 
             Hide();
-            new GameForm(_client, joinGameDetails.GameId).ShowDialog();
+            new GameForm(_client, joinGameDetails.GameId, joinGameDetails.LevelName).ShowDialog();
             Show();
         }
 
@@ -100,7 +101,7 @@ namespace ClientApp
             try
             {
                 object gameObj = _client.SendMessage("CloneEmptyPrototype", _client.Id);
-                game = JsonConvert.DeserializeObject<Game>(gameObj.ToString());
+                game = JsonConvert.DeserializeObject<ExpertGameLevel>(gameObj.ToString());
             }
             catch (Exception ex)
             {
@@ -117,7 +118,7 @@ namespace ClientApp
             MessageBox.Show($"Succesfully cloned empty game template!\nName: {game.Name}, password: {game.Password}, game id: {game.GameId}");
 
             Hide();
-            new GameForm(_client, game.GameId).ShowDialog();
+            new GameForm(_client, game.GameId, game.LevelName).ShowDialog();
             Show();
         }
 
@@ -127,7 +128,7 @@ namespace ClientApp
             try
             {
                 object gameObj = _client.SendMessage("CloneShipPrototype", _client.Id);
-                game = JsonConvert.DeserializeObject<Game>(gameObj.ToString());
+                game = JsonConvert.DeserializeObject<ExpertGameLevel>(gameObj.ToString());
             }
             catch (Exception ex)
             {
@@ -144,7 +145,7 @@ namespace ClientApp
             MessageBox.Show($"Succesfully cloned ship game template!\nName: {game.Name}, password: {game.Password}, game id: {game.GameId}");
 
             Hide();
-            new GameForm(_client, game.GameId).ShowDialog();
+            new GameForm(_client, game.GameId, game.LevelName).ShowDialog();
             Show();
         }
     }
