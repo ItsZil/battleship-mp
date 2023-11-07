@@ -175,7 +175,7 @@ namespace ClientApp.Forms
                 var newShip = shipBuilder.Build(_client.Id, size, isVertical)
                     .AddCoordinates(shipCoordinates)
                     .AddCannons(size)
-                    .GetShip();
+                    .Get();
 
                 PlaceShip(gameBoard, shipCoordinates);
 
@@ -265,7 +265,7 @@ namespace ClientApp.Forms
                 var newRadar = radarBuilder.Build(_client.Id)
                     .AddCoordinate(x, y)
                     .AddHealth()
-                    .GetRadar();
+                    .Get();
 
                 //PlaceRadar(gameBoard, new Coordinate(x, y));
 

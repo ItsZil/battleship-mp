@@ -1,6 +1,6 @@
 ﻿namespace SharedLibrary.Models.Builders
 {
-    public class ShipBuilder
+    public class ShipBuilder : Builder<Ship>
     {
         private Ship ship;
 
@@ -40,7 +40,7 @@
             return this;
         }
 
-        public Ship GetShip()
+        public override Ship Get()
         {
             return ship;
         }
