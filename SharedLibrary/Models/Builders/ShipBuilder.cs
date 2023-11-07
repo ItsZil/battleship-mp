@@ -1,6 +1,6 @@
 ﻿namespace SharedLibrary.Models.Builders
 {
-    public class ShipBuilder : Builder<Ship>
+    public class ShipBuilder : Builder<Ship, ShipBuilder>
     {
         private Ship ship;
 
@@ -27,15 +27,20 @@
             return this;
         }
 
-        public ShipBuilder Build(string clientId, int size, bool isVertical = false)
+        public ShipBuilder AddHealth(int size, bool isVertical = false)
+        {
+            ship.Health = size;
+            ship.MaxHealth = size;
+            ship.IsVertical = isVertical;
+            return this;
+        }
+
+        public override ShipBuilder Build(string clientId)
         {
             ship = new Ship
             {
                 ShipId = new Random().Next(1000, 9999),
                 PlayerId = clientId,
-                MaxHealth = size,
-                Health = size,
-                IsVertical = isVertical
             };
             return this;
         }

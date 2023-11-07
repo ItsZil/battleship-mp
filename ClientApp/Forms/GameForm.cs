@@ -172,7 +172,8 @@ namespace ClientApp.Forms
             {
                 var shipCoordinates = CreateShipCoordinates(size, x, y, isVertical);
                 var shipBuilder = new ShipBuilder();
-                var newShip = shipBuilder.Build(_client.Id, size, isVertical)
+                var newShip = shipBuilder.Build(_client.Id)
+                    .AddHealth(size, isVertical)
                     .AddCoordinates(shipCoordinates)
                     .AddCannons(size)
                     .Get();

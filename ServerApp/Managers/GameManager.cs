@@ -44,14 +44,16 @@ namespace ServerApp.Managers
             // Ships placed template, expert level
             var shipsLevelPrototype = _expertLevelGameFactory.CreateGame("", "Ships Expert Prototype", "");
             ShipBuilder shipBuilder = new ShipBuilder();
-            var ship1 = shipBuilder.Build("", 1)
+            var ship1 = shipBuilder.Build("")
+                .AddHealth(1)
                 .AddCoordinate(1, 1)
                 .AddCannons(1)
-                .GetShip();
-            var ship2 = shipBuilder.Build("", 1)
+                .Get();
+            var ship2 = shipBuilder.Build("")
+                .AddHealth(1)
                 .AddCoordinate(3, 4)
                 .AddCannons(1)
-                .GetShip();
+                .Get();
             shipsLevelPrototype.Ships.Add(ship1);
             shipsLevelPrototype.Ships.Add(ship2);
             shipsLevelPrototype.Players = new List<Player>();

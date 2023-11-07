@@ -1,7 +1,7 @@
 ﻿
 namespace SharedLibrary.Models.Builders
 {
-    public class RadarBuilder : Builder<Radar>
+    public class RadarBuilder : Builder<Radar, RadarBuilder>
     {
         private Radar radar;
 
@@ -22,7 +22,7 @@ namespace SharedLibrary.Models.Builders
             return this;
         }
 
-        public RadarBuilder Build(string clientId)
+        public override RadarBuilder Build(string clientId)
         {
             radar = new Radar
             {
