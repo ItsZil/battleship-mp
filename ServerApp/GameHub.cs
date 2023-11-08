@@ -158,5 +158,18 @@ namespace ServerApp
             return game;
         }
         #endregion
+
+        public async Task<List<Ship>> GetAllGameShips(int gameId)
+        {
+            var game = await _serverManager.GetGameById(gameId);
+            var ships = game.Ships;
+
+            return ships;
+        }
+
+        public async Task<bool> SendRadarPlacement(Radar radar)
+        {
+            return true;
+        } 
     }
 }
