@@ -11,13 +11,21 @@ namespace SharedLibrary.Models.Decorators
     public class StealthDecorator : ShipDecorator
     {
 
-        public StealthDecorator(Ship decoratedShip) : base(decoratedShip) { }
+        public StealthDecorator(IShip decoratedShip) : base(decoratedShip) { }
 
-        public override IGamePrototype Clone()
+        public int GetMaxHealth()
         {
-            decoratedShip.isStealth = true;
+            return base.GetMaxHealth();
+        }
 
-            return base.Clone();
+        public int GetCannonSize()
+        {
+            return base.GetCannonSize();
+        }
+
+        public bool GetStealth()
+        {
+            return true;
         }
 
     }

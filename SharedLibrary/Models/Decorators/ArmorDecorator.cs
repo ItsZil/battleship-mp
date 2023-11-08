@@ -10,14 +10,21 @@ namespace SharedLibrary.Models.Decorators
 {
     public class ArmorDecorator : ShipDecorator
     {
-        public ArmorDecorator(Ship decoratedShip) : base(decoratedShip) { }
+        public ArmorDecorator(IShip decoratedShip) : base(decoratedShip) { }
 
-        public override IGamePrototype Clone()
+        public int GetMaxHealth()
         {
-            decoratedShip.MaxHealth += 10;
-            decoratedShip.Health += 10;
+            return base.GetMaxHealth() + 1;
+        }
 
-            return base.Clone();
+        public int GetCannonSize()
+        {
+            return base.GetCannonSize();
+        }
+
+        public bool GetStealth()
+        {
+            return base.GetStealth();
         }
     }
 }

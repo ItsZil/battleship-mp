@@ -7,18 +7,28 @@ using SharedLibrary.Interfaces;
 
 namespace SharedLibrary.Models.Decorators
 {
-    public abstract class ShipDecorator : IGamePrototype
+    public abstract class ShipDecorator : IShip
     {
-        protected Ship decoratedShip;
+        private IShip decoratedShip;
 
-        public ShipDecorator(Ship decoratedShip)
+        public ShipDecorator(IShip decoratedShip)
         {
             this.decoratedShip = decoratedShip;
         }
 
-        public virtual IGamePrototype Clone()
+        public int GetMaxHealth()
         {
-            return decoratedShip.Clone();
+            return decoratedShip.GetMaxHealth();
+        }
+
+        public int GetCannonSize()
+        {
+            return decoratedShip.GetCannonSize();
+        }
+
+        public bool GetStealth()
+        {
+            return decoratedShip.GetStealth();
         }
 
     }

@@ -44,6 +44,11 @@ namespace SharedLibrary.Models
             return Players.Select(p => p.PlayerId).ToList();
         }
 
+        public List<Ship> GetAllShips()
+        {
+            return Ships;
+        }
+
         #region Game methods
         /*public HitDetails HandleShot(Shot shot)
         {

@@ -4,6 +4,7 @@ using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Structs;
 using SharedLibrary.Models.Builders;
 using SharedLibrary.Models.Levels;
+using SharedLibrary.Interfaces;
 
 namespace ClientApp.Forms
 {
@@ -17,13 +18,15 @@ namespace ClientApp.Forms
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
+        private ILogger _logger;
+
         private bool isMyTurn = false;
 
         public GameForm(Client client, int gameId, string gameLevel)
         {
             InitializeComponent();
             _client = client;
-
+            _logger = new ServerLoggerAdapter(client);
             object gameObj = _client.SendMessage("GetGameById", gameId);
 
             switch (gameLevel)
@@ -64,6 +67,40 @@ namespace ClientApp.Forms
             }
         }
 
+        public Ship GetShipByCoordinates(int x, int y)
+        {
+            List<Ship> ships = _game.GetAllShips();
+            foreach (Ship ship in ships)
+            {
+                foreach(Coordinate coord in ship.Coordinates)
+                {
+                    if (coord.X == x && coord.Y == y)
+                        return ship;
+                }
+            }
+            return null;
+
+        }
+
+        public void LeftCell_Click(object sender, EventArgs e)
+        {
+            if (!isMyTurn)
+                return;
+
+            Control clickedCell = (Control)sender;
+            string[] tagParts = clickedCell.Tag.ToString().Split('_'); // x_y
+
+            int x = int.Parse(tagParts[0]);
+            int y = int.Parse(tagParts[1]);
+
+
+            Ship ship = GetShipByCoordinates(x, y);
+
+            new DecorationsForm(ship).Show();
+
+        }
+
+
         private async void Cell_Click(object sender, EventArgs e)
         {
             if (!isMyTurn)
@@ -95,6 +132,10 @@ namespace ClientApp.Forms
                 Radar radar = TryPlaceRadar(gameBoardRight, x, y);
 
                 MessageBox.Show("Radar placed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _logger.LogInfo("Radar Placed!");
+
+
+
                 if (radar != null)
                 {
                     _radar = radar;
@@ -107,6 +148,7 @@ namespace ClientApp.Forms
             if (_ships.Count == 0)
             {
                 MessageBox.Show("You must place at least one ship!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                _logger.LogWarning("You must place at least one ship!");
                 return;
             }
 
@@ -381,6 +423,11 @@ namespace ClientApp.Forms
             foreach (Control cell in gameBoardRight.Controls)
             {
                 cell.Click += new EventHandler(Cell_Click);
+            }
+
+            foreach(Control cell in gameBoardLeft.Controls)
+            {
+                cell.Click += new EventHandler(LeftCell_Click);
             }
         }
 
