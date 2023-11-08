@@ -12,6 +12,7 @@ namespace ClientApp.Forms
         private static Client _client;
         private static Game _game;
 
+        private Radar _radar;
         private List<Ship> _ships = new List<Ship>();
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
@@ -74,9 +75,31 @@ namespace ClientApp.Forms
             int x = int.Parse(tagParts[0]);
             int y = int.Parse(tagParts[1]);
 
-            object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
-            var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
-            UpdateBoard(hitDetails, isShooter: true);
+            if (shootModeRadioButton.Checked)
+            {
+                object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
+                var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
+                UpdateBoard(hitDetails, isShooter: true);
+            }
+            else if (placeRadarModeButton.Checked)
+            {
+                object allGameShipsObj = await _client.SendMessageAsync("GetAllGameShips", _game.GameId);
+                var allGameShips = JsonConvert.DeserializeObject<List<Ship>>(allGameShipsObj.ToString());
+
+                _coordinatesRight = allGameShips.Select(ship => ship)
+                .Where(ship => ship.PlayerId != _client.Id)
+                .SelectMany(ship => ship.Coordinates)
+                .ToList();
+
+                //TODO: send radar coordinates to enemy
+                Radar radar = TryPlaceRadar(gameBoardRight, x, y);
+
+                MessageBox.Show("Radar placed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (radar != null)
+                {
+                    _radar = radar;
+                }
+            }
         }
 
         private void readyButton_Click(object sender, EventArgs e)
@@ -149,10 +172,11 @@ namespace ClientApp.Forms
             {
                 var shipCoordinates = CreateShipCoordinates(size, x, y, isVertical);
                 var shipBuilder = new ShipBuilder();
-                var newShip = shipBuilder.Build(_client.Id, size, isVertical)
+                var newShip = shipBuilder.Build(_client.Id)
+                    .AddHealth(size, isVertical)
                     .AddCoordinates(shipCoordinates)
                     .AddCannons(size)
-                    .GetShip();
+                    .Get();
 
                 PlaceShip(gameBoard, shipCoordinates);
 
@@ -224,6 +248,60 @@ namespace ClientApp.Forms
                     placeShipButton.Enabled = false;
                 }
             }
+        }
+
+        private Radar TryPlaceRadar(TableLayoutPanel gameBoard, int x, int y)
+        {
+            List<Coordinate> coordinates;
+            if (gameBoard == gameBoardLeft)
+                coordinates = _coordinatesLeft;
+            else if (gameBoard == gameBoardRight)
+                coordinates = _coordinatesRight;
+            else
+                throw new Exception("Invalid game board!");
+
+            if (CanPlaceRadar(coordinates, x, y))
+            {
+                var radarBuilder = new RadarBuilder();
+                var newRadar = radarBuilder.Build(_client.Id)
+                    .AddCoordinate(x, y)
+                    .AddHealth()
+                    .Get();
+
+                //PlaceRadar(gameBoard, new Coordinate(x, y));
+
+                coordinates.Add(new Coordinate(x, y));
+                return newRadar;
+            }
+            MessageBox.Show("Invalid radar location!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return null;
+        }
+
+        private static bool CanPlaceRadar(List<Coordinate> coordinates, int x, int y)
+        {
+            if (x < 1 || x > 6 || y < 1 || y > 6)
+            {
+                return false;
+            }
+
+            if (coordinates.Any(coord => coord.X == x && coord.Y == y))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static void PlaceRadar(TableLayoutPanel gameBoard, Coordinate radarCoordinates)
+        {
+            Button cellButton = new()
+            {
+                Text = "radar",
+                BackColor = ButtonColors.Radar,
+                Tag = radarCoordinates.X + "_" + radarCoordinates.Y
+            };
+
+            gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, radarCoordinates.X, radarCoordinates.Y); }));
         }
 
         private void InitializeInteractionElements()
