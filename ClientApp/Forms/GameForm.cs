@@ -5,6 +5,7 @@ using SharedLibrary.Structs;
 using SharedLibrary.Models.Builders;
 using SharedLibrary.Models.Levels;
 using SharedLibrary.Interfaces;
+using SharedLibrary.Models.Obstacles;
 
 namespace ClientApp.Forms
 {
@@ -15,6 +16,7 @@ namespace ClientApp.Forms
 
         private Radar _radar;
         private List<Ship> _ships = new List<Ship>();
+        private List<Obstacle> _obstacles = new List<Obstacle>();
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
@@ -25,8 +27,12 @@ namespace ClientApp.Forms
         public GameForm(Client client, int gameId, string gameLevel)
         {
             InitializeComponent();
+            
             _client = client;
             _logger = new ServerLoggerAdapter(client);
+
+            this.HandleCreated += GameForm_HandleCreated;
+
             object gameObj = _client.SendMessage("GetGameById", gameId);
 
             switch (gameLevel)
@@ -258,6 +264,11 @@ namespace ClientApp.Forms
                 {
                     return false;
                 }
+
+                if (_obstacles.Any(obstacle => obstacle.coordinate.X == currentX && obstacle.coordinate.Y == currentY))
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -319,7 +330,7 @@ namespace ClientApp.Forms
             return null;
         }
 
-        private static bool CanPlaceRadar(List<Coordinate> coordinates, int x, int y)
+        private bool CanPlaceRadar(List<Coordinate> coordinates, int x, int y)
         {
             if (x < 1 || x > 6 || y < 1 || y > 6)
             {
@@ -327,6 +338,11 @@ namespace ClientApp.Forms
             }
 
             if (coordinates.Any(coord => coord.X == x && coord.Y == y))
+            {
+                return false;
+            }
+
+            if (_obstacles.Any(obstacle => obstacle.coordinate.X == x && obstacle.coordinate.Y == y))
             {
                 return false;
             }
@@ -538,5 +554,52 @@ namespace ClientApp.Forms
             InitializeTemplateShips();
         }
         #endregion
+
+        private void GameForm_HandleCreated(object sender, EventArgs e)
+        {
+            GenerateRandomObstacles();
+        }
+
+        private void GenerateRandomObstacles()
+        {
+            Random random = new();
+
+            int totalObstacles = random.Next(1, 5);
+
+            for (int i = 0; i < totalObstacles; i++)
+            {
+                int x = random.Next(5);
+                int y = random.Next(5);
+
+                Obstacle obstacle;
+                ObstacleColor obstacleColor;
+
+                if (random.Next(2) == 0)
+                {
+                    obstacleColor = new BrownObstacleColor();
+                }
+                else
+                {
+                    obstacleColor = new GreenObstacleColor();
+                }
+
+                if (random.Next(2) == 0)
+                {
+                    obstacle = new IceBerg(obstacleColor);
+                }
+                else
+                {
+                    obstacle = new Island(obstacleColor);
+                }
+
+                Button cellButton = new();
+                cellButton.Enabled = false;
+                obstacle.coordinate = new Coordinate(x+1, y+1);
+                obstacle.ApplyStyle(cellButton);
+
+                _obstacles.Add(obstacle);
+                gameBoardLeft.Invoke(new MethodInvoker(delegate { gameBoardLeft.Controls.Add(cellButton, x, y); }));
+            }
+        }
     }
 }
