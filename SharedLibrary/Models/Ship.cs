@@ -13,6 +13,8 @@ namespace SharedLibrary.Models
         public List<Coordinate> Coordinates { get; set; } = new List<Coordinate>();
         public bool IsVertical { get; set; }
 
+        public bool isStealth { get; set; } = false;
+
         public Ship()
         {
             
