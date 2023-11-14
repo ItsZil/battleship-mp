@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace UnitTests.SharedLibraryTests.Factories
 {
+    [TestFixture]
     public class GameFactoryTests
     {
         [Test]

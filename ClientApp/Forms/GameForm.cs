@@ -21,6 +21,7 @@ namespace ClientApp.Forms
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
         private ILogger _logger;
+        private IUiInvoker _uiInvoker;
 
         private bool isMyTurn = false;
 
@@ -55,8 +56,21 @@ namespace ClientApp.Forms
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
+            _uiInvoker = new UiInvoker();
 
             RemoveUnallowedShipSizes();
+        }
+
+        public GameForm(Client client, IUiInvoker uiInvoker)
+        {
+            _client = client;
+            _uiInvoker = uiInvoker;
+        }
+
+        public void SetGameBoards(TableLayoutPanel left, TableLayoutPanel right)
+        {
+            gameBoardLeft = left;
+            gameBoardRight = right;
         }
 
         private void RemoveUnallowedShipSizes()
@@ -206,7 +220,7 @@ namespace ClientApp.Forms
             }
         }
 
-        private Ship TryPlaceShip(TableLayoutPanel gameBoard, int size, int x, int y, bool isVertical = false)
+        public Ship TryPlaceShip(TableLayoutPanel gameBoard, int size, int x, int y, bool isVertical = false)
         {
             List<Coordinate> coordinates;
             if (gameBoard == gameBoardLeft)
@@ -243,8 +257,10 @@ namespace ClientApp.Forms
                 cellButton.Text = "";
                 cellButton.BackColor = ButtonColors.Ship; // TODO: Change to ButtonColors.Empty when not testing (unless gameBoard is left)
                 cellButton.Tag = coordinate.X + "_" + coordinate.Y;
-
-                gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
+                
+                Action action = () => gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y);
+                _uiInvoker.InvokeOnUIThread(action, gameBoard);
+                //gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
             }
         }
 
@@ -252,10 +268,10 @@ namespace ClientApp.Forms
         {
             for (int i = 0; i < size; i++)
             {
-                int currentX = isVertical ? x : x + i;
-                int currentY = isVertical ? y - i : y;
+                int currentX = isVertical ? x - 1 : x + i - 1;
+                int currentY = isVertical ? y + i - 1 : y - 1;
 
-                if (currentX < 1 || currentX > 6 || currentY < 1 || currentY > 6)
+                if (currentX < 0 || currentX > 6 || currentY < 0 || currentY > 6)
                 {
                     return false;
                 }
