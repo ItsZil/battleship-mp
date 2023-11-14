@@ -2,7 +2,7 @@
 
 namespace SharedLibrary.Models
 {
-    public class Ship : IGamePrototype
+    public class Ship : IGamePrototype, IShip
     {
         public string PlayerId { get; set; }
         public int ShipId { get; set; }
@@ -13,6 +13,8 @@ namespace SharedLibrary.Models
         public List<Coordinate> Coordinates { get; set; } = new List<Coordinate>();
         public bool IsVertical { get; set; }
 
+        public bool isStealth { get; set; } = false;
+
         public Ship()
         {
             
@@ -22,6 +24,23 @@ namespace SharedLibrary.Models
         {
             Coordinates.Add(new Coordinate(x,y));
         }
+
+        public int GetMaxHealth()
+        {
+            return this.MaxHealth;
+        }
+
+        public int GetCannonSize()
+        {
+            return this.CannonSize;
+        }
+
+        public bool GetStealth()
+        {
+            return this.isStealth;
+        }
+
+        
 
         #region Prototype pattern
         public IGamePrototype Clone()
