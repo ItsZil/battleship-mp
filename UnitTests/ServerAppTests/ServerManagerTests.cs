@@ -15,7 +15,7 @@ namespace UnitTests.ServerAppTests
         [SetUp]
         public void Setup()
         {
-            _serverManager = ServerManager.Instance;
+            _serverManager = new ServerManager();
         }
 
         [Test]

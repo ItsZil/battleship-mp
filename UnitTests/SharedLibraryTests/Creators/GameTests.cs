@@ -9,6 +9,7 @@ using SharedLibrary.Models.Builders;
 using System.Security.Cryptography.Xml;
 using System.Windows.Forms;
 using UnitTests.Mocks;
+using UnitTests.Stubs;
 
 namespace UnitTests.SharedLibraryTests.Creators
 {
@@ -21,6 +22,7 @@ namespace UnitTests.SharedLibraryTests.Creators
 
         private Mock<Client> _mockClient;
         private UiInvokerStub _mockUiInvoker;
+        private MessageBoxStub _messageBoxStub;
         private Mock<TableLayoutPanel> _mockGameBoardLeft;
         private Mock<TableLayoutPanel> _mockGameBoardRight;
 
@@ -31,7 +33,8 @@ namespace UnitTests.SharedLibraryTests.Creators
 
             _mockClient = new Mock<Client>(null);
             _mockUiInvoker = new UiInvokerStub();
-            _gameForm = new GameForm(_mockClient.Object, _mockUiInvoker);
+            _messageBoxStub = new MessageBoxStub();
+            _gameForm = new GameForm(_mockClient.Object, _mockUiInvoker, _messageBoxStub);
             _mockGameBoardLeft = new Mock<TableLayoutPanel>();
             _mockGameBoardRight = new Mock<TableLayoutPanel>();
 
