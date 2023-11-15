@@ -1,3 +1,3 @@
 cd /d %~dp0
-dotnet test /p:CollectCoverage=true
-reportgenerator -reports:TestResults/coverage.opencover.xml -targetdir:CodeCoverage
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+reportgenerator -reports:TestResults/coverage.opencover.xml -targetdir:CodeCoverage -filefilters:-**\ClientApp\Forms\GameForm.Designer.cs;-**\ClientApp\Forms\StartForm.Designer.cs;-**\ClientApp\Components\CustomOutlinedLabel.cs;-**\ClientApp\Program.cs;-**\ServerApp\Program.cs;-**\ClientApp\System.Windows.Forms.Analyzers.CSharp\System.Windows.Forms.Generators.ApplicationConfigurationGenerator\ApplicationConfiguration.g.cs
