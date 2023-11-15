@@ -6,6 +6,7 @@ using SharedLibrary.Models;
 using SharedLibrary.Models.Builders;
 using System.Windows.Forms;
 using UnitTests.Mocks;
+using UnitTests.Stubs;
 
 namespace UnitTests.SharedLibraryTests.Creators
 {
@@ -16,7 +17,8 @@ namespace UnitTests.SharedLibraryTests.Creators
         private GameForm _gameForm;
 
         private Mock<Client> _mockClient;
-        private UiInvokerStub _mockUiInvoker;
+        private UiInvokerStub _uiInvokerStub;
+        private MessageBoxStub _messageBoxStub;
         private Mock<TableLayoutPanel> _mockGameBoardLeft;
         private Mock<TableLayoutPanel> _mockGameBoardRight;
 
@@ -25,8 +27,9 @@ namespace UnitTests.SharedLibraryTests.Creators
         {
             _shipBuilder = new ShipBuilder();
             _mockClient = new Mock<Client>(null);
-            _mockUiInvoker = new UiInvokerStub();
-            _gameForm = new GameForm(_mockClient.Object, _mockUiInvoker);
+            _uiInvokerStub = new UiInvokerStub();
+            _messageBoxStub = new MessageBoxStub();
+            _gameForm = new GameForm(_mockClient.Object, _uiInvokerStub, _messageBoxStub);
             _mockGameBoardLeft = new Mock<TableLayoutPanel>();
             _mockGameBoardRight = new Mock<TableLayoutPanel>();
 
