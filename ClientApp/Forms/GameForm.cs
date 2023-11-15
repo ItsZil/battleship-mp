@@ -6,6 +6,8 @@ using SharedLibrary.Models.Builders;
 using SharedLibrary.Models.Levels;
 using SharedLibrary.Interfaces;
 using SharedLibrary.Models.Obstacles;
+using ClientApp.Interfaces;
+using ClientApp.Utilities;
 
 namespace ClientApp.Forms
 {
@@ -21,7 +23,8 @@ namespace ClientApp.Forms
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
         private ILogger _logger;
-        private IUiInvoker _uiInvoker;
+        private IUiInvoker _uiInvoker = new UiInvoker();
+        private IMessageBox MessageBox = new Utilities.MessageBox();
 
         private bool isMyTurn = false;
 
@@ -56,15 +59,15 @@ namespace ClientApp.Forms
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
             _client.RegisterGameFormEvents(this);
-            _uiInvoker = new UiInvoker();
 
             RemoveUnallowedShipSizes();
         }
 
-        public GameForm(Client client, IUiInvoker uiInvoker)
+        public GameForm(Client client, IUiInvoker uiInvoker, IMessageBox messageBox)
         {
             _client = client;
             _uiInvoker = uiInvoker;
+            MessageBox = messageBox;
         }
 
         public void SetGameBoards(TableLayoutPanel left, TableLayoutPanel right)
