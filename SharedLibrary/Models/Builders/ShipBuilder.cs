@@ -29,6 +29,11 @@
 
         public ShipBuilder AddHealth(int size, bool isVertical = false)
         {
+            if (size < 1)
+            {
+                throw new ArgumentException();
+            }
+
             ship.Health = size;
             ship.MaxHealth = size;
             ship.IsVertical = isVertical;
