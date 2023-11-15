@@ -1,10 +1,5 @@
 ﻿using SharedLibrary.Factories;
 using SharedLibrary.Factories.GameLevel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTests.SharedLibraryTests.Factories
 {
@@ -91,6 +86,6 @@ namespace UnitTests.SharedLibraryTests.Factories
             Assert.That("Expert Level" == levelName);
         }
 
-        
+
     }
 }

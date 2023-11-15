@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharedLibrary.Interfaces
+﻿namespace SharedLibrary.Interfaces
 {
     public interface IShip
     {
@@ -12,6 +6,6 @@ namespace SharedLibrary.Interfaces
         int GetMaxHealth();
         int GetCannonSize();
         bool GetStealth();
-        
+
     }
 }

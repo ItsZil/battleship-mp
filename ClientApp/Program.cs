@@ -1,12 +1,9 @@
-using ClientApp.Forms;
-using Microsoft.AspNetCore.SignalR.Client;
-using SharedLibrary.Models;
 using System.Diagnostics;
 
 namespace ClientApp
 {
     internal static class Program
-    {   
+    {
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -20,7 +17,7 @@ namespace ClientApp
 
             // Wait 1.5 seconds to ensure both clients don't get the same ID
             Thread.Sleep(1500);
-            
+
             // Launch a second instance
             if (args.Length > 0 && args[0] == "client1")
             {

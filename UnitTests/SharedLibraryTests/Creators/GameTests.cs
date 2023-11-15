@@ -3,10 +3,8 @@ using ClientApp.Forms;
 using Moq;
 using SharedLibrary.Factories;
 using SharedLibrary.Factories.GameLevel;
-using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Builders;
-using System.Security.Cryptography.Xml;
 using System.Windows.Forms;
 using UnitTests.Mocks;
 using UnitTests.Stubs;
@@ -58,7 +56,7 @@ namespace UnitTests.SharedLibraryTests.Creators
             Player p2 = new Player(player2Id, player2Name);
 
             GameFactory gameFactory = new BasicLevelGameFactory();
-            
+
             var game = gameFactory.CreateGame(creatorId, gameName, password);
             game.Players.Add(p1);
             game.Players.Add(p2);
@@ -87,7 +85,7 @@ namespace UnitTests.SharedLibraryTests.Creators
             bool isVertical = false;
 
             Ship ship1 = _gameForm.TryPlaceShip(leftBoard, size, x1, y1, isVertical);
-            Ship ship2 = _gameForm.TryPlaceShip(leftBoard,size ,x2,y2, isVertical);
+            Ship ship2 = _gameForm.TryPlaceShip(leftBoard, size, x2, y2, isVertical);
 
             game.Ships.Add(ship1);
             game.Ships.Add(ship2);
@@ -149,7 +147,7 @@ namespace UnitTests.SharedLibraryTests.Creators
             game.Players.Add(p2);
 
 
-            
+
 
             Assert.Throws<Exception>(() =>
             {

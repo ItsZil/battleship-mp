@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using ClientApp.Interfaces;
+using Newtonsoft.Json;
+using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
-using SharedLibrary.Models.Request_Models;
-using SharedLibrary.Structs;
 using SharedLibrary.Models.Builders;
 using SharedLibrary.Models.Levels;
-using SharedLibrary.Interfaces;
-using SharedLibrary.Models.Obstacles;
-using ClientApp.Interfaces;
-using ClientApp.Utilities;
+using SharedLibrary.Models.Request_Models;
+using SharedLibrary.Structs;
 
 namespace ClientApp.Forms
 {
@@ -18,11 +16,9 @@ namespace ClientApp.Forms
 
         private Radar _radar;
         private List<Ship> _ships = new List<Ship>();
-        private List<Obstacle> _obstacles = new List<Obstacle>();
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
-        private ILogger _logger;
         private IUiInvoker _uiInvoker = new UiInvoker();
         private IMessageBox MessageBox = new Utilities.MessageBox();
 
@@ -31,11 +27,7 @@ namespace ClientApp.Forms
         public GameForm(Client client, int gameId, string gameLevel)
         {
             InitializeComponent();
-            
             _client = client;
-            _logger = new ServerLoggerAdapter(client);
-
-            this.HandleCreated += GameForm_HandleCreated;
 
             object gameObj = _client.SendMessage("GetGameById", gameId);
 
@@ -95,7 +87,7 @@ namespace ClientApp.Forms
             List<Ship> ships = _game.GetAllShips();
             foreach (Ship ship in ships)
             {
-                foreach(Coordinate coord in ship.Coordinates)
+                foreach (Coordinate coord in ship.Coordinates)
                 {
                     if (coord.X == x && coord.Y == y)
                         return ship;
@@ -116,11 +108,7 @@ namespace ClientApp.Forms
             int x = int.Parse(tagParts[0]);
             int y = int.Parse(tagParts[1]);
 
-
             Ship ship = GetShipByCoordinates(x, y);
-
-            new DecorationsForm(ship).Show();
-
         }
 
 
@@ -155,9 +143,6 @@ namespace ClientApp.Forms
                 Radar radar = TryPlaceRadar(gameBoardRight, x, y);
 
                 MessageBox.Show("Radar placed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                _logger.LogInfo("Radar Placed!");
-
-
 
                 if (radar != null)
                 {
@@ -171,7 +156,6 @@ namespace ClientApp.Forms
             if (_ships.Count == 0)
             {
                 MessageBox.Show("You must place at least one ship!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                _logger.LogWarning("You must place at least one ship!");
                 return;
             }
 
@@ -260,10 +244,9 @@ namespace ClientApp.Forms
                 cellButton.Text = "";
                 cellButton.BackColor = ButtonColors.Ship; // TODO: Change to ButtonColors.Empty when not testing (unless gameBoard is left)
                 cellButton.Tag = coordinate.X + "_" + coordinate.Y;
-                
+
                 Action action = () => gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y);
                 _uiInvoker.InvokeOnUIThread(action, gameBoard);
-                //gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
             }
         }
 
@@ -280,11 +263,6 @@ namespace ClientApp.Forms
                 }
 
                 if (coordinates.Any(coord => coord.X == currentX && coord.Y == currentY))
-                {
-                    return false;
-                }
-
-                if (_obstacles.Any(obstacle => obstacle.coordinate.X == currentX && obstacle.coordinate.Y == currentY))
                 {
                     return false;
                 }
@@ -360,12 +338,6 @@ namespace ClientApp.Forms
             {
                 return false;
             }
-
-            if (_obstacles.Any(obstacle => obstacle.coordinate.X == x && obstacle.coordinate.Y == y))
-            {
-                return false;
-            }
-
             return true;
         }
 
@@ -460,7 +432,7 @@ namespace ClientApp.Forms
                 cell.Click += new EventHandler(Cell_Click);
             }
 
-            foreach(Control cell in gameBoardLeft.Controls)
+            foreach (Control cell in gameBoardLeft.Controls)
             {
                 cell.Click += new EventHandler(LeftCell_Click);
             }
@@ -552,72 +524,6 @@ namespace ClientApp.Forms
             else
             {
                 turnIndicatorLabel.Invoke(new MethodInvoker(delegate { turnIndicatorLabel.Text = "Enemy's Turn"; }));
-            }
-        }
-
-        #region Prototype pattern methods
-        private void InitializeTemplateShips()
-        {
-            foreach (Ship ship in _game.Ships)
-            {
-                if (ship.PlayerId == _client.Id)
-                {
-                    TryPlaceShip(gameBoardLeft, ship.MaxHealth, ship.Coordinates[0].X, ship.Coordinates[0].Y, ship.IsVertical);
-                    _ships.Add(ship);
-                }
-            }
-        }
-
-        private void GameForm_Load(object sender, EventArgs e)
-        {
-            InitializeTemplateShips();
-        }
-        #endregion
-
-        private void GameForm_HandleCreated(object sender, EventArgs e)
-        {
-            GenerateRandomObstacles();
-        }
-
-        private void GenerateRandomObstacles()
-        {
-            Random random = new();
-
-            int totalObstacles = random.Next(1, 5);
-
-            for (int i = 0; i < totalObstacles; i++)
-            {
-                int x = random.Next(5);
-                int y = random.Next(5);
-
-                Obstacle obstacle;
-                ObstacleColor obstacleColor;
-
-                if (random.Next(2) == 0)
-                {
-                    obstacleColor = new BrownObstacleColor();
-                }
-                else
-                {
-                    obstacleColor = new GreenObstacleColor();
-                }
-
-                if (random.Next(2) == 0)
-                {
-                    obstacle = new IceBerg(obstacleColor);
-                }
-                else
-                {
-                    obstacle = new Island(obstacleColor);
-                }
-
-                Button cellButton = new();
-                cellButton.Enabled = false;
-                obstacle.coordinate = new Coordinate(x+1, y+1);
-                obstacle.ApplyStyle(cellButton);
-
-                _obstacles.Add(obstacle);
-                gameBoardLeft.Invoke(new MethodInvoker(delegate { gameBoardLeft.Controls.Add(cellButton, x, y); }));
             }
         }
     }

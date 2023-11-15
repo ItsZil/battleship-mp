@@ -10,13 +10,11 @@ namespace ServerApp
     public class GameHub : Hub
     {
         private readonly ServerManager _serverManager;
-        private readonly GameManager _gameManager;
         private readonly ShootStrategy _shootStrategy;
 
-        public GameHub(ServerManager serverManager, GameManager gameManager, ShootStrategy shootStrategy)
+        public GameHub(ServerManager serverManager, ShootStrategy shootStrategy)
         {
             _serverManager = serverManager;
-            _gameManager = gameManager;
             _shootStrategy = shootStrategy;
         }
 
@@ -96,11 +94,11 @@ namespace ServerApp
                 await Clients.Client(hitPlayerId).SendAsync("SendHitResult", hitResult);
             }
             var playerIds = game.GetAllPlayerIds();
-            
+
             // Trigger the SetNextTurn method on all clients.
             var nextTurnPlayerId = playerIds.First(id => id != shot.PlayerId);
             await Clients.Clients(playerIds).SendAsync("SetNextTurn", nextTurnPlayerId);
-            
+
             return hitResult;
         }
 
@@ -116,7 +114,7 @@ namespace ServerApp
         {
             List<string> connectedPlayerIds = connectedPlayers.Select(x => x.PlayerId).ToList();
             connectedPlayerIds.Remove(joinedPlayerId);
-            
+
             if (connectedPlayerIds.Contains(clientId))
                 await Clients.Client(clientId).SendAsync("SendPlayerJoinedGame", joinedPlayerId, connectedPlayers);
         }
@@ -127,35 +125,10 @@ namespace ServerApp
             {
                 List<string> connectedPlayerIds = game.Players.Select(x => x.PlayerId).ToList();
                 string firstTurnPlayerId = connectedPlayerIds.First();
-                
+
                 if (connectedPlayerIds.Contains(clientId))
                     await Clients.Client(clientId).SendAsync("SendAllPlayersReady", game.Ships, firstTurnPlayerId);
             }
-        }
-        #endregion
-
-        #region Prototype pattern methods
-        public async Task<Game> CloneEmptyPrototype(string clientId)
-        {
-            var game = await _gameManager.CreateNewGameFromTemplate("EmptyExpertTemplate");
-            game.Name = _serverManager.IsServerNameTaken("emptyTemp") ? "emptyTemp2" : "emptyTemp";
-            game.Password = "123";
-            game.Players.Add(new Player(clientId, "Player 1"));
-
-            _serverManager.AddGameToServerList(game);
-            return game;
-        }
-
-        public async Task<Game> CloneShipPrototype(string clientId)
-        {
-            var game = await _gameManager.CreateNewGameFromTemplate("ShipsExpertTemplate");
-            game.Name = _serverManager.IsServerNameTaken("shipTemp") ? "shipTemp2" : "shipTemp";
-            game.Password = "123";
-            game.Players.Add(new Player(clientId, "Player 1"));
-            game.Ships.ForEach(s => s.PlayerId = clientId);
-
-            _serverManager.AddGameToServerList(game);
-            return game;
         }
         #endregion
 

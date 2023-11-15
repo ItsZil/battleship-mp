@@ -1,16 +1,11 @@
 ﻿using SharedLibrary.Interfaces;
 using SharedLibrary.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharedLibrary.Models.Strategies
 {
     public class ShootStrategy : IBoardCellInteractionStrategy
     {
-        public HitDetails Interact(Game game, Shot shot) 
+        public HitDetails Interact(Game game, Shot shot)
         {
             // TODO: take into account shot.Radius
             var hitDetails = new HitDetails(shot.X, shot.Y);
@@ -35,6 +30,6 @@ namespace SharedLibrary.Models.Strategies
             return hitDetails;
         }
 
-     
+
     }
 }

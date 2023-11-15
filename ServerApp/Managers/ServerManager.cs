@@ -1,9 +1,9 @@
-﻿using SharedLibrary.Models;
+﻿using Microsoft.AspNet.SignalR;
 using SharedLibrary.Exceptions;
-using SharedLibrary.Models.Request_Models;
-using Microsoft.AspNet.SignalR;
 using SharedLibrary.Factories.GameLevel;
 using SharedLibrary.Interfaces;
+using SharedLibrary.Models;
+using SharedLibrary.Models.Request_Models;
 
 namespace ServerApp.Managers
 {
@@ -127,7 +127,7 @@ namespace ServerApp.Managers
                         if (gameServer.Players.Count < 2)
                         {
                             string playerName = "Player " + (gameServer.Players.Count + 1);
-                            
+
                             gameServer.Players.Add(new Player(joinGameDetails.ClientId, playerName));
                             OnPlayerJoinedGame(joinGameDetails.ClientId, gameServer.Players);
 
@@ -135,7 +135,7 @@ namespace ServerApp.Managers
                             joinGameDetails.GameId = gameServer.GameId;
                             joinGameDetails.PlayerCount = gameServer.Players.Count;
                             joinGameDetails.LevelName = gameServer.LevelName;
-                            
+
                             return joinGameDetails;
                         }
                         else
@@ -160,11 +160,11 @@ namespace ServerApp.Managers
                 {
                     gameServer.ReadyCount++;
                     gameServer.Ships.AddRange(playerReadyDetails.Ships);
-                    
+
                     // If this game is cloned from a prototype template, we can end up with duplicate ships (some already exist in the game server)
                     // So we need to remove the duplicates.
                     gameServer.Ships = gameServer.Ships.GroupBy(s => s.ShipId).Select(s => s.First()).ToList();
-                    
+
                     if (gameServer.ReadyCount == 2)
                     {
                         OnAllPlayersReady(gameServer);

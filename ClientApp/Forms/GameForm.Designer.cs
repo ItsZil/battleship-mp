@@ -415,7 +415,6 @@
             Name = "GameForm";
             Tag = "1_1";
             Text = "Battleship";
-            Load += GameForm_Load;
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             interactionModeTableLayoutPanel.ResumeLayout(false);

@@ -6,7 +6,7 @@
 
         public ShipBuilder()
         {
-            
+
         }
 
         public ShipBuilder AddCoordinate(int x, int y)

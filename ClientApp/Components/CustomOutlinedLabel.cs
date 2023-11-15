@@ -1,8 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-
-namespace ClientApp.Components
+﻿namespace ClientApp.Components
 {
     public class CustomOutlinedLabel : Label
     {

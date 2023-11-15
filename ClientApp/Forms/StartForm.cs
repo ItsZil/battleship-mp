@@ -1,5 +1,4 @@
 using ClientApp.Forms;
-using Microsoft.AspNet.SignalR.Client;
 using Newtonsoft.Json;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Levels;

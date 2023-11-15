@@ -1,9 +1,9 @@
+using Microsoft.AspNet.SignalR;
 using ServerApp.Managers;
 using SharedLibrary.Exceptions;
-using SharedLibrary.Models.Request_Models;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Levels;
-using Microsoft.AspNet.SignalR;
+using SharedLibrary.Models.Request_Models;
 
 namespace UnitTests.ServerAppTests
 {

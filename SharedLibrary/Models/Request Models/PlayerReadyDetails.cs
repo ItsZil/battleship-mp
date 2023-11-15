@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharedLibrary.Models.Request_Models
+﻿namespace SharedLibrary.Models.Request_Models
 {
     public class PlayerReadyDetails
     {

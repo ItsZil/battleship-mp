@@ -1,8 +1,6 @@
-﻿using SharedLibrary.Interfaces;
-
-namespace SharedLibrary.Models
+﻿namespace SharedLibrary.Models
 {
-    public abstract class Game : IGamePrototype
+    public abstract class Game
     {
         public int GameId { get; set; }
         public string CreatorId { get; set; }
@@ -54,10 +52,10 @@ namespace SharedLibrary.Models
         {
             var player = Players.FirstOrDefault(p => p.PlayerId == id);
 
-            if(player != null)
+            if (player != null)
             {
                 return player;
-                
+
             }
             else
             {
@@ -90,10 +88,6 @@ namespace SharedLibrary.Models
             }
             return hitDetails;
         }*/
-        #endregion
-
-        #region Prototype pattern
-        public abstract IGamePrototype Clone();
         #endregion
     }
 }

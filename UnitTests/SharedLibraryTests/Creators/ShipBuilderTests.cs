@@ -1,7 +1,6 @@
 ﻿using ClientApp;
 using ClientApp.Forms;
 using Moq;
-using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Builders;
 using System.Windows.Forms;
@@ -134,7 +133,7 @@ namespace UnitTests.SharedLibraryTests.Creators
             var size = 2;
             var coordinates = new List<Coordinate>{
                 new Coordinate(1,1),
-                new Coordinate(2,2) 
+                new Coordinate(2,2)
             };
 
             var ship = _shipBuilder.Build(clientId)

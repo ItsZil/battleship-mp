@@ -33,7 +33,7 @@ namespace ClientApp
             {
                 //MessageBox.Show($"There are currently {gameList.Count()} open servers.");
             });
-            
+
             _gameHub.On<Game>("SendNewCreatedGame", (game) =>
             {
                 MessageBox.Show($"A new game server ({game.Name}) was just opened!");
@@ -55,7 +55,7 @@ namespace ClientApp
         public async Task StartAsync()
         {
             try
-            {                
+            {
                 await _gameHub.StartAsync();
             }
             catch (Exception ex)
@@ -63,7 +63,7 @@ namespace ClientApp
                 MessageBox.Show(ex.Message);
             }
         }
-        
+
         public async void RegisterGameFormEvents(GameForm gameForm)
         {
             _gameForm = gameForm;
