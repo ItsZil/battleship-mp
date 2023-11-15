@@ -12,6 +12,8 @@ namespace ServerApp
         private readonly ServerManager _serverManager;
         private readonly ShootStrategy _shootStrategy;
 
+        private readonly IHubClients<IClientProxy> _clients;
+
         public GameHub(ServerManager serverManager, ShootStrategy shootStrategy)
         {
             _serverManager = serverManager;
@@ -97,7 +99,10 @@ namespace ServerApp
 
             // Trigger the SetNextTurn method on all clients.
             var nextTurnPlayerId = playerIds.First(id => id != shot.PlayerId);
-            await Clients.Clients(playerIds).SendAsync("SetNextTurn", nextTurnPlayerId);
+            var firstClient = Clients.Client(playerIds[0]);
+            var secondClient = Clients.Client(playerIds[1]);
+            await firstClient.SendAsync("SetNextTurn", nextTurnPlayerId);
+            await secondClient.SendAsync("SetNextTurn", nextTurnPlayerId);
 
             return hitResult;
         }
@@ -138,26 +143,6 @@ namespace ServerApp
             var ships = game.Ships;
 
             return ships;
-        }
-
-        public async Task<bool> SendRadarPlacement(Radar radar)
-        {
-            return true;
-        }
-
-        public void LogInfo(string message)
-        {
-            Console.WriteLine($"Info: {message}");
-        }
-
-        public void LogWarning(string message)
-        {
-            Console.WriteLine($"Warning: {message}");
-        }
-
-        public void LogError(string message)
-        {
-            Console.WriteLine($"Error: {message}");
         }
     }
 }

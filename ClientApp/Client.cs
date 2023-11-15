@@ -29,19 +29,9 @@ namespace ClientApp
 
         private async void Initialize()
         {
-            _gameHub.On<List<Game>>("SendAvailableGameList", (gameList) =>
-            {
-                //MessageBox.Show($"There are currently {gameList.Count()} open servers.");
-            });
-
             _gameHub.On<Game>("SendNewCreatedGame", (game) =>
             {
                 MessageBox.Show($"A new game server ({game.Name}) was just opened!");
-            });
-
-            _gameHub.On("SendPlayerJoinedGame", () =>
-            {
-                //MessageBox.Show("A player has joined your game, starting now!");
             });
 
             await StartAsync();
