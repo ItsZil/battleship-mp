@@ -26,7 +26,6 @@ namespace UnitTests.SharedLibraryTests.Creators
         public void SetUp()
         {
             _shipBuilder = new ShipBuilder();
-
             _mockClient = new Mock<Client>(null);
             _uiInvokerStub = new UiInvokerStub();
             _messageBoxStub = new MessageBoxStub();
@@ -93,6 +92,79 @@ namespace UnitTests.SharedLibraryTests.Creators
             Ship secondShip = _gameForm.TryPlaceShip(leftBoard, size, x, y, isVertical);
 
             Assert.IsNull(secondShip);
+        }
+
+        [Test]
+        public void BuildShip_WhenSize1_BuildsShip()
+        {
+            var clientId = "clientId";
+            var isVertical = false;
+            var size = 1;
+
+            var ship = _shipBuilder.Build(clientId)
+                .AddHealth(size, isVertical)
+                .Get();
+
+            Assert.IsNotNull(ship);
+        }
+
+        [Test]
+        public void BuildShip_WhenAllParamsSet_BuildsShip()
+        {
+            var clientId = "clientId";
+            var isVertical = false;
+            var size = 1;
+            var x = 1;
+            var y = 1;
+
+            var ship = _shipBuilder.Build(clientId)
+                .AddHealth(size, isVertical)
+                .AddCannons(size)
+                .AddCoordinate(x, y)
+                .Get();
+
+            Assert.IsNotNull(ship);
+        }
+
+        [Test]
+        public void BuildShip_WhenAllParamsSetAndSize2_BuildsShip()
+        {
+            var clientId = "clientId";
+            var isVertical = false;
+            var size = 2;
+            var coordinates = new List<Coordinate>{
+                new Coordinate(1,1),
+                new Coordinate(2,2) 
+            };
+
+            var ship = _shipBuilder.Build(clientId)
+                .AddHealth(size, isVertical)
+                .AddCannons(size)
+                .AddCoordinates(coordinates)
+                .Get();
+
+            Assert.IsNotNull(ship);
+        }
+
+        [Test]
+        public void BuildShip_WhenSizeNegative_Throws()
+        {
+            var clientId = "clientId";
+            var isVertical = false;
+            var size = -1;
+            var coordinates = new List<Coordinate>{
+                new Coordinate(1,1),
+                new Coordinate(2,2)
+            };
+
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var ship = _shipBuilder.Build(clientId)
+                    .AddHealth(size, isVertical)
+                    .AddCannons(size)
+                    .AddCoordinates(coordinates)
+                    .Get();
+            });
         }
     }
 }
