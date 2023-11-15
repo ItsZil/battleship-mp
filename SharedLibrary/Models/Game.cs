@@ -49,6 +49,21 @@ namespace SharedLibrary.Models
             return Ships;
         }
 
+        public Player GetPlayerById(string id)
+        {
+            var player = Players.FirstOrDefault(p => p.PlayerId == id);
+
+            if(player != null)
+            {
+                return player;
+                
+            }
+            else
+            {
+                throw new Exception("Plyer not found");
+            }
+        }
+
         #region Game methods
         /*public HitDetails HandleShot(Shot shot)
         {
