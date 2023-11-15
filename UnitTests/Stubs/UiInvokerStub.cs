@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace UnitTests.Mocks
 {
-    internal class MockUiInvoker : IUiInvoker
+    internal class UiInvokerStub : IUiInvoker
     {
         public void InvokeOnUIThread(Action action, TableLayoutPanel gameBoard)
         {

@@ -16,7 +16,7 @@ namespace UnitTests.SharedLibraryTests.Creators
         private GameForm _gameForm;
 
         private Mock<Client> _mockClient;
-        private MockUiInvoker _mockUiInvoker;
+        private UiInvokerStub _mockUiInvoker;
         private Mock<TableLayoutPanel> _mockGameBoardLeft;
         private Mock<TableLayoutPanel> _mockGameBoardRight;
 
@@ -26,7 +26,7 @@ namespace UnitTests.SharedLibraryTests.Creators
             _shipBuilder = new ShipBuilder();
 
             _mockClient = new Mock<Client>(null);
-            _mockUiInvoker = new MockUiInvoker();
+            _mockUiInvoker = new UiInvokerStub();
             _gameForm = new GameForm(_mockClient.Object, _mockUiInvoker);
             _mockGameBoardLeft = new Mock<TableLayoutPanel>();
             _mockGameBoardRight = new Mock<TableLayoutPanel>();
