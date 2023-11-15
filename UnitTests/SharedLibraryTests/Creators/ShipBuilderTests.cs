@@ -12,7 +12,7 @@ namespace UnitTests.SharedLibraryTests.Creators
     [TestFixture]
     public class ShipBuilderTests
     {
-        private ShipBuilder _shipBuilder;
+
         private GameForm _gameForm;
 
         private Mock<Client> _mockClient;
@@ -23,7 +23,6 @@ namespace UnitTests.SharedLibraryTests.Creators
         [SetUp]
         public void SetUp()
         {
-            _shipBuilder = new ShipBuilder();
 
             _mockClient = new Mock<Client>(null);
             _mockUiInvoker = new UiInvokerStub();
