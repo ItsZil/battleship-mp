@@ -60,6 +60,7 @@ namespace UnitTests.ServerAppTests
             bool isTaken = _serverManager.IsServerNameTaken("123");
 
             Assert.That(isTaken);
+        }
 
         [Test]
         public async Task CreateGameServer_WhenValidDetails_ReturnsGameId()
