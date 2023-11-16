@@ -33,7 +33,7 @@ namespace ServerApp.Managers
             Clients.Remove(client);
         }
 
-        protected async virtual void OnGameCreated(Game createdGame)
+        public async virtual void OnGameCreated(Game createdGame)
         {
             foreach (IServerObserver client in Clients)
             {
@@ -42,7 +42,7 @@ namespace ServerApp.Managers
         }
 
 
-        protected virtual void OnAllPlayersReady(Game game)
+        public virtual void OnAllPlayersReady(Game game)
         {
             foreach (IServerObserver client in Clients)
             {

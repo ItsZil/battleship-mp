@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
 using SharedLibrary.Models.Strategies;
 using ServerApp;
+using SharedLibrary.Models.Levels;
+using UnitTests.Stubs;
 
 namespace UnitTests.ServerAppTests
 {
@@ -17,7 +19,6 @@ namespace UnitTests.ServerAppTests
         private ServerManager _serverManager;
         private ShootStrategy _shootStrategy;
         private ServerApp.Client _client;
-        private Mock<ClientApp.Client> appClient;
 
         private HubConnection _hubConnection;
         private Mock<HubCallerContext> _mockHubCallerContext;
@@ -33,7 +34,6 @@ namespace UnitTests.ServerAppTests
             _mockHubCallerContext = new Mock<HubCallerContext>();
             _mockClientProxy = new Mock<ISingleClientProxy>();
             _mockClients = new Mock<IHubCallerClients>();
-            appClient = new Mock<ClientApp.Client>();
 
             _gameHub = new GameHub(_serverManager, _shootStrategy)
             {
@@ -47,8 +47,6 @@ namespace UnitTests.ServerAppTests
             _hubConnection.StartAsync();
 
             _client = new Client("0", _gameHub);
-
-           
         }
 
         [TearDown]
@@ -70,19 +68,13 @@ namespace UnitTests.ServerAppTests
                     createdGame = game;
                 });
 
-
-            // Arrange
             GameFactory gameFactory = new BasicLevelGameFactory();
            Game createGame = gameFactory.CreateGame("1", "server", "pass");
 
             _client.UpdateNewGameCreated(createGame);
 
             Assert.That(createdGame == createGame);
-
-            
         }
-
-       
 
         [Test]
         public async Task UpdateAllPlayersReady_ShouldSendPlayerReadyToGameHub()
@@ -98,7 +90,6 @@ namespace UnitTests.ServerAppTests
                     firstTurnPlayer = game;
                 });
 
-            // Arrange
             GameFactory gameFactory = new BasicLevelGameFactory();
             Game game = gameFactory.CreateGame("1", "server", "pass");
             Player p1 = new Player("0", "P1");
@@ -108,13 +99,61 @@ namespace UnitTests.ServerAppTests
 
             game.ReadyCount = 2;
 
-
-            // Act
             _client.UpdateAllPlayersReady(game);
 
-
-            // Assert
             Assert.That(firstTurnPlayer == p1.PlayerId || firstTurnPlayer == p2.PlayerId);
+        }
+
+        [Test]
+        public async Task OnGameCreated_OneObserver_GameIsNotNull()
+        {
+            ClientStub clientOne = new ClientStub("1", null);
+
+            await _serverManager.Subscribe(clientOne);
+
+            _serverManager.OnGameCreated(new BasicGame("", "", "", "Basic Level", new List<Player>()));
+
+            Assert.NotNull(clientOne.Game);
+        }
+
+        [Test]
+        public async Task OnAllPlayersReady_OneObserver_GameIsNotNull()
+        {
+            ClientStub clientOne = new ClientStub("1", null);
+
+            await _serverManager.Subscribe(clientOne);
+
+            _serverManager.OnAllPlayersReady(new BasicGame("", "", "", "Basic Level", new List<Player>()));
+
+            Assert.NotNull(clientOne.Game);
+        }
+
+        [Test]
+        public async Task OnGameCreated_TwoObservers_GamesMatch()
+        {
+            ClientStub clientOne = new ClientStub("1", null);
+            ClientStub clientTwo = new ClientStub("2", null);
+
+            await _serverManager.Subscribe(clientOne);
+            await _serverManager.Subscribe(clientTwo);
+
+            _serverManager.OnGameCreated(new BasicGame("", "", "", "Basic Level", new List<Player>()));
+
+            Assert.That(clientOne.Game == clientTwo.Game);
+        }
+
+        [Test]
+        public async Task OnAllPlayersReady_TwoObservers_GamesMatch()
+        {
+            ClientStub clientOne = new ClientStub("1", null);
+            ClientStub clientTwo = new ClientStub("2", null);
+
+            await _serverManager.Subscribe(clientOne);
+            await _serverManager.Subscribe(clientTwo);
+
+            _serverManager.OnAllPlayersReady(new BasicGame("", "", "", "Basic Level", new List<Player>()));
+
+            Assert.That(clientOne.Game == clientTwo.Game);
         }
     }
 

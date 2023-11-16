@@ -4,6 +4,8 @@ using SharedLibrary.Exceptions;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Levels;
 using SharedLibrary.Models.Request_Models;
+using ServerApp;
+using UnitTests.Stubs;
 
 namespace UnitTests.ServerAppTests
 {
@@ -16,6 +18,15 @@ namespace UnitTests.ServerAppTests
         public void Setup()
         {
             _serverManager = new ServerManager();
+        }
+
+        [Test]
+        public void GetInstance_ReturnsSameInstance()
+        {
+            ServerManager serverManager1 = ServerManager.Instance;
+            ServerManager serverManager2 = ServerManager.Instance;
+
+            Assert.That(serverManager1 == serverManager2);
         }
 
         [Test]
@@ -63,7 +74,7 @@ namespace UnitTests.ServerAppTests
         }
 
         [Test]
-        public async Task CreateGameServer_WhenValidDetails_ReturnsGameId()
+        public async Task CreateBasicGameServer_WhenValidDetails_ReturnsGameId()
         {
             string creatorId = "creatorId",
                 name = "TestGame1",
@@ -77,6 +88,71 @@ namespace UnitTests.ServerAppTests
 
             Assert.IsTrue(gameId > 0);
             Assert.IsTrue(_serverManager.GetAvailableGames().Any(g => g.GameId == gameId));
+        }
+
+        [Test]
+        public async Task CreateEnhancedGameServer_WhenValidDetails_ReturnsGameId()
+        {
+            string creatorId = "creatorId",
+                name = "TestGame1",
+                levelName = "Enhanced Level",
+                password = "password";
+
+
+            var createGameDetails = new CreateGameDetails(creatorId, name, password, levelName);
+
+            var gameId = await _serverManager.CreateGameServer(createGameDetails);
+
+            Assert.IsTrue(gameId > 0);
+            Assert.IsTrue(_serverManager.GetAvailableGames().Any(g => g.GameId == gameId));
+        }
+
+        [Test]
+        public async Task CreateAdvancedGameServer_WhenValidDetails_ReturnsGameId()
+        {
+            string creatorId = "creatorId",
+                name = "TestGame1",
+                levelName = "Advanced Level",
+                password = "password";
+
+
+            var createGameDetails = new CreateGameDetails(creatorId, name, password, levelName);
+
+            var gameId = await _serverManager.CreateGameServer(createGameDetails);
+
+            Assert.IsTrue(gameId > 0);
+            Assert.IsTrue(_serverManager.GetAvailableGames().Any(g => g.GameId == gameId));
+        }
+
+        [Test]
+        public async Task CreateExpertGameServer_WhenValidDetails_ReturnsGameId()
+        {
+            string creatorId = "creatorId",
+                name = "TestGame1",
+                levelName = "Expert Level",
+                password = "password";
+
+
+            var createGameDetails = new CreateGameDetails(creatorId, name, password, levelName);
+
+            var gameId = await _serverManager.CreateGameServer(createGameDetails);
+
+            Assert.IsTrue(gameId > 0);
+            Assert.IsTrue(_serverManager.GetAvailableGames().Any(g => g.GameId == gameId));
+        }
+
+        [Test]
+        public async Task CreateGameServer_WhenInvalidLevel_Throws()
+        {
+            string creatorId = "creatorId",
+                name = "TestGame1",
+                levelName = "Invalid Level",
+                password = "password";
+
+
+            var createGameDetails = new CreateGameDetails(creatorId, name, password, levelName);
+
+            Assert.ThrowsAsync<Exception>(async () => await _serverManager.CreateGameServer(createGameDetails));
         }
 
         [Test]
@@ -117,8 +193,8 @@ namespace UnitTests.ServerAppTests
 
             var joinedDetails = await _serverManager.JoinGameServer(joinGameDetails);
 
-            Assert.AreEqual(gameId, joinedDetails.GameId);
-            Assert.AreEqual(2, joinedDetails.PlayerCount);
+            Assert.That(gameId == joinedDetails.GameId);
+            Assert.That(2 == joinedDetails.PlayerCount);
         }
 
         [Test]
@@ -139,7 +215,7 @@ namespace UnitTests.ServerAppTests
 
             var joinGameDetailsPlayer2 = new JoinGameDetails("testId", name, password);
 
-            Assert.ThrowsAsync<GameFullException>(() => _serverManager.JoinGameServer(joinGameDetailsPlayer2));
+            Assert.ThrowsAsync<GameFullException>(async () => await _serverManager.JoinGameServer(joinGameDetailsPlayer2));
         }
 
         [Test]
@@ -157,7 +233,25 @@ namespace UnitTests.ServerAppTests
 
             var joinGameDetails = new JoinGameDetails("player1", name, password2);
 
-            Assert.ThrowsAsync<InvalidPasswordException>(() => _serverManager.JoinGameServer(joinGameDetails));
+            Assert.ThrowsAsync<InvalidPasswordException>(async () => await _serverManager.JoinGameServer(joinGameDetails));
+        }
+
+        [Test]
+        public void JoinGameServer_WhenInvalidName_ThrowsGameNotFoundException()
+        {
+            string creatorId = "creatorId",
+                name = "TestGame4",
+                levelName = "Basic Level",
+                password1 = "password",
+                password2 = "123";
+
+            var createGameDetails = new CreateGameDetails(creatorId, name, password1, levelName);
+
+            _serverManager.CreateGameServer(createGameDetails);
+
+            var joinGameDetails = new JoinGameDetails("player1", "TestGame5", password2);
+
+            Assert.ThrowsAsync<GameNotFoundException>(async () => await _serverManager.JoinGameServer(joinGameDetails));
         }
     }
 }

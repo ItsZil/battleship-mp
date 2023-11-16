@@ -177,6 +177,28 @@ namespace UnitTests.ServerAppTests
         }
 
         [Test]
+        public async Task PlayerReady_WhenNoGame_ReturnsFalse()
+        {
+            PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails("", 0, new List<Ship>());
+            bool starting = await _gameHub.SetPlayerAsReady(playerReadyDetails);
+
+            Assert.That(starting == false);
+        }
+
+        [Test]
+        public async Task PlayerReady_WhenGameIdIncorrect_ReturnsFalse()
+        {
+            CreateGameDetails createGameDetails = new CreateGameDetails("", "", "", "Basic Level");
+            int gameId = await _gameHub.CreateGameServer(createGameDetails);
+            await _gameHub.JoinGameServer(new JoinGameDetails("", "", ""));
+
+            PlayerReadyDetails playerReadyDetails = new PlayerReadyDetails("", gameId + 1, new List<Ship>());
+            bool starting = await _gameHub.SetPlayerAsReady(playerReadyDetails);
+
+            Assert.That(starting == false);
+        }
+
+        [Test]
         public async Task PlayerReady_When1PlayerReady_ReturnsFalse()
         {
             CreateGameDetails createGameDetails = new CreateGameDetails("", "", "", "Basic Level");
