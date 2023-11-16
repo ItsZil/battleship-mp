@@ -113,15 +113,6 @@ namespace ServerApp
                 await Clients.Client(clientId).SendAsync("SendNewCreatedGame", newGame);
         }
 
-        public async Task SendPlayerJoinedGame(string clientId, string joinedPlayerId, List<Player> connectedPlayers)
-        {
-            List<string> connectedPlayerIds = connectedPlayers.Select(x => x.PlayerId).ToList();
-            connectedPlayerIds.Remove(joinedPlayerId);
-
-            if (connectedPlayerIds.Contains(clientId))
-                await Clients.Client(clientId).SendAsync("SendPlayerJoinedGame", joinedPlayerId, connectedPlayers);
-        }
-
         public async Task SendPlayerReady(string clientId, Game game)
         {
             if (game.ReadyCount == 2)

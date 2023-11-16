@@ -6,7 +6,6 @@ namespace SharedLibrary.Interfaces
     public interface IServerObserver
     {
         void UpdateNewGameCreated(Game createdGame);
-        void UpdatePlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers);
         void UpdateAllPlayersReady(Game game);
     }
 }

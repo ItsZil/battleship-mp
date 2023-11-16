@@ -20,11 +20,6 @@ namespace ServerApp
             await _gameHub.SendNewCreatedGame(Id, createdGame);
         }
 
-        public async void UpdatePlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
-        {
-            await _gameHub.SendPlayerJoinedGame(Id, joinedPlayerId, connectedPlayers);
-        }
-
         public async void UpdateAllPlayersReady(Game game)
         {
             await _gameHub.SendPlayerReady(Id, game);

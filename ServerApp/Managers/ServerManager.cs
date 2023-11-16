@@ -41,13 +41,6 @@ namespace ServerApp.Managers
             }
         }
 
-        protected virtual void OnPlayerJoinedGame(string joinedPlayerId, List<Player> connectedPlayers)
-        {
-            foreach (IServerObserver client in Clients)
-            {
-                client.UpdatePlayerJoinedGame(joinedPlayerId, connectedPlayers);
-            }
-        }
 
         protected virtual void OnAllPlayersReady(Game game)
         {
@@ -129,7 +122,7 @@ namespace ServerApp.Managers
                             string playerName = "Player " + (gameServer.Players.Count + 1);
 
                             gameServer.Players.Add(new Player(joinGameDetails.ClientId, playerName));
-                            OnPlayerJoinedGame(joinGameDetails.ClientId, gameServer.Players);
+                            
 
                             // Prepare response object
                             joinGameDetails.GameId = gameServer.GameId;
