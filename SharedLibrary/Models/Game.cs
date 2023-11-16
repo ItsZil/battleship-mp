@@ -19,12 +19,6 @@
         public bool SupportsMovingShips { get; set; } = false;
 
         #region Constructors
-        public Game()
-        {
-            var random = new Random();
-            GameId = random.Next(1000, 9999);
-        }
-
         public Game(string CreatorId, string Name, string Password, string LevelName, List<Player> Players)
         {
             var random = new Random();

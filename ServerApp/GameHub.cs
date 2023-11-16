@@ -12,8 +12,6 @@ namespace ServerApp
         private readonly ServerManager _serverManager;
         private readonly ShootStrategy _shootStrategy;
 
-        private readonly IHubClients<IClientProxy> _clients;
-
         public GameHub(ServerManager serverManager, ShootStrategy shootStrategy)
         {
             _serverManager = serverManager;

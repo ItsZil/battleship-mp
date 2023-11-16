@@ -5,6 +5,7 @@ using SharedLibrary.Factories;
 using SharedLibrary.Factories.GameLevel;
 using SharedLibrary.Models;
 using SharedLibrary.Models.Builders;
+using SharedLibrary.Models.Levels;
 using System.Windows.Forms;
 using UnitTests.Mocks;
 using UnitTests.Stubs;
@@ -14,8 +15,6 @@ namespace UnitTests.SharedLibraryTests.Creators
     [TestFixture]
     public class GameTests
     {
-
-        private ShipBuilder _shipBuilder;
         private GameForm _gameForm;
 
         private Mock<Client> _mockClient;
@@ -27,8 +26,6 @@ namespace UnitTests.SharedLibraryTests.Creators
         [SetUp]
         public void SetUp()
         {
-            _shipBuilder = new ShipBuilder();
-
             _mockClient = new Mock<Client>(null);
             _mockUiInvoker = new UiInvokerStub();
             _messageBoxStub = new MessageBoxStub();
@@ -146,14 +143,42 @@ namespace UnitTests.SharedLibraryTests.Creators
             game.Players.Add(p1);
             game.Players.Add(p2);
 
-
-
-
             Assert.Throws<Exception>(() =>
             {
                 var player = game.GetPlayerById(fakePlayerId);
             });
+        }
 
+        [Test]
+        public void CreateGame_BasicGame_NotNull()
+        {
+            BasicGame basicGame = new BasicGame("", "", "", "Basic Level", new List<Player>());
+
+            Assert.IsNotNull(basicGame);
+        }
+
+        [Test]
+        public void CreateGame_EnhancedGame_NotNull()
+        {
+            EnhancedGame enhancedGame = new EnhancedGame("", "", "", "Enhanced Level", new List<Player>());
+
+            Assert.IsNotNull(enhancedGame);
+        }
+
+        [Test]
+        public void CreateGame_AdvancedGame_NotNull()
+        {
+            AdvancedGame advancedGame = new AdvancedGame("", "", "", "Advanced Level", new List<Player>());
+
+            Assert.IsNotNull(advancedGame);
+        }
+
+        [Test]
+        public void CreateGame_ExpertGame_NotNull()
+        {
+            ExpertGame expertGame = new ExpertGame("", "", "", "Expert Level", new List<Player>());
+
+            Assert.IsNotNull(expertGame);
         }
     }
 }

@@ -21,8 +21,8 @@ namespace UnitTests.ServerAppTests
         [Test]
         public void GetAvailableGames_ReturnsGameList()
         {
-            _serverManager.AddGameToServerList(new BasicGame());
-            _serverManager.AddGameToServerList(new BasicGame());
+            _serverManager.AddGameToServerList(new BasicGame("", "", "", "Basic Level", new List<Player>()));
+            _serverManager.AddGameToServerList(new BasicGame("", "", "", "Basic Level", new List<Player>()));
 
             List<Game> gameList = _serverManager.GetAvailableGames();
 
@@ -32,7 +32,7 @@ namespace UnitTests.ServerAppTests
         [Test]
         public async Task GetGameById_WhenIdExists_ReturnsGame()
         {
-            Game newGame = new BasicGame();
+            Game newGame = new BasicGame("", "", "", "Basic Level", new List<Player>());
             _serverManager.AddGameToServerList(newGame);
 
             Game game = await _serverManager.GetGameById(newGame.GameId);
