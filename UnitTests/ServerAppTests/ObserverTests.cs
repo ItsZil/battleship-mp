@@ -1,20 +1,14 @@
-﻿using NUnit.Framework;
-using Moq;
-using SharedLibrary.Interfaces;
+﻿using Moq;
 using SharedLibrary.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SharedLibrary.Factories;
 using SharedLibrary.Factories.GameLevel;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.SignalR;
 using ServerApp.Managers;
 using SharedLibrary.Models.Strategies;
-using SharedLibrary.Models.Request_Models;
-using ClientApp;
-using SharedLibrary.Models.Levels;
+using ServerApp;
 
-namespace ServerApp.Tests
+namespace UnitTests.ServerAppTests
 {
     [TestFixture]
     public class ObserverTests
@@ -29,7 +23,6 @@ namespace ServerApp.Tests
         private Mock<HubCallerContext> _mockHubCallerContext;
         private Mock<ISingleClientProxy> _mockClientProxy;
         private Mock<IHubCallerClients> _mockClients;
-
         
 
         [SetUp]

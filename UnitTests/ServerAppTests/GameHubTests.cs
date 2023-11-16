@@ -60,6 +60,28 @@ namespace UnitTests.ServerAppTests
         }
 
         [Test]
+        public async Task ClientConnected_Subscriber_ContainsOne()
+        {
+            _mockHubCallerContext.Setup(x => x.ConnectionId).Returns("testid");
+            _mockClients.Setup(m => m.Client("testid")).Returns(_mockClientProxy.Object);
+            _gameHub.Clients = _mockClients.Object;
+
+            await _gameHub.OnConnectedAsync();
+
+            Assert.That(_serverManager.Clients.Count == 1);
+        }
+
+        [Test]
+        public async Task NoClients_Unsubscribe_ContainsZero()
+        {
+            _mockHubCallerContext.Setup(x => x.ConnectionId).Returns("testid");
+
+            await _gameHub.OnDisconnectedAsync(null);
+
+            Assert.That(_serverManager.Clients.Count == 0);
+        }
+
+        [Test]
         public async Task CreateBasicGameServer_CorrectDetails_ReturnsGameId()
         {
             CreateGameDetails createGameDetails = new CreateGameDetails("", "", "", "Basic Level");

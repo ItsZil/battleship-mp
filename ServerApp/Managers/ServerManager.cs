@@ -18,7 +18,7 @@ namespace ServerApp.Managers
         private readonly AdvancedLevelGameFactory _advancedLevelGameFactory = new AdvancedLevelGameFactory();
         private readonly ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
 
-        private List<IServerObserver> Clients = new List<IServerObserver>();
+        public List<IServerObserver> Clients = new List<IServerObserver>();
 
         public static ServerManager Instance => _instance.Value;
 
