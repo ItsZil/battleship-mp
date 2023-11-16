@@ -44,8 +44,6 @@
             JoinGamePasswordLabel = new Components.CustomOutlinedLabel();
             createGameLevelComboBox = new ComboBox();
             BattleshipTitleLabel = new Components.CustomOutlinedLabel();
-            startEmptyGameButton = new Button();
-            startPlacedShipsGameButton = new Button();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -246,36 +244,12 @@
             BattleshipTitleLabel.Text = "Battleship";
             BattleshipTitleLabel.TextOutlineColor = Color.Black;
             // 
-            // startEmptyGameButton
-            // 
-            startEmptyGameButton.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
-            startEmptyGameButton.Location = new Point(687, 12);
-            startEmptyGameButton.Name = "startEmptyGameButton";
-            startEmptyGameButton.Size = new Size(123, 23);
-            startEmptyGameButton.TabIndex = 5;
-            startEmptyGameButton.Text = "Empty Expert Prot.";
-            startEmptyGameButton.UseVisualStyleBackColor = true;
-            startEmptyGameButton.Click += startEmptyGameButton_Click;
-            // 
-            // startPlacedShipsGameButton
-            // 
-            startPlacedShipsGameButton.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
-            startPlacedShipsGameButton.Location = new Point(687, 41);
-            startPlacedShipsGameButton.Name = "startPlacedShipsGameButton";
-            startPlacedShipsGameButton.Size = new Size(123, 23);
-            startPlacedShipsGameButton.TabIndex = 6;
-            startPlacedShipsGameButton.Text = "Ships Expert Prot.";
-            startPlacedShipsGameButton.UseVisualStyleBackColor = true;
-            startPlacedShipsGameButton.Click += startPlacedShipsGameButton_Click;
-            // 
             // StartForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(822, 471);
-            Controls.Add(startPlacedShipsGameButton);
-            Controls.Add(startEmptyGameButton);
             Controls.Add(BattleshipTitleLabel);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -303,7 +277,5 @@
         private Components.CustomOutlinedLabel CreateServerPasswordLabel;
         private Components.CustomOutlinedLabel JoinGamePasswordLabel;
         private ComboBox createGameLevelComboBox;
-        private Button startEmptyGameButton;
-        private Button startPlacedShipsGameButton;
     }
 }

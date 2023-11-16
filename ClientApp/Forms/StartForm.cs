@@ -1,7 +1,5 @@
 using ClientApp.Forms;
 using Newtonsoft.Json;
-using SharedLibrary.Models;
-using SharedLibrary.Models.Levels;
 using SharedLibrary.Models.Request_Models;
 
 namespace ClientApp
@@ -91,60 +89,6 @@ namespace ClientApp
 
             Hide();
             new GameForm(_client, joinGameDetails.GameId, joinGameDetails.LevelName).ShowDialog();
-            Show();
-        }
-
-        private void startEmptyGameButton_Click(object sender, EventArgs e)
-        {
-            Game game = null;
-            try
-            {
-                object gameObj = _client.SendMessage("CloneEmptyPrototype", _client.Id);
-                game = JsonConvert.DeserializeObject<ExpertGame>(gameObj.ToString());
-            }
-            catch (Exception ex)
-            {
-                string exceptionMessage = ex.Message;
-                string errorMessage = exceptionMessage.Substring(exceptionMessage.IndexOf("HubException:") + 14);
-                if (errorMessage != String.Empty)
-                {
-                    exceptionMessage = errorMessage;
-                }
-
-                MessageBox.Show(exceptionMessage, "Error cloning template!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            MessageBox.Show($"Succesfully cloned empty game template!\nName: {game.Name}, password: {game.Password}, game id: {game.GameId}");
-
-            Hide();
-            new GameForm(_client, game.GameId, game.LevelName).ShowDialog();
-            Show();
-        }
-
-        private void startPlacedShipsGameButton_Click(object sender, EventArgs e)
-        {
-            Game game = null;
-            try
-            {
-                object gameObj = _client.SendMessage("CloneShipPrototype", _client.Id);
-                game = JsonConvert.DeserializeObject<ExpertGame>(gameObj.ToString());
-            }
-            catch (Exception ex)
-            {
-                string exceptionMessage = ex.Message;
-                string errorMessage = exceptionMessage.Substring(exceptionMessage.IndexOf("HubException:") + 14);
-                if (errorMessage != String.Empty)
-                {
-                    exceptionMessage = errorMessage;
-                }
-
-                MessageBox.Show(exceptionMessage, "Error cloning template!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            MessageBox.Show($"Succesfully cloned ship game template!\nName: {game.Name}, password: {game.Password}, game id: {game.GameId}");
-
-            Hide();
-            new GameForm(_client, game.GameId, game.LevelName).ShowDialog();
             Show();
         }
     }
