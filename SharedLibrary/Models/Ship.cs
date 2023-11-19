@@ -6,6 +6,7 @@ namespace SharedLibrary.Models
     {
         public string PlayerId { get; set; }
         public int ShipId { get; set; }
+        public int Group { get; set; } = 1;
         public int Health { get; set; }
         public int MaxHealth { get; set; }
         public int CannonSize { get; set; }
@@ -39,8 +40,6 @@ namespace SharedLibrary.Models
         {
             return this.isStealth;
         }
-
-        
 
         #region Prototype pattern
         public IGamePrototype Clone()

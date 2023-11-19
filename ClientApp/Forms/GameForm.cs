@@ -19,6 +19,7 @@ namespace ClientApp.Forms
         private List<Obstacle> _obstacles = new List<Obstacle>();
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
+        private Dictionary<Ship, Button> _playerShipbuttons = new Dictionary<Ship, Button>();
 
         private ILogger _logger;
 
@@ -27,7 +28,7 @@ namespace ClientApp.Forms
         public GameForm(Client client, int gameId, string gameLevel)
         {
             InitializeComponent();
-            
+
             _client = client;
             _logger = new ServerLoggerAdapter(client);
 
@@ -54,6 +55,7 @@ namespace ClientApp.Forms
             }
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
+            shipGroupComboBox.SelectedIndex = 0;
             _client.RegisterGameFormEvents(this);
 
             RemoveUnallowedShipSizes();
@@ -78,7 +80,7 @@ namespace ClientApp.Forms
             List<Ship> ships = _game.GetAllShips();
             foreach (Ship ship in ships)
             {
-                foreach(Coordinate coord in ship.Coordinates)
+                foreach (Coordinate coord in ship.Coordinates)
                 {
                     if (coord.X == x && coord.Y == y)
                         return ship;
@@ -226,7 +228,9 @@ namespace ClientApp.Forms
                     .AddCannons(size)
                     .Get();
 
-                PlaceShip(gameBoard, shipCoordinates);
+                newShip.Group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+
+                PlaceShip(gameBoard, shipCoordinates, newShip);
 
                 coordinates.AddRange(shipCoordinates);
                 return newShip;
@@ -235,7 +239,7 @@ namespace ClientApp.Forms
             return null;
         }
 
-        private void PlaceShip(TableLayoutPanel gameBoard, List<Coordinate> shipCoordinates)
+        private void PlaceShip(TableLayoutPanel gameBoard, List<Coordinate> shipCoordinates, Ship ship = null)
         {
             foreach (var coordinate in shipCoordinates)
             {
@@ -245,6 +249,8 @@ namespace ClientApp.Forms
                 cellButton.Tag = coordinate.X + "_" + coordinate.Y;
 
                 gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
+                if (ship != null)
+                    _playerShipbuttons.Add(ship, cellButton);
             }
         }
 
@@ -255,7 +261,7 @@ namespace ClientApp.Forms
                 int currentX = isVertical ? x : x + i;
                 int currentY = isVertical ? y - i : y;
 
-                if (currentX < 1 || currentX > 6 || currentY < 1 || currentY > 6)
+                if (currentX < 0 || currentX > 6 || currentY < 1 || currentY > 6)
                 {
                     return false;
                 }
@@ -441,7 +447,7 @@ namespace ClientApp.Forms
                 cell.Click += new EventHandler(Cell_Click);
             }
 
-            foreach(Control cell in gameBoardLeft.Controls)
+            foreach (Control cell in gameBoardLeft.Controls)
             {
                 cell.Click += new EventHandler(LeftCell_Click);
             }
@@ -594,7 +600,7 @@ namespace ClientApp.Forms
 
                 Button cellButton = new();
                 cellButton.Enabled = false;
-                obstacle.coordinate = new Coordinate(x+1, y+1);
+                obstacle.coordinate = new Coordinate(x + 1, y + 1);
                 obstacle.ApplyStyle(cellButton);
 
                 _obstacles.Add(obstacle);
