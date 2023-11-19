@@ -20,14 +20,18 @@ namespace ClientApp.Forms
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
 
+        private Dictionary<Button, Ship> _playerShipbuttons = new Dictionary<Button, Ship>();
+        private List<ShipGroup> shipGroups = new List<ShipGroup>();
+
         private ILogger _logger;
 
         private bool isMyTurn = false;
+        private bool isPlayingPhase = false;
 
         public GameForm(Client client, int gameId, string gameLevel)
         {
             InitializeComponent();
-            
+
             _client = client;
             _logger = new ServerLoggerAdapter(client);
 
@@ -54,6 +58,7 @@ namespace ClientApp.Forms
             }
 
             Text = $"Game: {_game.Name} Game ID: {_game.GameId} Player ID: {client.Id}";
+            shipGroupComboBox.SelectedIndex = 0;
             _client.RegisterGameFormEvents(this);
 
             RemoveUnallowedShipSizes();
@@ -78,7 +83,7 @@ namespace ClientApp.Forms
             List<Ship> ships = _game.GetAllShips();
             foreach (Ship ship in ships)
             {
-                foreach(Coordinate coord in ship.Coordinates)
+                foreach (Coordinate coord in ship.Coordinates)
                 {
                     if (coord.X == x && coord.Y == y)
                         return ship;
@@ -120,9 +125,27 @@ namespace ClientApp.Forms
 
             if (shootModeRadioButton.Checked)
             {
-                object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
-                var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
-                UpdateBoard(hitDetails, isShooter: true);
+                Shot shot = new Shot(_game.GameId, _client.Id, x, y, 1);
+                if (shootAsGroupCheckBox.Checked)
+                {
+                    int group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                    ShipGroup shipGroup = shipGroups.First(shipGroup => shipGroup.Group == group);
+                    HitDetails hitDetails = shipGroup.SendShot(shot);
+
+                    if (!hitDetails.ShotHappened)
+                    {
+                        MessageBox.Show("Selected ship group has run out of shots!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    MessageBox.Show($"Remaining ship group ({shipGroup.Group}) shots: {shipGroup.RemainingShots}", $"Group update", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UpdateBoard(hitDetails, isShooter: true);
+                }
+                else
+                {
+                    object hitDetailsObj = await _client.SendMessageAsync("SendShot", shot);
+                    HitDetails hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
+                    UpdateBoard(hitDetails, isShooter: true);
+                }
             }
             else if (placeRadarModeButton.Checked)
             {
@@ -167,10 +190,17 @@ namespace ClientApp.Forms
             if (!isServerReady)
             {
                 MessageBox.Show("Waiting for other player to ready up...");
-
-                placeShipButton.Enabled = false;
-                readyButton.Enabled = false;
             }
+            placeShipButton.Enabled = false;
+            readyButton.Enabled = false;
+            placeShipButton.Visible = false;
+            readyButton.Visible = false;
+            AvailableShipsLabel.Visible = false;
+            EnterStartingCoordsLabel.Visible = false;
+            shipPlacementTypeComboBox.Visible = false;
+            textBox1.Visible = false;
+            textBox2.Visible = false;
+            RemoveInvalidShipGroups();
         }
 
         private void placeShipButton_Click(object sender, EventArgs e)
@@ -226,7 +256,19 @@ namespace ClientApp.Forms
                     .AddCannons(size)
                     .Get();
 
-                PlaceShip(gameBoard, shipCoordinates);
+                newShip.Group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                if (shipGroups.Any(shipGroup => shipGroup.Group == newShip.Group))
+                {
+                    shipGroups.First(shipGroup => shipGroup.Group == newShip.Group).Add(newShip);
+                }
+                else
+                {
+                    ShipGroup shipGroup = new ShipGroup(newShip.Group, _client);
+                    shipGroup.Add(newShip);
+                    shipGroups.Add(shipGroup);
+                }
+
+                PlaceShip(gameBoard, shipCoordinates, newShip);
 
                 coordinates.AddRange(shipCoordinates);
                 return newShip;
@@ -235,7 +277,7 @@ namespace ClientApp.Forms
             return null;
         }
 
-        private void PlaceShip(TableLayoutPanel gameBoard, List<Coordinate> shipCoordinates)
+        private void PlaceShip(TableLayoutPanel gameBoard, List<Coordinate> shipCoordinates, Ship ship = null)
         {
             foreach (var coordinate in shipCoordinates)
             {
@@ -245,6 +287,8 @@ namespace ClientApp.Forms
                 cellButton.Tag = coordinate.X + "_" + coordinate.Y;
 
                 gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
+                if (ship != null)
+                    _playerShipbuttons.Add(cellButton, ship);
             }
         }
 
@@ -255,7 +299,7 @@ namespace ClientApp.Forms
                 int currentX = isVertical ? x : x + i;
                 int currentY = isVertical ? y - i : y;
 
-                if (currentX < 1 || currentX > 6 || currentY < 1 || currentY > 6)
+                if (currentX < 0 || currentX > 6 || currentY < 1 || currentY > 6)
                 {
                     return false;
                 }
@@ -393,6 +437,14 @@ namespace ClientApp.Forms
                     remainingItemTableLayoutPanel.RowCount--;
                 }));
             }
+
+            shootAsGroupCheckBox.Invoke(new MethodInvoker(delegate
+            {
+                shootAsGroupCheckBox.Visible = true;
+                shootAsGroupCheckBox.Enabled = true;
+                shootAsGroupLabel.Visible = true;
+                shootAsGroupLabel.Enabled = true;
+            }));
         }
 
         public void InitializeBoard(List<Ship> otherPlayerShips, string firstTurnPlayerId)
@@ -416,6 +468,7 @@ namespace ClientApp.Forms
                 PlaceShip(gameBoardRight, ship.Coordinates);
             }
             FillRemainingCells();
+            isPlayingPhase = true;
         }
 
         private void FillRemainingCells()
@@ -441,7 +494,7 @@ namespace ClientApp.Forms
                 cell.Click += new EventHandler(Cell_Click);
             }
 
-            foreach(Control cell in gameBoardLeft.Controls)
+            foreach (Control cell in gameBoardLeft.Controls)
             {
                 cell.Click += new EventHandler(LeftCell_Click);
             }
@@ -470,13 +523,13 @@ namespace ClientApp.Forms
             {
                 if (!isShooter)
                 {
-                    message = "You were hit!";
+                    message = $"You were hit for {hitDetails.Damage} damage!";
                     caption = "Hit!";
                     icon = MessageBoxIcon.Exclamation;
                 }
                 else
                 {
-                    message = "You hit the enemy!";
+                    message = $"You hit the enemy for {hitDetails.Damage} damage!";
                     caption = "Hit!";
                 }
                 cell.BackColor = ButtonColors.Hit;
@@ -594,11 +647,65 @@ namespace ClientApp.Forms
 
                 Button cellButton = new();
                 cellButton.Enabled = false;
-                obstacle.coordinate = new Coordinate(x+1, y+1);
+                obstacle.coordinate = new Coordinate(x + 1, y + 1);
                 obstacle.ApplyStyle(cellButton);
 
                 _obstacles.Add(obstacle);
                 gameBoardLeft.Invoke(new MethodInvoker(delegate { gameBoardLeft.Controls.Add(cellButton, x, y); }));
+            }
+        }
+
+        private void RemoveInvalidShipGroups()
+        {
+            List<int> groups = _ships.Select(ship => ship.Group).Distinct().ToList();
+            for (int i = shipGroupComboBox.Items.Count - 1; i >= 0; i--)
+            {
+                if (!groups.Contains(int.Parse(shipGroupComboBox.Items[i].ToString())))
+                {
+                    shipGroupComboBox.Items.RemoveAt(i);
+                }
+            }
+        }
+
+        private void shipGroupComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isPlayingPhase)
+            {
+                int group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                SetGroupButtonBorders(group);
+            }
+        }
+
+        private void shootAsGroupCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (shootAsGroupCheckBox.Checked)
+            {
+                shipGroupComboBox.Enabled = true;
+                int group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                SetGroupButtonBorders(group);
+            }
+            else
+            {
+                shipGroupComboBox.Enabled = false;
+                SetGroupButtonBorders(0); // Turn off all borders
+            }
+        }
+
+        private void SetGroupButtonBorders(int group)
+        {
+            foreach (var shipButton in _playerShipbuttons)
+            {
+                if (shipButton.Value.Group == group)
+                {
+                    shipButton.Key.FlatStyle = FlatStyle.Flat;
+                    shipButton.Key.FlatAppearance.BorderColor = Color.SeaGreen;
+                    shipButton.Key.FlatAppearance.BorderSize = 2;
+                }
+                else
+                {
+                    shipButton.Key.FlatStyle = FlatStyle.Standard;
+                    shipButton.Key.FlatAppearance.BorderSize = 0;
+                }
             }
         }
     }

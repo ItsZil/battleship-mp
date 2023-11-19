@@ -1,10 +1,5 @@
 ﻿using SharedLibrary.Interfaces;
 using SharedLibrary.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharedLibrary.Models.Strategies
 {
@@ -22,8 +17,8 @@ namespace SharedLibrary.Models.Strategies
                 {
                     if (coordinate.X == shot.X && coordinate.Y == shot.Y)
                     {
-                        ship.Health--;
-                        if (ship.Health == 0)
+                        ship.Health -= shot.Damage;
+                        if (ship.Health <= 0)
                             hitDetails.Sunk = true;
                         else
                             hitDetails.Hit = true;
