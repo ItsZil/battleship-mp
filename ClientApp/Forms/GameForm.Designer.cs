@@ -431,6 +431,7 @@
             shootAsGroupCheckBox.TabIndex = 56;
             shootAsGroupCheckBox.UseVisualStyleBackColor = true;
             shootAsGroupCheckBox.Visible = false;
+            shootAsGroupCheckBox.CheckedChanged += shootAsGroupCheckBox_CheckedChanged;
             // 
             // shootAsGroupLabel
             // 

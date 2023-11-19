@@ -19,7 +19,9 @@ namespace ClientApp.Forms
         private List<Obstacle> _obstacles = new List<Obstacle>();
         private List<Coordinate> _coordinatesLeft = new List<Coordinate>(); // Left side game board, current player
         private List<Coordinate> _coordinatesRight = new List<Coordinate>(); // Right side game board, other player
+
         private Dictionary<Button, Ship> _playerShipbuttons = new Dictionary<Button, Ship>();
+        private List<ShipGroup> shipGroups = new List<ShipGroup>();
 
         private ILogger _logger;
 
@@ -123,9 +125,27 @@ namespace ClientApp.Forms
 
             if (shootModeRadioButton.Checked)
             {
-                object hitDetailsObj = await _client.SendMessageAsync("SendShot", new Shot(_game.GameId, _client.Id, x, y, 1));
-                var hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
-                UpdateBoard(hitDetails, isShooter: true);
+                Shot shot = new Shot(_game.GameId, _client.Id, x, y, 1);
+                if (shootAsGroupCheckBox.Checked)
+                {
+                    int group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                    ShipGroup shipGroup = shipGroups.First(shipGroup => shipGroup.Group == group);
+                    HitDetails hitDetails = shipGroup.SendShot(shot);
+
+                    if (!hitDetails.ShotHappened)
+                    {
+                        MessageBox.Show("Selected ship group has run out of shots!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    MessageBox.Show($"Remaining ship group ({shipGroup.Group}) shots: {shipGroup.RemainingShots}", $"Group update", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UpdateBoard(hitDetails, isShooter: true);
+                }
+                else
+                {
+                    object hitDetailsObj = await _client.SendMessageAsync("SendShot", shot);
+                    HitDetails hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
+                    UpdateBoard(hitDetails, isShooter: true);
+                }
             }
             else if (placeRadarModeButton.Checked)
             {
@@ -237,6 +257,16 @@ namespace ClientApp.Forms
                     .Get();
 
                 newShip.Group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                if (shipGroups.Any(shipGroup => shipGroup.Group == newShip.Group))
+                {
+                    shipGroups.First(shipGroup => shipGroup.Group == newShip.Group).Add(newShip);
+                }
+                else
+                {
+                    ShipGroup shipGroup = new ShipGroup(newShip.Group, _client);
+                    shipGroup.Add(newShip);
+                    shipGroups.Add(shipGroup);
+                }
 
                 PlaceShip(gameBoard, shipCoordinates, newShip);
 
@@ -493,13 +523,13 @@ namespace ClientApp.Forms
             {
                 if (!isShooter)
                 {
-                    message = "You were hit!";
+                    message = $"You were hit for {hitDetails.Damage} damage!";
                     caption = "Hit!";
                     icon = MessageBoxIcon.Exclamation;
                 }
                 else
                 {
-                    message = "You hit the enemy!";
+                    message = $"You hit the enemy for {hitDetails.Damage} damage!";
                     caption = "Hit!";
                 }
                 cell.BackColor = ButtonColors.Hit;
@@ -642,19 +672,39 @@ namespace ClientApp.Forms
             if (isPlayingPhase)
             {
                 int group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
-                foreach (var shipButton in _playerShipbuttons)
+                SetGroupButtonBorders(group);
+            }
+        }
+
+        private void shootAsGroupCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (shootAsGroupCheckBox.Checked)
+            {
+                shipGroupComboBox.Enabled = true;
+                int group = int.Parse(shipGroupComboBox.SelectedItem.ToString());
+                SetGroupButtonBorders(group);
+            }
+            else
+            {
+                shipGroupComboBox.Enabled = false;
+                SetGroupButtonBorders(0); // Turn off all borders
+            }
+        }
+
+        private void SetGroupButtonBorders(int group)
+        {
+            foreach (var shipButton in _playerShipbuttons)
+            {
+                if (shipButton.Value.Group == group)
                 {
-                    if (shipButton.Value.Group == group)
-                    {
-                        shipButton.Key.FlatStyle = FlatStyle.Flat;
-                        shipButton.Key.FlatAppearance.BorderColor = Color.SeaGreen;
-                        shipButton.Key.FlatAppearance.BorderSize = 2;
-                    }
-                    else
-                    {
-                        shipButton.Key.FlatStyle = FlatStyle.Standard;
-                        shipButton.Key.FlatAppearance.BorderSize = 0;
-                    }
+                    shipButton.Key.FlatStyle = FlatStyle.Flat;
+                    shipButton.Key.FlatAppearance.BorderColor = Color.SeaGreen;
+                    shipButton.Key.FlatAppearance.BorderSize = 2;
+                }
+                else
+                {
+                    shipButton.Key.FlatStyle = FlatStyle.Standard;
+                    shipButton.Key.FlatAppearance.BorderSize = 0;
                 }
             }
         }
