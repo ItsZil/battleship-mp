@@ -10,6 +10,7 @@ namespace SharedLibrary.Models
         public int Health { get; set; }
         public int MaxHealth { get; set; }
         public int CannonSize { get; set; }
+        public int CannonAmmo { get; set; } = 2;
         
         public List<Coordinate> Coordinates { get; set; } = new List<Coordinate>();
         public bool IsVertical { get; set; }

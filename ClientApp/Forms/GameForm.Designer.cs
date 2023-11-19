@@ -54,6 +54,8 @@
             EnterStartingCoordsLabel = new Components.CustomOutlinedLabel();
             shipGroupComboBox = new ComboBox();
             groupLabel = new Components.CustomOutlinedLabel();
+            shootAsGroupCheckBox = new CheckBox();
+            shootAsGroupLabel = new Components.CustomOutlinedLabel();
             flowLayoutPanel1.SuspendLayout();
             interactionModeTableLayoutPanel.SuspendLayout();
             remainingItemTableLayoutPanel.SuspendLayout();
@@ -110,10 +112,10 @@
             // readyButton
             // 
             readyButton.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            readyButton.Location = new Point(316, 298);
+            readyButton.Location = new Point(329, 298);
             readyButton.Margin = new Padding(3, 2, 3, 2);
             readyButton.Name = "readyButton";
-            readyButton.Size = new Size(168, 22);
+            readyButton.Size = new Size(165, 22);
             readyButton.TabIndex = 39;
             readyButton.Text = "Ready!";
             readyButton.UseVisualStyleBackColor = true;
@@ -403,6 +405,7 @@
             shipGroupComboBox.Name = "shipGroupComboBox";
             shipGroupComboBox.Size = new Size(44, 23);
             shipGroupComboBox.TabIndex = 54;
+            shipGroupComboBox.SelectedIndexChanged += shipGroupComboBox_SelectedIndexChanged;
             // 
             // groupLabel
             // 
@@ -418,6 +421,33 @@
             groupLabel.TextAlign = ContentAlignment.MiddleCenter;
             groupLabel.TextOutlineColor = Color.Black;
             // 
+            // shootAsGroupCheckBox
+            // 
+            shootAsGroupCheckBox.AutoSize = true;
+            shootAsGroupCheckBox.Enabled = false;
+            shootAsGroupCheckBox.Location = new Point(109, 320);
+            shootAsGroupCheckBox.Name = "shootAsGroupCheckBox";
+            shootAsGroupCheckBox.Size = new Size(15, 14);
+            shootAsGroupCheckBox.TabIndex = 56;
+            shootAsGroupCheckBox.UseVisualStyleBackColor = true;
+            shootAsGroupCheckBox.Visible = false;
+            // 
+            // shootAsGroupLabel
+            // 
+            shootAsGroupLabel.AutoSize = true;
+            shootAsGroupLabel.BackColor = Color.Transparent;
+            shootAsGroupLabel.Enabled = false;
+            shootAsGroupLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            shootAsGroupLabel.ForeColor = Color.Coral;
+            shootAsGroupLabel.Location = new Point(72, 298);
+            shootAsGroupLabel.Name = "shootAsGroupLabel";
+            shootAsGroupLabel.Size = new Size(98, 15);
+            shootAsGroupLabel.TabIndex = 57;
+            shootAsGroupLabel.Text = "Shoot as Group::";
+            shootAsGroupLabel.TextAlign = ContentAlignment.MiddleCenter;
+            shootAsGroupLabel.TextOutlineColor = Color.Black;
+            shootAsGroupLabel.Visible = false;
+            // 
             // GameForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -425,6 +455,8 @@
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(853, 410);
+            Controls.Add(shootAsGroupLabel);
+            Controls.Add(shootAsGroupCheckBox);
             Controls.Add(groupLabel);
             Controls.Add(shipGroupComboBox);
             Controls.Add(EnterStartingCoordsLabel);
@@ -486,5 +518,7 @@
         private Components.CustomOutlinedLabel turnIndicatorLabel;
         private ComboBox shipGroupComboBox;
         private Components.CustomOutlinedLabel groupLabel;
+        private CheckBox shootAsGroupCheckBox;
+        private Components.CustomOutlinedLabel shootAsGroupLabel;
     }
 }
