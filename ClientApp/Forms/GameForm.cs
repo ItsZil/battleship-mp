@@ -285,7 +285,9 @@ namespace ClientApp.Forms
                 cellButton.Text = "";
                 cellButton.BackColor = ButtonColors.Ship; // TODO: Change to ButtonColors.Empty when not testing (unless gameBoard is left)
                 cellButton.Tag = coordinate.X + "_" + coordinate.Y;
-
+                cellButton.Margin = new Padding(0);
+                cellButton.Size = new Size(50, 50);
+                
                 gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
                 if (ship != null)
                     _playerShipbuttons.Add(cellButton, ship);
