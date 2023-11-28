@@ -5,7 +5,8 @@ using SharedLibrary.Structs;
 using SharedLibrary.Models.Builders;
 using SharedLibrary.Models.Levels;
 using SharedLibrary.Interfaces;
-using SharedLibrary.Models.Obstacles;
+using ClientApp.Obstacles.Bridge;
+using ClientApp.Obstacles.Flyweigth;
 
 namespace ClientApp.Forms
 {
@@ -618,6 +619,7 @@ namespace ClientApp.Forms
         private void GenerateRandomObstacles()
         {
             Random random = new();
+            ObstacleImageFactory imageFactory = new();
 
             int totalObstacles = random.Next(1, 5);
 
@@ -640,15 +642,21 @@ namespace ClientApp.Forms
 
                 if (random.Next(2) == 0)
                 {
-                    obstacle = new IceBerg(obstacleColor);
+                    IObstacleImage icebergImage = imageFactory.GetObstacleImage("Images/iceberg.jpg");
+                    obstacle = new IceBerg(obstacleColor, icebergImage);
                 }
                 else
                 {
-                    obstacle = new Island(obstacleColor);
+                    IObstacleImage islandImage = imageFactory.GetObstacleImage("Images/island.jpg");
+                    obstacle = new Island(obstacleColor, islandImage);
                 }
 
-                Button cellButton = new();
-                cellButton.Enabled = false;
+                Button cellButton = new()
+                {
+                    Enabled = false,
+                    Size = new Size(50, 50),
+                    Margin = new Padding(0)
+                };
                 obstacle.coordinate = new Coordinate(x + 1, y + 1);
                 obstacle.ApplyStyle(cellButton);
 
