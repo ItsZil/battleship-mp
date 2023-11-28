@@ -1,4 +1,4 @@
-﻿namespace SharedLibrary.Models.Obstacles
+﻿namespace ClientApp.Obstacles.Bridge
 {
     public abstract class ObstacleColor
     {

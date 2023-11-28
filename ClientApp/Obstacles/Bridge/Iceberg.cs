@@ -1,17 +1,18 @@
-﻿namespace SharedLibrary.Models.Obstacles
+﻿using ClientApp.Obstacles.Flyweigth;
+using SharedLibrary.Models;
+
+namespace ClientApp.Obstacles.Bridge
 {
     public class IceBerg : Obstacle
     {
-        public override string name { get; set; } = "Iceberg";
         public override Coordinate coordinate { get; set; }
-
-        public IceBerg(ObstacleColor color) : base(color)
+        public IceBerg(ObstacleColor color, IObstacleImage image) : base(color, image)
         {
         }
 
         public override void ApplyStyle(Button button)
         {
-            button.Text = name;
+            button.BackgroundImage = image.GetImage();
             color.ColorObstacle(button);
         }
     }
