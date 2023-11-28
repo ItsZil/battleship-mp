@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using ClientApp.Handlers;
 using SharedLibrary.Interfaces;
 using SharedLibrary.Models;
 using SharedLibrary.Structs;
@@ -42,17 +42,17 @@ namespace ClientApp
             int groupDamage = GetGroupDamage();
             if (groupDamage <= 0 || RemainingShots <= 0)
             {
-                return new HitDetails
-                {
-                    ShotHappened = false
-                };
+                return new HitDetails { ShotHappened = false };
             }
             shot.Damage = groupDamage;
             RemainingShots--;
 
-            object hitDetailsObj = _client.SendMessage("SendShot", shot);
-            HitDetails hitDetails = JsonConvert.DeserializeObject<HitDetails>(hitDetailsObj.ToString());
-            return hitDetails;
+            ShotHandler singleShotHandler = new SingleShotHandler();
+            ShotHandler groupShotHandler = new GroupShotHandler();
+            singleShotHandler.SetNextHandler(groupShotHandler);
+
+            // Start the chain
+            return singleShotHandler.HandleShot(shot, _client);
         }
     }
 }
