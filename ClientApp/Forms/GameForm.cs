@@ -34,7 +34,7 @@ namespace ClientApp.Forms
             InitializeComponent();
 
             _client = client;
-            _logger = new ServerLoggerAdapter(client);
+            _logger = new ServerLoggerProxy(client);
 
             this.HandleCreated += GameForm_HandleCreated;
 
@@ -718,5 +718,6 @@ namespace ClientApp.Forms
                 }
             }
         }
+
     }
 }
