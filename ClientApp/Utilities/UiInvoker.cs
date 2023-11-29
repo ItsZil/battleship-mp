@@ -1,4 +1,5 @@
-﻿using SharedLibrary.Interfaces;
+﻿using ClientApp.Interfaces;
+using SharedLibrary.Interfaces;
 
 namespace ClientApp
 {

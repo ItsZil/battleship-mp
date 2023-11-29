@@ -1,4 +1,5 @@
-﻿namespace ClientApp.Interfaces
+﻿
+namespace ClientApp.Interfaces
 {
     public interface IMessageBox
     {
