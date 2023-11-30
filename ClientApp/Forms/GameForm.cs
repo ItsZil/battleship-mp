@@ -7,6 +7,8 @@ using SharedLibrary.Models.Levels;
 using SharedLibrary.Interfaces;
 using ClientApp.Obstacles.Bridge;
 using ClientApp.Obstacles.Flyweigth;
+using ClientApp.State;
+using ClientApp.State.States;
 
 namespace ClientApp.Forms
 {
@@ -14,6 +16,7 @@ namespace ClientApp.Forms
     {
         private static Client _client;
         private static Game _game;
+        private readonly UIManager uiManager = new();
 
         private Radar _radar;
         private List<Ship> _ships = new List<Ship>();
@@ -112,7 +115,6 @@ namespace ClientApp.Forms
 
         }
 
-
         private async void Cell_Click(object sender, EventArgs e)
         {
             if (!isMyTurn)
@@ -148,7 +150,7 @@ namespace ClientApp.Forms
                     UpdateBoard(hitDetails, isShooter: true);
                 }
             }
-            else if (placeRadarModeButton.Checked)
+            else if (placeRadarModeRadioButton.Checked)
             {
                 object allGameShipsObj = await _client.SendMessageAsync("GetAllGameShips", _game.GameId);
                 var allGameShips = JsonConvert.DeserializeObject<List<Ship>>(allGameShipsObj.ToString());
@@ -288,7 +290,7 @@ namespace ClientApp.Forms
                 cellButton.Tag = coordinate.X + "_" + coordinate.Y;
                 cellButton.Margin = new Padding(0);
                 cellButton.Size = new Size(50, 50);
-                
+
                 gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
                 if (ship != null)
                     _playerShipbuttons.Add(cellButton, ship);
@@ -418,6 +420,9 @@ namespace ClientApp.Forms
                 interactionModeTableLayoutPanel.Invoke(new MethodInvoker(delegate
                 {
                     interactionModeTableLayoutPanel.Visible = true;
+                    shootModeRadioButton.CheckedChanged += RadioButton_CheckedChanged;
+                    moveShipModeRadioButton.CheckedChanged += RadioButton_CheckedChanged;
+                    placeRadarModeRadioButton.CheckedChanged += RadioButton_CheckedChanged;
                 }));
 
                 remainingItemTableLayoutPanel.Invoke(new MethodInvoker(delegate
@@ -429,10 +434,10 @@ namespace ClientApp.Forms
             if (!_game.SupportsRadars)
             {
                 // If radars are not allowed, remove the radar button as well as the count.
-                placeRadarModeButton.Invoke(new MethodInvoker(delegate
+                placeRadarModeRadioButton.Invoke(new MethodInvoker(delegate
                 {
-                    placeRadarModeButton.Enabled = false;
-                    placeRadarModeButton.Visible = false;
+                    placeRadarModeRadioButton.Enabled = false;
+                    placeRadarModeRadioButton.Visible = false;
                     interactionModeTableLayoutPanel.RowCount--;
 
                     remainingRadarTextLabel.Visible = false;
@@ -716,6 +721,74 @@ namespace ClientApp.Forms
                     shipButton.Key.FlatStyle = FlatStyle.Standard;
                     shipButton.Key.FlatAppearance.BorderSize = 0;
                 }
+            }
+        }
+
+        public void RadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            List<Control> enableList = new();
+            List<Control> disableList = new();
+
+            if (sender is RadioButton radioButton && radioButton.Checked)
+            {
+                switch (radioButton.Name)
+                {
+                    case "moveShipModeRadioButton":
+                        enableList = new List<Control>
+                        {
+                            remainingMoveShipsTextLabel,
+                            remainingMoveShipsCountLabel
+                        };
+                        disableList = new List<Control>
+                        {
+                            remainingRadarTextLabel,
+                            remainingRadarCountLabel,
+                            shootAsGroupLabel,
+                            groupLabel,
+                            shipGroupComboBox,
+                            shootAsGroupCheckBox
+                        };
+                        uiManager.SetState(new MoveActionState());
+                        break;
+
+                    case "shootModeRadioButton":
+                        enableList = new List<Control>
+                        {
+                            shootAsGroupLabel,
+                            groupLabel,
+                            shipGroupComboBox,
+                            shootAsGroupCheckBox
+                        };
+                        disableList = new List<Control>
+                        {
+                            remainingMoveShipsTextLabel,
+                            remainingMoveShipsCountLabel,
+                            remainingRadarTextLabel,
+                            remainingRadarCountLabel
+                        };
+                        uiManager.SetState(new ShootActionState());
+                        break;
+
+                    case "placeRadarModeRadioButton":
+                        enableList = new List<Control>
+                        {
+                            remainingRadarTextLabel,
+                            remainingRadarCountLabel
+                        };
+                        disableList = new List<Control>
+                        {
+                            remainingMoveShipsTextLabel,
+                            remainingMoveShipsCountLabel,
+                            shootAsGroupLabel,
+                            groupLabel,
+                            shipGroupComboBox,
+                            shootAsGroupCheckBox
+                        };
+                        uiManager.SetState(new PlaceRadarActionState());
+                        break;
+                }
+                uiManager.Disable(disableList);
+                uiManager.Enable(enableList);
             }
         }
     }
