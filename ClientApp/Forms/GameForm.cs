@@ -9,6 +9,7 @@ using ClientApp.Obstacles.Bridge;
 using ClientApp.Obstacles.Flyweigth;
 using ClientApp.State;
 using ClientApp.State.States;
+using ClientApp.Memento;
 
 namespace ClientApp.Forms
 {
@@ -31,6 +32,8 @@ namespace ClientApp.Forms
 
         private bool isMyTurn = false;
         private bool isPlayingPhase = false;
+
+        private ShipPlacementCaretaker _shipPlacementCaretaker = new ShipPlacementCaretaker();
 
         public GameForm(Client client, int gameId, string gameLevel)
         {
@@ -234,6 +237,8 @@ namespace ClientApp.Forms
 
             if (newShip != null)
             {
+                // Save current state before placing new ship
+                _shipPlacementCaretaker.SaveState(new ShipPlacementMemento(_ships));
                 _ships.Add(newShip);
                 RemoveSelectedShipFromComboBox(); // TODO: allow multiple ships of same type
             }
@@ -293,7 +298,9 @@ namespace ClientApp.Forms
 
                 gameBoard.Invoke(new MethodInvoker(delegate { gameBoard.Controls.Add(cellButton, coordinate.X, coordinate.Y); }));
                 if (ship != null)
+                {
                     _playerShipbuttons.Add(cellButton, ship);
+                }
             }
         }
 
@@ -320,6 +327,24 @@ namespace ClientApp.Forms
                 }
             }
             return true;
+        }
+
+        private void RemoveShip(TableLayoutPanel gameBoard, List<Coordinate> shipCoordinates)
+        {
+            foreach (var coordinate in shipCoordinates)
+            {
+                foreach (Control cell in gameBoard.Controls)
+                {
+                    if (cell.Tag != null && cell.Tag.ToString() == coordinate.X + "_" + coordinate.Y)
+                    {
+                        gameBoard.Controls.Remove(cell);
+                        cell.Dispose();
+                        break;
+                    }
+                }
+            }
+            var shipButton = _playerShipbuttons.First(shipButton => shipButton.Value.Coordinates == shipCoordinates).Key;
+            _playerShipbuttons.Remove(shipButton);
         }
 
         private List<Coordinate> CreateShipCoordinates(int size, int x, int y, bool isVertical)
@@ -468,6 +493,8 @@ namespace ClientApp.Forms
             // Because this method is called from another thread (inside Client), we need to use Invoke to access UI elements.
             placeShipButton.Invoke(new MethodInvoker(delegate { placeShipButton.Enabled = false; }));
             readyButton.Invoke(new MethodInvoker(delegate { readyButton.Visible = false; }));
+            shipPlacementMemento_Undo.Invoke(new MethodInvoker(delegate { shipPlacementMemento_Undo.Visible = false; }));
+            shipPlacementMemento_Redo.Invoke(new MethodInvoker(delegate { shipPlacementMemento_Redo.Visible = false; }));
             SetNextTurn(firstTurnPlayerId);
 
             // Populate gameBoardRight (other player's board)
@@ -789,6 +816,30 @@ namespace ClientApp.Forms
                 }
                 uiManager.Disable(disableList);
                 uiManager.Enable(enableList);
+            }
+        }
+
+        private void shipPlacementMemento_Undo_Click(object sender, EventArgs e)
+        {
+            ShipPlacementMemento memento = _shipPlacementCaretaker.Undo(_ships);
+            if (memento != null)
+            {
+                // Restore state from memento
+                var lastShip = _ships.Last();
+                _ships = memento.Ships;
+
+                RemoveShip(gameBoardLeft, lastShip.Coordinates);
+            }
+        }
+
+        private void shipPlacementMemento_Redo_Click(object sender, EventArgs e)
+        {
+            ShipPlacementMemento memento = _shipPlacementCaretaker.Redo(_ships);
+            if (memento != null)
+            {
+                // Restore state from memento
+                _ships = memento.Ships;
+                PlaceShip(gameBoardLeft, _ships.Last().Coordinates, _ships.Last());
             }
         }
     }
