@@ -791,5 +791,15 @@ namespace ClientApp.Forms
                 uiManager.Enable(enableList);
             }
         }
+
+        private void shipPlacementMemento_Undo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void shipPlacementMemento_Redo_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

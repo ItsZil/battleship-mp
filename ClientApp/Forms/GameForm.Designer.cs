@@ -56,6 +56,8 @@
             groupLabel = new Components.CustomOutlinedLabel();
             shootAsGroupCheckBox = new CheckBox();
             shootAsGroupLabel = new Components.CustomOutlinedLabel();
+            shipPlacementMemento_Undo = new Button();
+            shipPlacementMemento_Redo = new Button();
             flowLayoutPanel1.SuspendLayout();
             interactionModeTableLayoutPanel.SuspendLayout();
             remainingItemTableLayoutPanel.SuspendLayout();
@@ -72,7 +74,8 @@
             gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
             gameBoardLeft.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
             gameBoardLeft.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            gameBoardLeft.Location = new Point(106, 93);
+            gameBoardLeft.Location = new Point(93, 70);
+            gameBoardLeft.Margin = new Padding(3, 2, 3, 2);
             gameBoardLeft.Name = "gameBoardLeft";
             gameBoardLeft.RowCount = 6;
             gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
@@ -81,7 +84,7 @@
             gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             gameBoardLeft.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoardLeft.Size = new Size(277, 268);
+            gameBoardLeft.Size = new Size(242, 201);
             gameBoardLeft.TabIndex = 0;
             // 
             // gameBoardRight
@@ -95,7 +98,8 @@
             gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
             gameBoardRight.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6666679F));
             gameBoardRight.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            gameBoardRight.Location = new Point(557, 93);
+            gameBoardRight.Location = new Point(487, 70);
+            gameBoardRight.Margin = new Padding(3, 2, 3, 2);
             gameBoardRight.Name = "gameBoardRight";
             gameBoardRight.RowCount = 6;
             gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
@@ -104,15 +108,16 @@
             gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             gameBoardRight.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
-            gameBoardRight.Size = new Size(282, 268);
+            gameBoardRight.Size = new Size(247, 201);
             gameBoardRight.TabIndex = 36;
             // 
             // readyButton
             // 
             readyButton.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            readyButton.Location = new Point(376, 397);
+            readyButton.Location = new Point(329, 298);
+            readyButton.Margin = new Padding(3, 2, 3, 2);
             readyButton.Name = "readyButton";
-            readyButton.Size = new Size(189, 29);
+            readyButton.Size = new Size(165, 22);
             readyButton.TabIndex = 39;
             readyButton.Text = "Ready!";
             readyButton.UseVisualStyleBackColor = true;
@@ -123,35 +128,39 @@
             shipPlacementTypeComboBox.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
             shipPlacementTypeComboBox.FormattingEnabled = true;
             shipPlacementTypeComboBox.Items.AddRange(new object[] { "One piece", "Two piece (horizontal)", "Two piece (vertical)", "Three piece (vertical)" });
-            shipPlacementTypeComboBox.Location = new Point(37, 421);
+            shipPlacementTypeComboBox.Location = new Point(32, 316);
+            shipPlacementTypeComboBox.Margin = new Padding(3, 2, 3, 2);
             shipPlacementTypeComboBox.Name = "shipPlacementTypeComboBox";
-            shipPlacementTypeComboBox.Size = new Size(151, 26);
+            shipPlacementTypeComboBox.Size = new Size(133, 22);
             shipPlacementTypeComboBox.TabIndex = 41;
             // 
             // textBox1
             // 
             textBox1.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            textBox1.Location = new Point(37, 492);
+            textBox1.Location = new Point(32, 369);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "X";
-            textBox1.Size = new Size(27, 26);
+            textBox1.Size = new Size(24, 22);
             textBox1.TabIndex = 42;
             // 
             // textBox2
             // 
             textBox2.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            textBox2.Location = new Point(82, 492);
+            textBox2.Location = new Point(72, 369);
+            textBox2.Margin = new Padding(3, 2, 3, 2);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "Y";
-            textBox2.Size = new Size(25, 26);
+            textBox2.Size = new Size(22, 22);
             textBox2.TabIndex = 43;
             // 
             // placeShipButton
             // 
             placeShipButton.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            placeShipButton.Location = new Point(139, 491);
+            placeShipButton.Location = new Point(122, 368);
+            placeShipButton.Margin = new Padding(3, 2, 3, 2);
             placeShipButton.Name = "placeShipButton";
-            placeShipButton.Size = new Size(94, 29);
+            placeShipButton.Size = new Size(82, 22);
             placeShipButton.TabIndex = 45;
             placeShipButton.Text = "Place!";
             placeShipButton.UseVisualStyleBackColor = true;
@@ -162,10 +171,9 @@
             flowLayoutPanel1.AutoSize = true;
             flowLayoutPanel1.BackColor = Color.Transparent;
             flowLayoutPanel1.Controls.Add(turnIndicatorLabel);
-            flowLayoutPanel1.Location = new Point(438, 116);
-            flowLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
+            flowLayoutPanel1.Location = new Point(383, 87);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(97, 96);
+            flowLayoutPanel1.Size = new Size(85, 72);
             flowLayoutPanel1.TabIndex = 47;
             // 
             // turnIndicatorLabel
@@ -177,7 +185,7 @@
             turnIndicatorLabel.Location = new Point(0, 0);
             turnIndicatorLabel.Margin = new Padding(0);
             turnIndicatorLabel.Name = "turnIndicatorLabel";
-            turnIndicatorLabel.Size = new Size(0, 20);
+            turnIndicatorLabel.Size = new Size(0, 15);
             turnIndicatorLabel.TabIndex = 54;
             turnIndicatorLabel.TextAlign = ContentAlignment.MiddleCenter;
             turnIndicatorLabel.TextOutlineColor = Color.Black;
@@ -192,15 +200,14 @@
             interactionModeTableLayoutPanel.Controls.Add(moveShipModeRadioButton, 0, 2);
             interactionModeTableLayoutPanel.Controls.Add(placeRadarModeRadioButton, 0, 3);
             interactionModeTableLayoutPanel.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            interactionModeTableLayoutPanel.Location = new Point(419, 224);
-            interactionModeTableLayoutPanel.Margin = new Padding(3, 4, 3, 4);
+            interactionModeTableLayoutPanel.Location = new Point(367, 168);
             interactionModeTableLayoutPanel.Name = "interactionModeTableLayoutPanel";
             interactionModeTableLayoutPanel.RowCount = 4;
             interactionModeTableLayoutPanel.RowStyles.Add(new RowStyle());
             interactionModeTableLayoutPanel.RowStyles.Add(new RowStyle());
             interactionModeTableLayoutPanel.RowStyles.Add(new RowStyle());
             interactionModeTableLayoutPanel.RowStyles.Add(new RowStyle());
-            interactionModeTableLayoutPanel.Size = new Size(122, 119);
+            interactionModeTableLayoutPanel.Size = new Size(107, 89);
             interactionModeTableLayoutPanel.TabIndex = 48;
             interactionModeTableLayoutPanel.Visible = false;
             // 
@@ -213,7 +220,7 @@
             activeModeLabel.ForeColor = Color.Coral;
             activeModeLabel.Location = new Point(3, 0);
             activeModeLabel.Name = "activeModeLabel";
-            activeModeLabel.Size = new Size(101, 20);
+            activeModeLabel.Size = new Size(81, 15);
             activeModeLabel.TabIndex = 58;
             activeModeLabel.Text = "Active mode:";
             activeModeLabel.TextOutlineColor = Color.Black;
@@ -224,10 +231,9 @@
             shootModeRadioButton.Checked = true;
             shootModeRadioButton.Font = new Font("Verdana", 9F, FontStyle.Bold, GraphicsUnit.Point);
             shootModeRadioButton.ForeColor = Color.Coral;
-            shootModeRadioButton.Location = new Point(3, 24);
-            shootModeRadioButton.Margin = new Padding(3, 4, 3, 4);
+            shootModeRadioButton.Location = new Point(3, 18);
             shootModeRadioButton.Name = "shootModeRadioButton";
-            shootModeRadioButton.Size = new Size(77, 22);
+            shootModeRadioButton.Size = new Size(63, 18);
             shootModeRadioButton.TabIndex = 0;
             shootModeRadioButton.TabStop = true;
             shootModeRadioButton.Text = "Shoot";
@@ -238,10 +244,9 @@
             moveShipModeRadioButton.AutoSize = true;
             moveShipModeRadioButton.Font = new Font("Verdana", 9F, FontStyle.Bold, GraphicsUnit.Point);
             moveShipModeRadioButton.ForeColor = Color.Coral;
-            moveShipModeRadioButton.Location = new Point(3, 54);
-            moveShipModeRadioButton.Margin = new Padding(3, 4, 3, 4);
+            moveShipModeRadioButton.Location = new Point(3, 42);
             moveShipModeRadioButton.Name = "moveShipModeRadioButton";
-            moveShipModeRadioButton.Size = new Size(113, 22);
+            moveShipModeRadioButton.Size = new Size(93, 18);
             moveShipModeRadioButton.TabIndex = 5;
             moveShipModeRadioButton.Text = "Move Ship";
             moveShipModeRadioButton.UseVisualStyleBackColor = true;
@@ -251,10 +256,9 @@
             placeRadarModeRadioButton.AutoSize = true;
             placeRadarModeRadioButton.Font = new Font("Verdana", 9F, FontStyle.Bold, GraphicsUnit.Point);
             placeRadarModeRadioButton.ForeColor = Color.Coral;
-            placeRadarModeRadioButton.Location = new Point(3, 84);
-            placeRadarModeRadioButton.Margin = new Padding(3, 4, 3, 4);
+            placeRadarModeRadioButton.Location = new Point(3, 66);
             placeRadarModeRadioButton.Name = "placeRadarModeRadioButton";
-            placeRadarModeRadioButton.Size = new Size(126, 22);
+            placeRadarModeRadioButton.Size = new Size(104, 18);
             placeRadarModeRadioButton.TabIndex = 1;
             placeRadarModeRadioButton.Text = "Place Radar";
             placeRadarModeRadioButton.UseVisualStyleBackColor = true;
@@ -269,14 +273,13 @@
             remainingItemTableLayoutPanel.Controls.Add(remainingMoveShipsCountLabel, 1, 0);
             remainingItemTableLayoutPanel.Controls.Add(remainingRadarTextLabel, 0, 1);
             remainingItemTableLayoutPanel.Controls.Add(remainingMoveShipsTextLabel, 0, 0);
-            remainingItemTableLayoutPanel.Location = new Point(602, 397);
-            remainingItemTableLayoutPanel.Margin = new Padding(3, 4, 3, 4);
+            remainingItemTableLayoutPanel.Location = new Point(527, 298);
             remainingItemTableLayoutPanel.Name = "remainingItemTableLayoutPanel";
             remainingItemTableLayoutPanel.RowCount = 3;
             remainingItemTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             remainingItemTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            remainingItemTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            remainingItemTableLayoutPanel.Size = new Size(160, 133);
+            remainingItemTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 15F));
+            remainingItemTableLayoutPanel.Size = new Size(140, 100);
             remainingItemTableLayoutPanel.TabIndex = 49;
             remainingItemTableLayoutPanel.Visible = false;
             // 
@@ -287,9 +290,9 @@
             remainingRadarCountLabel.BackColor = Color.Transparent;
             remainingRadarCountLabel.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point);
             remainingRadarCountLabel.ForeColor = Color.Coral;
-            remainingRadarCountLabel.Location = new Point(136, 75);
+            remainingRadarCountLabel.Location = new Point(119, 56);
             remainingRadarCountLabel.Name = "remainingRadarCountLabel";
-            remainingRadarCountLabel.Size = new Size(15, 17);
+            remainingRadarCountLabel.Size = new Size(13, 13);
             remainingRadarCountLabel.TabIndex = 57;
             remainingRadarCountLabel.Text = "0";
             remainingRadarCountLabel.TextOutlineColor = Color.Black;
@@ -301,9 +304,9 @@
             remainingMoveShipsCountLabel.BackColor = Color.Transparent;
             remainingMoveShipsCountLabel.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point);
             remainingMoveShipsCountLabel.ForeColor = Color.Coral;
-            remainingMoveShipsCountLabel.Location = new Point(136, 19);
+            remainingMoveShipsCountLabel.Location = new Point(119, 14);
             remainingMoveShipsCountLabel.Name = "remainingMoveShipsCountLabel";
-            remainingMoveShipsCountLabel.Size = new Size(15, 17);
+            remainingMoveShipsCountLabel.Size = new Size(13, 13);
             remainingMoveShipsCountLabel.TabIndex = 56;
             remainingMoveShipsCountLabel.Text = "0";
             remainingMoveShipsCountLabel.TextOutlineColor = Color.Black;
@@ -315,9 +318,9 @@
             remainingRadarTextLabel.BackColor = Color.Transparent;
             remainingRadarTextLabel.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point);
             remainingRadarTextLabel.ForeColor = Color.Coral;
-            remainingRadarTextLabel.Location = new Point(3, 75);
+            remainingRadarTextLabel.Location = new Point(3, 56);
             remainingRadarTextLabel.Name = "remainingRadarTextLabel";
-            remainingRadarTextLabel.Size = new Size(120, 17);
+            remainingRadarTextLabel.Size = new Size(101, 13);
             remainingRadarTextLabel.TabIndex = 55;
             remainingRadarTextLabel.Text = "Remaining radars:";
             remainingRadarTextLabel.TextOutlineColor = Color.Black;
@@ -329,9 +332,9 @@
             remainingMoveShipsTextLabel.BackColor = Color.Transparent;
             remainingMoveShipsTextLabel.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point);
             remainingMoveShipsTextLabel.ForeColor = Color.Coral;
-            remainingMoveShipsTextLabel.Location = new Point(3, 11);
+            remainingMoveShipsTextLabel.Location = new Point(3, 8);
             remainingMoveShipsTextLabel.Name = "remainingMoveShipsTextLabel";
-            remainingMoveShipsTextLabel.Size = new Size(108, 34);
+            remainingMoveShipsTextLabel.Size = new Size(91, 26);
             remainingMoveShipsTextLabel.TabIndex = 54;
             remainingMoveShipsTextLabel.Text = "Remaining ship movements:";
             remainingMoveShipsTextLabel.TextOutlineColor = Color.Black;
@@ -342,9 +345,9 @@
             YourBoardLabel.BackColor = Color.Transparent;
             YourBoardLabel.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point);
             YourBoardLabel.ForeColor = Color.Coral;
-            YourBoardLabel.Location = new Point(194, 49);
+            YourBoardLabel.Location = new Point(170, 37);
             YourBoardLabel.Name = "YourBoardLabel";
-            YourBoardLabel.Size = new Size(98, 23);
+            YourBoardLabel.Size = new Size(85, 19);
             YourBoardLabel.TabIndex = 50;
             YourBoardLabel.Text = "Your Board";
             YourBoardLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -356,9 +359,9 @@
             EnemysBoardLabel.BackColor = Color.Transparent;
             EnemysBoardLabel.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point);
             EnemysBoardLabel.ForeColor = Color.Coral;
-            EnemysBoardLabel.Location = new Point(635, 49);
+            EnemysBoardLabel.Location = new Point(556, 37);
             EnemysBoardLabel.Name = "EnemysBoardLabel";
-            EnemysBoardLabel.Size = new Size(127, 23);
+            EnemysBoardLabel.Size = new Size(107, 19);
             EnemysBoardLabel.TabIndex = 51;
             EnemysBoardLabel.Text = "Enemy's Board";
             EnemysBoardLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -370,9 +373,9 @@
             AvailableShipsLabel.BackColor = Color.Transparent;
             AvailableShipsLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             AvailableShipsLabel.ForeColor = Color.Coral;
-            AvailableShipsLabel.Location = new Point(37, 397);
+            AvailableShipsLabel.Location = new Point(32, 298);
             AvailableShipsLabel.Name = "AvailableShipsLabel";
-            AvailableShipsLabel.Size = new Size(118, 20);
+            AvailableShipsLabel.Size = new Size(92, 15);
             AvailableShipsLabel.TabIndex = 52;
             AvailableShipsLabel.Text = "Available Ships:";
             AvailableShipsLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -384,9 +387,9 @@
             EnterStartingCoordsLabel.BackColor = Color.Transparent;
             EnterStartingCoordsLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             EnterStartingCoordsLabel.ForeColor = Color.Coral;
-            EnterStartingCoordsLabel.Location = new Point(37, 460);
+            EnterStartingCoordsLabel.Location = new Point(32, 345);
             EnterStartingCoordsLabel.Name = "EnterStartingCoordsLabel";
-            EnterStartingCoordsLabel.Size = new Size(197, 20);
+            EnterStartingCoordsLabel.Size = new Size(155, 15);
             EnterStartingCoordsLabel.TabIndex = 53;
             EnterStartingCoordsLabel.Text = "Enter starting Coordinates:";
             EnterStartingCoordsLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -398,12 +401,11 @@
             shipGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             shipGroupComboBox.FormattingEnabled = true;
             shipGroupComboBox.Items.AddRange(new object[] { "1", "2", "3" });
-            shipGroupComboBox.Location = new Point(195, 421);
-            shipGroupComboBox.Margin = new Padding(3, 4, 3, 4);
+            shipGroupComboBox.Location = new Point(171, 316);
             shipGroupComboBox.MaxDropDownItems = 3;
             shipGroupComboBox.MaxLength = 1;
             shipGroupComboBox.Name = "shipGroupComboBox";
-            shipGroupComboBox.Size = new Size(50, 28);
+            shipGroupComboBox.Size = new Size(44, 23);
             shipGroupComboBox.TabIndex = 54;
             shipGroupComboBox.SelectedIndexChanged += shipGroupComboBox_SelectedIndexChanged;
             // 
@@ -413,9 +415,9 @@
             groupLabel.BackColor = Color.Transparent;
             groupLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             groupLabel.ForeColor = Color.Coral;
-            groupLabel.Location = new Point(194, 397);
+            groupLabel.Location = new Point(170, 298);
             groupLabel.Name = "groupLabel";
-            groupLabel.Size = new Size(57, 20);
+            groupLabel.Size = new Size(45, 15);
             groupLabel.TabIndex = 55;
             groupLabel.Text = "Group:";
             groupLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -425,10 +427,9 @@
             // 
             shootAsGroupCheckBox.AutoSize = true;
             shootAsGroupCheckBox.Enabled = false;
-            shootAsGroupCheckBox.Location = new Point(125, 427);
-            shootAsGroupCheckBox.Margin = new Padding(3, 4, 3, 4);
+            shootAsGroupCheckBox.Location = new Point(109, 320);
             shootAsGroupCheckBox.Name = "shootAsGroupCheckBox";
-            shootAsGroupCheckBox.Size = new Size(18, 17);
+            shootAsGroupCheckBox.Size = new Size(15, 14);
             shootAsGroupCheckBox.TabIndex = 56;
             shootAsGroupCheckBox.UseVisualStyleBackColor = true;
             shootAsGroupCheckBox.Visible = false;
@@ -441,22 +442,48 @@
             shootAsGroupLabel.Enabled = false;
             shootAsGroupLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             shootAsGroupLabel.ForeColor = Color.Coral;
-            shootAsGroupLabel.Location = new Point(82, 397);
+            shootAsGroupLabel.Location = new Point(72, 298);
             shootAsGroupLabel.Name = "shootAsGroupLabel";
-            shootAsGroupLabel.Size = new Size(125, 20);
+            shootAsGroupLabel.Size = new Size(98, 15);
             shootAsGroupLabel.TabIndex = 57;
             shootAsGroupLabel.Text = "Shoot as Group::";
             shootAsGroupLabel.TextAlign = ContentAlignment.MiddleCenter;
             shootAsGroupLabel.TextOutlineColor = Color.Black;
             shootAsGroupLabel.Visible = false;
             // 
+            // shipPlacementMemento_Undo
+            // 
+            shipPlacementMemento_Undo.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            shipPlacementMemento_Undo.Location = new Point(329, 338);
+            shipPlacementMemento_Undo.Margin = new Padding(3, 2, 3, 2);
+            shipPlacementMemento_Undo.Name = "shipPlacementMemento_Undo";
+            shipPlacementMemento_Undo.Size = new Size(75, 22);
+            shipPlacementMemento_Undo.TabIndex = 58;
+            shipPlacementMemento_Undo.Text = "Undo";
+            shipPlacementMemento_Undo.UseVisualStyleBackColor = true;
+            shipPlacementMemento_Undo.Click += shipPlacementMemento_Undo_Click;
+            // 
+            // shipPlacementMemento_Redo
+            // 
+            shipPlacementMemento_Redo.Font = new Font("Verdana", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            shipPlacementMemento_Redo.Location = new Point(415, 338);
+            shipPlacementMemento_Redo.Margin = new Padding(3, 2, 3, 2);
+            shipPlacementMemento_Redo.Name = "shipPlacementMemento_Redo";
+            shipPlacementMemento_Redo.Size = new Size(79, 22);
+            shipPlacementMemento_Redo.TabIndex = 59;
+            shipPlacementMemento_Redo.Text = "Redo";
+            shipPlacementMemento_Redo.UseVisualStyleBackColor = true;
+            shipPlacementMemento_Redo.Click += shipPlacementMemento_Redo_Click;
+            // 
             // GameForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(975, 547);
+            ClientSize = new Size(853, 410);
+            Controls.Add(shipPlacementMemento_Redo);
+            Controls.Add(shipPlacementMemento_Undo);
             Controls.Add(shootAsGroupLabel);
             Controls.Add(shootAsGroupCheckBox);
             Controls.Add(groupLabel);
@@ -477,6 +504,7 @@
             Controls.Add(gameBoardLeft);
             Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "GameForm";
             Tag = "1_1";
@@ -521,5 +549,7 @@
         private Components.CustomOutlinedLabel groupLabel;
         private CheckBox shootAsGroupCheckBox;
         private Components.CustomOutlinedLabel shootAsGroupLabel;
+        private Button shipPlacementMemento_Undo;
+        private Button shipPlacementMemento_Redo;
     }
 }
