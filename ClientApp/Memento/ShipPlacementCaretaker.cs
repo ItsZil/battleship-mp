@@ -1,40 +1,23 @@
-﻿using SharedLibrary.Interfaces;
-using SharedLibrary.Models;
-
-namespace ClientApp.Memento
+﻿namespace ClientApp.Memento
 {
     public class ShipPlacementCaretaker
     {
-        private Stack<ShipPlacementMemento> undoStack = new Stack<ShipPlacementMemento>();
-        private Stack<ShipPlacementMemento> redoStack = new Stack<ShipPlacementMemento>();
+        private List<ShipPlacementMemento> mementoList = new List<ShipPlacementMemento>();
 
-        public void SaveState(ShipPlacementMemento memento)
+        public void AddState(ShipPlacementMemento state)
         {
-            undoStack.Push(memento);
+            mementoList.Add(state);
         }
 
-        public ShipPlacementMemento Undo(List<Ship> ships)
+        public ShipPlacementMemento GetState(int index)
         {
-            if (undoStack.Count > 0)
-            {
-                ShipPlacementMemento currentState = new ShipPlacementMemento(ships);
-                ShipPlacementMemento memento = undoStack.Pop();
-                redoStack.Push(currentState);
-                return memento;
-            }
-            return null;
+            var memento = mementoList[index];
+            return memento;
         }
 
-        public ShipPlacementMemento Redo(List<Ship> ships)
+        public int GetMementoCount()
         {
-            if (redoStack.Count > 0)
-            {
-                ShipPlacementMemento currentState = new ShipPlacementMemento(ships);
-                ShipPlacementMemento memento = redoStack.Pop();
-                undoStack.Push(currentState);
-                return memento;
-            }
-            return null;
+            return mementoList.Count;
         }
     }
 }

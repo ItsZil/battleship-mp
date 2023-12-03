@@ -4,11 +4,21 @@ namespace ClientApp.Memento
 {
     public class ShipPlacementMemento
     {
-        public List<Ship> Ships { get; private set; }
+        private List<Ship> state = new List<Ship>();
 
-        public ShipPlacementMemento(List<Ship> ships)
+        public ShipPlacementMemento(List<Ship> state)
         {
-            Ships = new List<Ship>(ships.Select(s => (Ship)s.Clone()));
+            this.state = state;
+        }
+
+        public List<Ship> GetState()
+        {
+            return state;
+        }
+
+        public void SetState(List<Ship> state)
+        {
+            this.state = state.Select(ship => (Ship)ship.Clone()).ToList();
         }
     }
 }

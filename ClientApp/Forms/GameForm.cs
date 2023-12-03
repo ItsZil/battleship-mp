@@ -33,6 +33,7 @@ namespace ClientApp.Forms
         private bool isMyTurn = false;
         private bool isPlayingPhase = false;
 
+        private ShipPlacementOriginator _shipPlacementOriginator = new ShipPlacementOriginator();
         private ShipPlacementCaretaker _shipPlacementCaretaker = new ShipPlacementCaretaker();
 
         public GameForm(Client client, int gameId, string gameLevel)
@@ -237,9 +238,11 @@ namespace ClientApp.Forms
 
             if (newShip != null)
             {
-                // Save current state before placing new ship
-                _shipPlacementCaretaker.SaveState(new ShipPlacementMemento(_ships));
+                _shipPlacementOriginator.SetState(_ships);
+                _shipPlacementCaretaker.AddState(_shipPlacementOriginator.CreateMemento());
                 _ships.Add(newShip);
+                _shipPlacementOriginator.SetState(_ships);
+                _shipPlacementCaretaker.AddState(_shipPlacementOriginator.CreateMemento());
                 RemoveSelectedShipFromComboBox(); // TODO: allow multiple ships of same type
             }
         }
@@ -343,8 +346,11 @@ namespace ClientApp.Forms
                     }
                 }
             }
-            var shipButton = _playerShipbuttons.First(shipButton => shipButton.Value.Coordinates == shipCoordinates).Key;
-            _playerShipbuttons.Remove(shipButton);
+            if (_playerShipbuttons.Count > 0)
+            {
+                var shipButton = _playerShipbuttons.First(shipButton => shipButton.Value.Coordinates == shipCoordinates).Key;
+                _playerShipbuttons.Remove(shipButton);
+            }
         }
 
         private List<Coordinate> CreateShipCoordinates(int size, int x, int y, bool isVertical)
@@ -821,25 +827,38 @@ namespace ClientApp.Forms
 
         private void shipPlacementMemento_Undo_Click(object sender, EventArgs e)
         {
-            ShipPlacementMemento memento = _shipPlacementCaretaker.Undo(_ships);
-            if (memento != null)
+            int mementoCount = _shipPlacementCaretaker.GetMementoCount();
+            if (mementoCount > 0)
             {
-                // Restore state from memento
-                var lastShip = _ships.Last();
-                _ships = memento.Ships;
+                ShipPlacementMemento undoState = _shipPlacementCaretaker.GetState(mementoCount - 2);
+                _shipPlacementOriginator.RestoreFromMemento(undoState);
 
-                RemoveShip(gameBoardLeft, lastShip.Coordinates);
+                if (_ships.Count > 0)
+                {
+                    var lastShip = _ships.Last();
+                    _ships = undoState.GetState();
+
+                    RemoveShip(gameBoardLeft, lastShip.Coordinates);
+                }
             }
         }
 
         private void shipPlacementMemento_Redo_Click(object sender, EventArgs e)
         {
-            ShipPlacementMemento memento = _shipPlacementCaretaker.Redo(_ships);
-            if (memento != null)
+            int mementoCount = _shipPlacementCaretaker.GetMementoCount();
+            if (mementoCount > 0)
             {
-                // Restore state from memento
-                _ships = memento.Ships;
-                PlaceShip(gameBoardLeft, _ships.Last().Coordinates, _ships.Last());
+                ShipPlacementMemento redoState = _shipPlacementCaretaker.GetState(mementoCount - 1);
+                _shipPlacementOriginator.RestoreFromMemento(redoState);
+
+                var oldShips = _ships;
+                _ships = redoState.GetState();
+                if (_ships.Count > 0)
+                {
+                    var lastShip = _ships.Last();
+                    if (!oldShips.Select(ship => ship.Coordinates).Contains(lastShip.Coordinates))
+                        PlaceShip(gameBoardLeft, lastShip.Coordinates, lastShip);
+                }
             }
         }
     }
