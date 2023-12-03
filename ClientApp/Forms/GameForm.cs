@@ -493,6 +493,8 @@ namespace ClientApp.Forms
             // Because this method is called from another thread (inside Client), we need to use Invoke to access UI elements.
             placeShipButton.Invoke(new MethodInvoker(delegate { placeShipButton.Enabled = false; }));
             readyButton.Invoke(new MethodInvoker(delegate { readyButton.Visible = false; }));
+            shipPlacementMemento_Undo.Invoke(new MethodInvoker(delegate { shipPlacementMemento_Undo.Visible = false; }));
+            shipPlacementMemento_Redo.Invoke(new MethodInvoker(delegate { shipPlacementMemento_Redo.Visible = false; }));
             SetNextTurn(firstTurnPlayerId);
 
             // Populate gameBoardRight (other player's board)
@@ -826,10 +828,7 @@ namespace ClientApp.Forms
                 var lastShip = _ships.Last();
                 _ships = memento.Ships;
 
-                if (_ships.Count > 0)
-                    RemoveShip(gameBoardLeft, _ships.Last().Coordinates);
-                else
-                    RemoveShip(gameBoardLeft, lastShip.Coordinates);
+                RemoveShip(gameBoardLeft, lastShip.Coordinates);
             }
         }
 
