@@ -10,7 +10,7 @@ namespace ServerApp.Managers
     {
         private static readonly Lazy<GameManager> _instance = new Lazy<GameManager>(() => new GameManager());
         private Dictionary<string, IGamePrototype> _gameTemplates = new Dictionary<string, IGamePrototype>();
-        private ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
+        private ExpertLevelGameCreator _expertLevelGameFactory = new ExpertLevelGameCreator("Expert Level");
 
         public GameManager()
         {
