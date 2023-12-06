@@ -13,10 +13,10 @@ namespace ServerApp.Managers
         private static readonly Lazy<ServerManager> _instance = new Lazy<ServerManager>(() => new ServerManager());
         private readonly List<Game> _gameServers = new List<Game>();
 
-        private readonly BasicLevelGameFactory _basicLevelGameFactory = new BasicLevelGameFactory();
-        private readonly EnhancedLevelGameFactory _enhancedLevelGameFactory = new EnhancedLevelGameFactory();
-        private readonly AdvancedLevelGameFactory _advancedLevelGameFactory = new AdvancedLevelGameFactory();
-        private readonly ExpertLevelGameFactory _expertLevelGameFactory = new ExpertLevelGameFactory();
+        private readonly BasicLevelGameCreator _basicLevelGameCreator = new BasicLevelGameCreator("Basic Level");
+        private readonly EnhancedLevelGameCreator _enhancedLevelGameCreator = new EnhancedLevelGameCreator("Enhanced Level");
+        private readonly AdvancedLevelGameCreator _advancedLevelGameCreator = new AdvancedLevelGameCreator("Advanced Level");
+        private readonly ExpertLevelGameCreator _expertLevelGameCreator = new ExpertLevelGameCreator("Expert Level");
 
         private List<IServerObserver> Clients = new List<IServerObserver>();
 
@@ -69,16 +69,16 @@ namespace ServerApp.Managers
             switch (createGameDetails.LevelName)
             {
                 case "Basic Level":
-                    game = _basicLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
+                    game = _basicLevelGameCreator.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
                     break;
                 case "Enhanced Level":
-                    game = _enhancedLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
+                    game = _enhancedLevelGameCreator.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
                     break;
                 case "Advanced Level":
-                    game = _advancedLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
+                    game = _advancedLevelGameCreator.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
                     break;
                 case "Expert Level":
-                    game = _expertLevelGameFactory.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
+                    game = _expertLevelGameCreator.CreateGame(createGameDetails.CreatorId, createGameDetails.Name, createGameDetails.Password);
                     break;
                 default:
                     throw new Exception("Invalid game level!");
