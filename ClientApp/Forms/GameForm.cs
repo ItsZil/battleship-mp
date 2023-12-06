@@ -10,6 +10,7 @@ using ClientApp.Obstacles.Flyweigth;
 using ClientApp.State;
 using ClientApp.State.States;
 using ClientApp.Memento;
+using SharedLibrary.Interpreter;
 
 namespace ClientApp.Forms
 {
@@ -212,12 +213,17 @@ namespace ClientApp.Forms
 
         private void placeShipButton_Click(object sender, EventArgs e)
         {
-            string ship = shipPlacementTypeComboBox.SelectedItem.ToString();
+            string shipName = shipPlacementTypeComboBox.SelectedItem.ToString();
             int x = int.Parse(textBox1.Text);
             int y = int.Parse(textBox2.Text);
 
+            HandleShipPlacement(shipName, x, y);
+        }
+
+        public void HandleShipPlacement(string shipName, int x, int y)
+        {
             Ship newShip = null;
-            switch (ship)
+            switch (shipName)
             {
                 case "One piece":
                     newShip = TryPlaceShip(gameBoardLeft, 1, x, y);
@@ -859,6 +865,31 @@ namespace ClientApp.Forms
                     if (!oldShips.Select(ship => ship.Coordinates).Contains(lastShip.Coordinates))
                         PlaceShip(gameBoardLeft, lastShip.Coordinates, lastShip);
                 }
+            }
+        }
+
+        private void ConsoleTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string command = ConsoleTextBox.Text;
+                var parts = command.Split(" ").ToList();
+                if (parts[0] == "place")
+                {
+                    parts.RemoveAt(0);
+                    IExpression placeShipExpression = new PlaceShipExpression();
+
+                    string shipName = shipPlacementTypeComboBox.SelectedItem.ToString();
+                    parts.Add(shipName);
+                    
+                    var args = placeShipExpression.Interpret(parts);
+
+                    HandleShipPlacement(args[2], int.Parse(args[0]), int.Parse(args[1]));
+                }
+
+                ConsoleTextBox.Clear();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
     }
