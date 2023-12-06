@@ -1,4 +1,5 @@
-﻿using SharedLibrary.Interfaces;
+﻿using ClientApp.Interfaces;
+using SharedLibrary.Interfaces;
 using System.Windows.Forms;
 
 namespace UnitTests.Mocks

@@ -28,7 +28,7 @@ namespace UnitTests.SharedLibraryTests.Creators
             _mockClient = new Mock<Client>(null);
             _uiInvokerStub = new UiInvokerStub();
             _messageBoxStub = new MessageBoxStub();
-            _gameForm = new GameForm(_mockClient.Object, _uiInvokerStub, _messageBoxStub);
+            _gameForm = new GameForm(_mockClient.Object, 1, "1");
             _mockGameBoardLeft = new Mock<TableLayoutPanel>();
             _mockGameBoardRight = new Mock<TableLayoutPanel>();
 
